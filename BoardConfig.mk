@@ -27,7 +27,11 @@ WITHOUT_RIL := true
 # assert
 TARGET_OTA_ASSERT_DEVICE := c0,p4notewifi,p4notewifiww,n8013,GT-N8013,n8010,GT-N8010
 
-# SELinux
+# Selinux
 BOARD_VENDOR_SEPOLICY_DIRS += device/samsung/n80xx-common/selinux/vendor
 SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += device/samsung/n80xx-common/selinux/public
 SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += device/samsung/n80xx-common/selinux/private
+
+# Temporarily set SELinux to permissive for debugging binder issues
+# TODO: Create proper SELinux policies and remove this
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive

@@ -18,6 +18,10 @@ LOCAL_PATH := device/samsung/n8010
 
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
+# Disable VINTF manifest enforcement for legacy non-Treble device
+# Prevents crashes when apps query unavailable HIDL HAL services
+PRODUCT_ENFORCE_VINTF_MANIFEST := false
+
 # Rootdir
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/init.target.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.target.rc
