@@ -1,0 +1,6 @@
+ M drivers/md/dm-verity.c
+?? arch/arm/configs/lineageos_n8010_defconfig
+?? arch/configs/
+?? tools/gator/daemon/configuration_xml.h
+?? tools/gator/daemon/events.xml
+?? tools/gator/daemon/events_xml.h

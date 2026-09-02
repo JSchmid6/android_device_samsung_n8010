@@ -1,0 +1,4 @@
+ M BoardCommonConfig.mk
+ M common.mk
+ M rootdir/init.smdk4210.rc
+ M shims/libstagefright-shim/CameraSource.cpp

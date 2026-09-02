@@ -19,6 +19,16 @@ vom 2. September 2026.
 | `hardware_samsung/` | `hardware/samsung` | 14 | `567d455b` |
 | `external_crosvm/` | `external/crosvm` | 4 | `f19362bb` |
 | `device_tree_DEV/` | Device-Tree in `~/DEV/lineagos` | 7 | Branch `fix/l21_4_ha` |
+| `device_samsung_n8010/` | `device/samsung/n8010` | 8 | im Build-Baum |
+| `device_samsung_smdk4412-common/` | `device/samsung/smdk4412-common` | 4 | |
+| `device_samsung_n80xx-common/` | `device/samsung/n80xx-common` | 1 | |
+| `kernel_samsung_smdk4412/` | `kernel/samsung/smdk4412` | 6 | dm-verity-Patch, neues Defconfig |
+| `frameworks_native/` | `frameworks/native` | 6 | Gralloc 2/3/4/5 |
+| `packages_modules_Connectivity/` | `packages/modules/Connectivity` | 2 | |
+| `packages_apps_SamsungServiceMode/` | | 1 | |
+| `external_chromium-webview_*` | drei Prebuilt-Zweige | je 1 | |
+| `device_google_cuttlefish_vmm/` | | 2 | |
+| `vendor_samsung_smdk4412-common/` | kein Git-Repo — Dateikopien | | |
 
 Je Verzeichnis:
 
@@ -82,3 +92,53 @@ Folge dieser Kette, nicht ihre Ursache.**
 - Der `repo sync` ist vom Dezember 2025, also rund neun Monate alt.
 - `external/crosvm` enthält vier **gelöschte** `Cargo.lock` — vermutlich unbeabsichtigt,
   der Patch hält den Zustand trotzdem fest.
+
+
+## Nachtrag 2. September: der EGL-Treiber wurde nie geladen
+
+Beim Nachvollziehen der Grafik-Kette kam heraus, dass das ROM **gar keinen
+ladbaren EGL-Treiber enthielt**.
+
+`frameworks/native/opengl/libs/EGL/Loader.cpp` sucht Vendor-GL-Treiber
+ausschliesslich unter:
+
+    /vendor/${LIB}/egl/lib{GLES | [EGL|GLESv1_CM|GLESv2]}_${SUFFIX}.so
+
+Mit `ro.hardware.egl=mali` (vendor_prop.mk:23) also `/vendor/lib/egl/libEGL_mali.so`.
+Dieses Verzeichnis existierte im Build **nicht**. Die Blobs lagen in
+`/system/lib/egl/` — dort schaut Android 14 fuer Vendor-Treiber nicht mehr hin.
+
+Damit erklaert sich der beobachtete Ablauf: surfaceflinger stirbt viermal,
+zygote geht mit, `sys.init.updatable_crashing=1` greift, Rueckfall nach TWRP.
+
+### Ursache
+
+`device/samsung/smdk4412-common/common.mk` hatte in PRODUCT_PACKAGES:
+
+    # libMali (missing vendor blobs) \
+    # libEGL_mali (missing vendor blobs) \
+
+Stillgelegt, als die Blobs noch fehlten. Im Januar 2026 wurden sie extrahiert —
+die Zeilen wurden nie wieder aktiviert. Stattdessen legt die bei der Extraktion
+generierte `smdk4412-common-vendor.mk` alle Blobs per PRODUCT_COPY_FILES nach
+`$(TARGET_COPY_OUT_SYSTEM)` (29 Eintraege nach SYSTEM, 3 nach VENDOR).
+
+Der LineageOS-Shim `hardware/samsung/exynos4/hal/libEGL_mali/` (shim.S +
+eglApi.cpp) wurde folglich in keinem Build kompiliert — obwohl
+`TARGET_PROVIDES_LIBEGL_MALI := true` und
+`TARGET_NEEDS_NATIVE_WINDOW_FORMAT_FIX := true` gesetzt sind.
+
+### Aenderung
+
+- `common.mk`: `libMali` und `libEGL_mali` in PRODUCT_PACKAGES aktiviert
+- `smdk4412-common-vendor.mk`:
+  - Kopie von `libEGL_mali.so` entfernt (der Shim belegt diesen Pfad)
+  - Kopie von `libMali.so` entfernt (das Prebuilt-Modul installiert nach /vendor/lib)
+  - `libGLESv1_CM_mali.so` und `libGLESv2_mali.so` von SYSTEM nach VENDOR
+
+### Offen
+
+`CONFIG_DMA_SHARED_BUFFER is not set` im neuen Defconfig. dma-buf existiert in
+Kernel 3.4 (seit 3.3), ist hier aber abgeschaltet. `CONFIG_SYNC`, `CONFIG_SW_SYNC`
+und `CONFIG_ION` sind an. Ob der Grafikstapel ohne dma-buf traegt, ist die naechste
+offene Frage — unabhaengig von dieser Aenderung.

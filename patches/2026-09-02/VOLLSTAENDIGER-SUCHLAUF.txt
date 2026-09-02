@@ -1,2 +1,97 @@
-Suchlauf über alle Git-Repos im Build-Baum, gestartet 02.09.2026 13:56
+Suchlauf über alle Git-Repos im Build-Baum
+Gestartet: 02.09.2026 14:17
 
+=== hardware/samsung  (14 Dateien)
+ M AdvancedDisplay/Android.bp
+ M AdvancedDisplay/src/org/lineageos/settings/device/AdvancedDisplayActivity.java
+ M Android.mk
+ M doze/src/org/lineageos/settings/doze/SamsungDozeActivity.java
+ M doze/src/org/lineageos/settings/doze/SamsungDozeSettings.java
+ M exynos/multimedia/openmax/component/video/enc/SEC_OMX_Venc.c
+ M exynos/multimedia/utils/csc/exynos4/include/color_space_convertor.h
+ M exynos4/hal/libcamera/SecCamera.cpp
+ M exynos4/hal/libcamera/SecCameraHWInterface.cpp
+ M exynos4/hal/libhwc/hwcomposer.cpp
+ M exynos4/hal/libhwc/hwcomposer_vsync.cpp
+ D exynos4/interfaces/health/Android.bp
+?? exynos4/interfaces/health/Android.bp.disabled.bak
+?? nfc/
+
+=== device/google/cuttlefish_vmm  (2 Dateien)
+ D aarch64-linux-gnu/Cargo.lock
+ D x86_64-linux-gnu/Cargo.lock
+
+=== device/samsung/n8010  (8 Dateien)
+ M BoardConfig.mk
+ M docker-build.sh
+ M n8010.mk
+ M rootdir/init.target.rc
+ M system.prop
+ M vendor_prop.mk
+?? android_device_samsung_n8010
+?? vendorsetup.sh
+
+=== device/samsung/n80xx-common  (1 Dateien)
+ M n80xx-common.mk
+
+=== device/samsung/smdk4412-common  (4 Dateien)
+ M BoardCommonConfig.mk
+ M common.mk
+ M rootdir/init.smdk4210.rc
+ M shims/libstagefright-shim/CameraSource.cpp
+
+=== external/chromium-webview/prebuilt/arm  (1 Dateien)
+ M webview.apk
+
+=== external/chromium-webview/prebuilt/arm64  (1 Dateien)
+ M webview.apk
+
+=== external/chromium-webview/prebuilt/x86  (1 Dateien)
+ M webview.apk
+
+=== external/crosvm  (4 Dateien)
+ D Cargo.lock
+ D tools/contrib/cros_tracing_analyser/Cargo.lock
+ D tools/contrib/crosvmdump/Cargo.lock
+ D tools/contrib/memstats_chart/Cargo.lock
+
+=== frameworks/native  (6 Dateien)
+ M libs/ui/Android.bp
+ M libs/ui/Gralloc2.cpp
+ M libs/ui/Gralloc3.cpp
+ M libs/ui/Gralloc4.cpp
+ M libs/ui/Gralloc5.cpp
+?? opengl/libs/Android.bp.bak
+
+=== kernel/samsung/smdk4412  (6 Dateien)
+ M drivers/md/dm-verity.c
+?? arch/arm/configs/lineageos_n8010_defconfig
+?? arch/configs/
+?? tools/gator/daemon/configuration_xml.h
+?? tools/gator/daemon/events.xml
+?? tools/gator/daemon/events_xml.h
+
+=== packages/apps/SamsungServiceMode  (1 Dateien)
+ M Android.mk
+
+=== packages/modules/Connectivity  (2 Dateien)
+ M netbpfload/netbpfload.mainline.rc
+ M netbpfload/netbpfload.rc
+
+=== system/apex  (1 Dateien)
+ M apexd/apexd.cpp
+
+=== system/core  (4 Dateien)
+ M init/service.cpp
+ M libprocessgroup/processgroup.cpp
+ M rootdir/init.rc
+?? libprocessgroup/processgroup.cpp.orig
+
+=== system/netd  (1 Dateien)
+ M server/netd.rc
+
+=== system/sepolicy  (1 Dateien)
+ M tests/apex_sepolicy_tests.py
+
+
+Abgeschlossen: 02.09.2026 14:23

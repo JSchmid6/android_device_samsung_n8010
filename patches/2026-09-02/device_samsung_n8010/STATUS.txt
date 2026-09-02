@@ -1,0 +1,8 @@
+ M BoardConfig.mk
+ M docker-build.sh
+ M n8010.mk
+ M rootdir/init.target.rc
+ M system.prop
+ M vendor_prop.mk
+?? android_device_samsung_n8010
+?? vendorsetup.sh

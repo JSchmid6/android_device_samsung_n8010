@@ -1,0 +1,10 @@
+diff --git a/n80xx-common.mk b/n80xx-common.mk
+index 4c810f8..396208a 100644
+--- a/n80xx-common.mk
++++ b/n80xx-common.mk
+@@ -107,4 +107,4 @@ PRODUCT_CHARACTERISTICS := tablet
+ 
+ $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
+ 
+-$(call inherit-product-if-exists, vendor/samsung/n80xx/n80xx-vendor.mk)
++$(call inherit-product-if-exists, vendor/samsung/n80xx-common/n80xx-common-vendor.mk)

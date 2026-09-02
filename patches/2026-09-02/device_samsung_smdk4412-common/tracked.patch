@@ -1,0 +1,116 @@
+diff --git a/BoardCommonConfig.mk b/BoardCommonConfig.mk
+index ee558e0..034d76a 100755
+--- a/BoardCommonConfig.mk
++++ b/BoardCommonConfig.mk
+@@ -245,7 +245,7 @@ BOARD_CHARGER_SHOW_PERCENTAGE := true
+ TARGET_RELEASETOOLS_EXTENSIONS := ./device/samsung/smdk4412-common
+ 
+ # inherit from the proprietary version
+--include vendor/samsung/smdk4412-common-treble/BoardConfigVendor.mk
++-include vendor/samsung/smdk4412-common/BoardConfigVendor.mk
+ 
+ OVERRIDE_TARGET_FLATTEN_APEX := true
+ DEXPREOPT_GENERATE_APEX_IMAGE := false
+diff --git a/common.mk b/common.mk
+index f257ee4..65fe210 100644
+--- a/common.mk
++++ b/common.mk
+@@ -80,7 +80,7 @@ PRODUCT_COPY_FILES += \
+ 
+ # USB
+ PRODUCT_PACKAGES += \
+-    android.hardware.usb@1.0-service.basic \
++    # android.hardware.usb@1.0-service.basic # Obsolete in LOS21 \
+     com.android.future.usb.accessory
+ 
+ # Use legacy ADB USB support
+@@ -89,7 +89,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
+ 
+ # Trust HAL
+ PRODUCT_PACKAGES += \
+-    vendor.lineage.trust@1.0-service
++    # vendor.lineage.trust@1.0-service # Obsolete in LOS21
+ 
+ # Battery
+ PRODUCT_PROPERTY_OVERRIDES += \
+@@ -198,8 +198,8 @@ PRODUCT_PACKAGES += \
+ 
+ # Health
+ PRODUCT_PACKAGES += \
+-    android.hardware.health@2.0-impl \
+-    android.hardware.health@2.0-service
++    # android.hardware.health@2.0-impl # Obsolete in LOS21 \
++    # android.hardware.health@2.0-service # Obsolete in LOS21
+ 
+ # Charger
+ PRODUCT_PRODUCT_PROPERTIES += \
+@@ -304,7 +304,7 @@ PRODUCT_PACKAGES += \
+ 
+ # Wifi
+ PRODUCT_PACKAGES += \
+-    android.hardware.wifi@1.0-service-lazy.legacy \
++    # android.hardware.wifi@1.0-service-lazy.legacy # Obsolete in LOS21 \
+     android.hardware.wifi.supplicant@1.0 \
+     macloader \
+     wificond \
+@@ -390,7 +390,7 @@ $(call inherit-product, hardware/samsung/exynos4x12.mk)
+ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_k.mk)
+ 
+ # Include non-opensource parts
+-$(call inherit-product, vendor/samsung/smdk4412-common-treble/smdk4412-common-vendor.mk)
++$(call inherit-product, vendor/samsung/smdk4412-common/smdk4412-common-vendor.mk)
+ 
+ # Art
+ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+@@ -401,8 +401,15 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+ PRODUCT_PROPERTY_OVERRIDES += \
+     ro.lineage.build.vendor_security_patch=2015-11-05
+ 
+-# Inherit go defaults configs
+-$(call inherit-product, build/make/target/product/go_defaults.mk)
++# LMK tuning from go_defaults_common.prop (without enabling low_ram mode)
++# go_defaults.mk is not included because n8010 has 2GB RAM and is not an Android Go device
++PRODUCT_VENDOR_PROPERTIES += \
++    ro.lmk.critical_upgrade=true \
++    ro.lmk.upgrade_pressure=40 \
++    ro.lmk.downgrade_pressure=60 \
++    ro.lmk.kill_heaviest_task=false \
++    pm.dexopt.downgrade_after_inactive_days=10 \
++    pm.dexopt.shared=quicken
+ 
+ # Apply Dalvik config for 1G phone
+ $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
+diff --git a/rootdir/init.smdk4210.rc b/rootdir/init.smdk4210.rc
+index 2b4bff0..950fcda 100644
+--- a/rootdir/init.smdk4210.rc
++++ b/rootdir/init.smdk4210.rc
+@@ -2,7 +2,7 @@ import init.smdk4210.usb.rc
+ import init.gps.rc
+ 
+ on init
+-    export LD_SHIM_LIBS /vendor/lib/libsec-ril.so|libsamsung_symbols.so
++    #export LD_SHIM_LIBS /vendor/lib/libsec-ril.so|libsamsung_symbols.so
+ 
+     mkdir /efs 0771 radio system
+     mkdir /preload 0771 system system
+diff --git a/shims/libstagefright-shim/CameraSource.cpp b/shims/libstagefright-shim/CameraSource.cpp
+index f0be1bd..addc185 100644
+--- a/shims/libstagefright-shim/CameraSource.cpp
++++ b/shims/libstagefright-shim/CameraSource.cpp
+@@ -92,14 +92,8 @@ status_t CameraSource::isCameraColorFormatSupported(
+ MetadataBufferType CameraSource::metaDataStoredInVideoBuffers() const {
+     ALOGV("metaDataStoredInVideoBuffers");
+ 
+-    // Output buffers will contain metadata if camera sends us buffer in metadata mode or via
+-    // buffer queue.
+-    switch (mVideoBufferMode) {
+-        case hardware::ICamera::VIDEO_BUFFER_MODE_BUFFER_QUEUE:
+-            return kMetadataBufferTypeANWBuffer;
+-        default:
+-            return kMetadataBufferTypeInvalid;
+-    }
++    // Android 14+: camera always uses VIDEO_BUFFER_MODE_BUFFER_QUEUE
++    return kMetadataBufferTypeANWBuffer;
+ }
+ 
+ } // namespace android

@@ -1,0 +1,19 @@
+diff --git a/drivers/md/dm-verity.c b/drivers/md/dm-verity.c
+index 9ab2a6a582b..ba01a43bd20 100644
+--- a/drivers/md/dm-verity.c
++++ b/drivers/md/dm-verity.c
+@@ -671,8 +671,12 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		goto bad;
+ 	}
+ 
+-	if (argc != 10) {
+-		ti->error = "Invalid argument count: exactly 10 arguments required";
++	/* N8010 COMPAT: Android 14 apexd passes optional args after the 10
++	 * mandatory ones (format: "... <salt> <N> <opt1> ... <optN>").
++	 * Accept any argc >= 10 and silently ignore unknown optional args.
++	 */
++	if (argc < 10) {
++		ti->error = "Invalid argument count: at least 10 arguments required";
+ 		r = -EINVAL;
+ 		goto bad;
+ 	}

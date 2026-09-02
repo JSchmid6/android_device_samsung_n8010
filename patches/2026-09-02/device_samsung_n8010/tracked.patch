@@ -1,0 +1,108 @@
+diff --git a/BoardConfig.mk b/BoardConfig.mk
+index 9179e15..2bdd860 100644
+--- a/BoardConfig.mk
++++ b/BoardConfig.mk
+@@ -17,8 +17,11 @@
+ # Include n80xx BoardConfigCommon
+ -include device/samsung/n80xx-common/BoardConfigCommon.mk
+ 
++# n8010 is a non-Treble device: override smdk4412-common's VINTF enforcement
++PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := false
++
+ # Inline kernel building
+-TARGET_KERNEL_CONFIG := lineageos_n8000_defconfig
++TARGET_KERNEL_CONFIG := lineageos_n8010_defconfig
+ 
+ N8010 := true
+ 
+diff --git a/docker-build.sh b/docker-build.sh
+index 503773b..6c813b1 100755
+--- a/docker-build.sh
++++ b/docker-build.sh
+@@ -82,9 +82,10 @@ cmd_init() {
+ # Sync source
+ cmd_sync() {
+     log_info "Syncing LineageOS source (this will take a while)..."
++    log_warn "Using -j1 to avoid repository corruption and rate limits"
+     docker exec -u build $CONTAINER_NAME bash -c "
+         cd /lineage/src && \
+-        repo sync -c -j\$(nproc) --force-sync --no-clone-bundle --no-tags
++        repo sync -c -j1 --force-sync --no-clone-bundle --no-tags
+     "
+ }
+ 
+@@ -93,6 +94,7 @@ cmd_breakfast() {
+     log_info "Setting up device tree for $DEVICE..."
+     docker exec -u build $CONTAINER_NAME bash -c "
+         cd /lineage/src && \
++        mkdir -p device/samsung && \
+         ln -sf /lineage/device/samsung/android_device_samsung_n8010 device/samsung/n8010 && \
+         source build/envsetup.sh && \
+         breakfast $DEVICE
+diff --git a/n8010.mk b/n8010.mk
+index 35560fc..2ede4c3 100644
+--- a/n8010.mk
++++ b/n8010.mk
+@@ -31,5 +31,11 @@ DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
+ 
+ $(call inherit-product-if-exists, vendor/samsung/n8010/n8010-vendor.mk)
+ 
++# Software KeyMint service (AIDL KeyMint 3.0, software-only)
++# Required for Android 14: odsign creates keys with TAG_MAX_BOOT_LEVEL=30 which
++# Samsung's legacy Keymaster 3.0 HIDL HAL does not support. Without this service,
++# odsign silently crashes and wait_for_prop odsign.key.done 1 blocks forever.
++PRODUCT_PACKAGES += android.hardware.security.keymint-service
++
+ # Vendor properties
+ -include $(LOCAL_PATH)/vendor_prop.mk
+\ No newline at end of file
+diff --git a/rootdir/init.target.rc b/rootdir/init.target.rc
+index 1364a5c..040379f 100644
+--- a/rootdir/init.target.rc
++++ b/rootdir/init.target.rc
+@@ -2,7 +2,7 @@ import /vendor/etc/init/hw/init.target.usb.rc
+ import /vendor/etc/init/hw/init.n80xx.rc
+ 
+ on init
+-    export LD_SHIM_LIBS /vendor/lib/libsec-ril.so|libsamsung_symbols.so
++    #export LD_SHIM_LIBS /vendor/lib/libsec-ril.so|libsamsung_symbols.so
+ 
+     chown system system /sys/devices/system/cpu/cpufreq/pegasusq
+     chown system system /sys/devices/system/cpu/cpufreq/pegasusq/boost_freq
+diff --git a/system.prop b/system.prop
+index cb129dd..f3b79b2 100644
+--- a/system.prop
++++ b/system.prop
+@@ -3,7 +3,6 @@
+ #
+ 
+ dalvik.vm.dexopt-data-only=1
+-dalvik.vm.dex2oat-Xmx=256m
+ ro.hdcp2.rx=tz
+ ro.lcd_min_brightness=20
+ ro.sf.lcd_density=160
+@@ -48,9 +47,6 @@ ro.HOME_APP_ADJ=1
+ # Force high-end graphics in low ram mode
+ persist.sys.force_highendgfx=true
+ 
+-# Reduce background apps limit to 16 on low-tier devices
+-ro.sys.fw.bg_apps_limit=16
+-
+ # Set max background services
+ ro.config.max_starting_bg=4
+ 
+diff --git a/vendor_prop.mk b/vendor_prop.mk
+index fc89745..81f5202 100644
+--- a/vendor_prop.mk
++++ b/vendor_prop.mk
+@@ -70,10 +70,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
+ PRODUCT_PROPERTY_OVERRIDES += \
+ 	persist.sys.force_highendgfx=true
+ 
+-# Reduce background apps limit to 16 on low-tier devices
+-PRODUCT_PROPERTY_OVERRIDES += \
+-	ro.sys.fw.bg_apps_limit=16
+-
+ # Set max background services
+ # PRODUCT_PROPERTY_OVERRIDES += \
+ 	ro.config.max_starting_bg=4
