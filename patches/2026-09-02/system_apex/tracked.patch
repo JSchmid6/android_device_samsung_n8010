@@ -1,0 +1,25 @@
+diff --git a/apexd/apexd.cpp b/apexd/apexd.cpp
+index 8e539cfd..a5b9b70d 100644
+--- a/apexd/apexd.cpp
++++ b/apexd/apexd.cpp
+@@ -217,10 +217,16 @@ std::unique_ptr<DmTable> CreateVerityTable(const ApexVerityData& verity_data,
+       desc->image_size / desc->data_block_size, hash_start_block,
+       verity_data.hash_algorithm, verity_data.root_digest, verity_data.salt);
+ 
+-  target->IgnoreZeroBlocks();
+-  if (restart_on_corruption) {
+-    target->SetVerityMode(kDmVerityRestartOnCorruption);
+-  }
++  // N8010 COMPAT PATCH: Samsung kernel 3.0.101 dm-verity only supports exactly
++  // 10 mandatory arguments (argc != 10 check). Omitting optional parameters
++  // (ignore_zero_blocks, restart_on_corruption) to maintain argc=10 for
++  // kernel compatibility. Zero blocks remain verified via hashtree; corruption
++  // yields I/O errors instead of panic (acceptable for debugging).
++  // TODO: patch kernel dm-verity to accept argc >= 10 and remove this workaround.
++  // target->IgnoreZeroBlocks();
++  // if (restart_on_corruption) {
++  //   target->SetVerityMode(kDmVerityRestartOnCorruption);
++  // }
+   table->AddTarget(std::move(target));
+ 
+   table->set_readonly(true);

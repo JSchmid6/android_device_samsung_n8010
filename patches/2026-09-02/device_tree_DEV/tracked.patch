@@ -1,0 +1,76 @@
+diff --git a/.github/copilot-instructions.md b/.github/copilot-instructions.md
+index ca7bab0..542463e 100644
+--- a/.github/copilot-instructions.md
++++ b/.github/copilot-instructions.md
+@@ -4,3 +4,11 @@
+ - Vorgehen: Anpassungen immer mit passenden Tests absichern und deren Ergebnis dokumentieren.
+ - Architektur: SOLID-Prinzipien berücksichtigen, insbesondere klare Verantwortlichkeiten und saubere Schnittstellen.
+ - Kommunikation: Relevante Entscheidungen knapp begründen und Risiken transparent machen.
++
++## LineageOS Build - Workflow-Regel
++
++Nach jedem Build-Fehler-Fix **vor** dem Neustart des Builds immer prüfen:
++1. Gibt es das gleiche Muster an anderen Stellen im Samsung-spezifischen Code (`device/samsung/`, `hardware/samsung/`)?
++2. Für Java-Fehler: alle `.java`-Dateien nach dem gleichen veralteten API-Import scannen.
++3. Für C/C++-Fehler: alle `.c`/`.cpp`-Dateien nach dem gleichen undeklarierten Symbol oder entfernten API-Aufruf scannen.
++4. Fixes für alle gefundenen Stellen gleichzeitig anwenden, dann erst den Build neu starten.
+diff --git a/BoardConfig.mk b/BoardConfig.mk
+index 9179e15..2bdd860 100644
+--- a/BoardConfig.mk
++++ b/BoardConfig.mk
+@@ -17,8 +17,11 @@
+ # Include n80xx BoardConfigCommon
+ -include device/samsung/n80xx-common/BoardConfigCommon.mk
+ 
++# n8010 is a non-Treble device: override smdk4412-common's VINTF enforcement
++PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := false
++
+ # Inline kernel building
+-TARGET_KERNEL_CONFIG := lineageos_n8000_defconfig
++TARGET_KERNEL_CONFIG := lineageos_n8010_defconfig
+ 
+ N8010 := true
+ 
+diff --git a/docker-build.sh b/docker-build.sh
+index 503773b..d9ddd6c 100755
+--- a/docker-build.sh
++++ b/docker-build.sh
+@@ -82,9 +82,10 @@ cmd_init() {
+ # Sync source
+ cmd_sync() {
+     log_info "Syncing LineageOS source (this will take a while)..."
++    log_warn "Using -j1 to avoid repository corruption and rate limits"
+     docker exec -u build $CONTAINER_NAME bash -c "
+         cd /lineage/src && \
+-        repo sync -c -j\$(nproc) --force-sync --no-clone-bundle --no-tags
++        repo sync -c -j1 --force-sync --no-clone-bundle --no-tags
+     "
+ }
+ 
+@@ -93,7 +94,8 @@ cmd_breakfast() {
+     log_info "Setting up device tree for $DEVICE..."
+     docker exec -u build $CONTAINER_NAME bash -c "
+         cd /lineage/src && \
+-        ln -sf /lineage/device/samsung/android_device_samsung_n8010 device/samsung/n8010 && \
++        rm -rf device/samsung/n8010 && \
++        cp -r /lineage/device/samsung/android_device_samsung_n8010 device/samsung/n8010 && \
+         source build/envsetup.sh && \
+         breakfast $DEVICE
+     "
+diff --git a/n8010.mk b/n8010.mk
+index 35560fc..2ede4c3 100644
+--- a/n8010.mk
++++ b/n8010.mk
+@@ -31,5 +31,11 @@ DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
+ 
+ $(call inherit-product-if-exists, vendor/samsung/n8010/n8010-vendor.mk)
+ 
++# Software KeyMint service (AIDL KeyMint 3.0, software-only)
++# Required for Android 14: odsign creates keys with TAG_MAX_BOOT_LEVEL=30 which
++# Samsung's legacy Keymaster 3.0 HIDL HAL does not support. Without this service,
++# odsign silently crashes and wait_for_prop odsign.key.done 1 blocks forever.
++PRODUCT_PACKAGES += android.hardware.security.keymint-service
++
+ # Vendor properties
+ -include $(LOCAL_PATH)/vendor_prop.mk
+\ No newline at end of file

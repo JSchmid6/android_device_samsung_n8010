@@ -1,0 +1,22 @@
+diff --git a/tests/apex_sepolicy_tests.py b/tests/apex_sepolicy_tests.py
+index 26082cbcf..2161c1848 100644
+--- a/tests/apex_sepolicy_tests.py
++++ b/tests/apex_sepolicy_tests.py
+@@ -27,6 +27,7 @@ import pathlib
+ import pkgutil
+ import re
+ import sys
++import shutil
+ import tempfile
+ from dataclasses import dataclass
+ from typing import List
+@@ -218,5 +219,8 @@ def do_main(work_dir):
+ 
+ 
+ if __name__ == '__main__':
+-    with tempfile.TemporaryDirectory() as temp_dir:
++    temp_dir = tempfile.mkdtemp()
++    try:
+         do_main(temp_dir)
++    finally:
++        shutil.rmtree(temp_dir, ignore_errors=True)

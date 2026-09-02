@@ -1,0 +1,273 @@
+diff --git a/AdvancedDisplay/Android.bp b/AdvancedDisplay/Android.bp
+index 455692a..82f14a3 100644
+--- a/AdvancedDisplay/Android.bp
++++ b/AdvancedDisplay/Android.bp
+@@ -13,6 +13,8 @@ android_app {
+     platform_apis: true,
+ 
+     static_libs: [
++        "SettingsLib",
++        "SettingsLibCollapsingToolbarBaseActivity",
+         "org.lineageos.platform.internal",
+         "org.lineageos.settings.resources",
+     ],
+diff --git a/AdvancedDisplay/src/org/lineageos/settings/device/AdvancedDisplayActivity.java b/AdvancedDisplay/src/org/lineageos/settings/device/AdvancedDisplayActivity.java
+index 774919e..c32c8d3 100644
+--- a/AdvancedDisplay/src/org/lineageos/settings/device/AdvancedDisplayActivity.java
++++ b/AdvancedDisplay/src/org/lineageos/settings/device/AdvancedDisplayActivity.java
+@@ -19,7 +19,7 @@ package org.lineageos.settings.device;
+ import android.os.Bundle;
+ 
+ import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
+-import com.android.settingslib.widget.R;
++import com.android.settingslib.collapsingtoolbar.R;
+ 
+ public class AdvancedDisplayActivity extends CollapsingToolbarBaseActivity {
+ 
+diff --git a/Android.mk b/Android.mk
+index 8ec159e..74afa49 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -49,5 +49,5 @@ include $(SAM_ROOT)/liblights/Android.mk
+ include $(SAM_ROOT)/modemloader/Android.mk
+ include $(SAM_ROOT)/ril/Android.mk
+ include $(SAM_ROOT)/consumerir/Android.mk
+-include $(SAM_ROOT)/SamsungServiceMode/Android.mk
++# include $(SAM_ROOT)/SamsungServiceMode/Android.mk
+ endif
+diff --git a/doze/src/org/lineageos/settings/doze/SamsungDozeActivity.java b/doze/src/org/lineageos/settings/doze/SamsungDozeActivity.java
+index 02a1324..fa9e7ca 100644
+--- a/doze/src/org/lineageos/settings/doze/SamsungDozeActivity.java
++++ b/doze/src/org/lineageos/settings/doze/SamsungDozeActivity.java
+@@ -17,7 +17,7 @@ package org.lineageos.settings.doze;
+ 
+ import android.os.Bundle;
+ import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
+-import com.android.settingslib.widget.R;
++import com.android.settingslib.collapsingtoolbar.R;
+ 
+ public class SamsungDozeActivity extends CollapsingToolbarBaseActivity {
+ 
+diff --git a/doze/src/org/lineageos/settings/doze/SamsungDozeSettings.java b/doze/src/org/lineageos/settings/doze/SamsungDozeSettings.java
+index 5a5d704..25ca9e4 100644
+--- a/doze/src/org/lineageos/settings/doze/SamsungDozeSettings.java
++++ b/doze/src/org/lineageos/settings/doze/SamsungDozeSettings.java
+@@ -19,7 +19,6 @@ package org.lineageos.settings.doze;
+ 
+ import android.os.Bundle;
+ import android.os.Handler;
+-import android.widget.Switch;
+ 
+ import androidx.preference.Preference;
+ import androidx.preference.Preference.OnPreferenceChangeListener;
+@@ -27,12 +26,12 @@ import androidx.preference.PreferenceFragment;
+ import androidx.preference.SwitchPreference;
+ 
+ import com.android.settingslib.widget.MainSwitchPreference;
+-import com.android.settingslib.widget.OnMainSwitchChangeListener;
++import android.widget.CompoundButton;
+ 
+ import org.lineageos.internal.util.ScreenType;
+ 
+ public class SamsungDozeSettings extends PreferenceFragment implements OnPreferenceChangeListener,
+-        OnMainSwitchChangeListener {
++        CompoundButton.OnCheckedChangeListener {
+ 
+     private MainSwitchPreference mSwitchBar;
+ 
+@@ -108,7 +107,7 @@ public class SamsungDozeSettings extends PreferenceFragment implements OnPrefere
+     }
+ 
+     @Override
+-    public void onSwitchChanged(Switch switchView, boolean isChecked) {
++    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+         Utils.enableDoze(getActivity(), isChecked);
+         Utils.checkDozeService(getActivity());
+ 
+diff --git a/exynos/multimedia/openmax/component/video/enc/SEC_OMX_Venc.c b/exynos/multimedia/openmax/component/video/enc/SEC_OMX_Venc.c
+index c796f87..a951df5 100644
+--- a/exynos/multimedia/openmax/component/video/enc/SEC_OMX_Venc.c
++++ b/exynos/multimedia/openmax/component/video/enc/SEC_OMX_Venc.c
+@@ -807,7 +807,7 @@ OMX_BOOL SEC_Preprocessor_InputData(OMX_COMPONENTTYPE *pOMXComponent)
+                             SEC_OSAL_GetInfoFromMetaData(inputData, ppBuf);
+                             SEC_OSAL_LockANBHandle((OMX_U32)ppBuf[0], width, height, OMX_COLOR_FormatAndroidOpaque, &pOutBuffer);
+ 
+-                            csc_ABGR8888_to_YUV420SP_NEON(pVideoEnc->MFCEncInputBuffer[pVideoEnc->indexInputBuffer].YVirAddr,
++                            csc_ABGR8888_to_YUV420SP(pVideoEnc->MFCEncInputBuffer[pVideoEnc->indexInputBuffer].YVirAddr,
+                                                     pVideoEnc->MFCEncInputBuffer[pVideoEnc->indexInputBuffer].CVirAddr,
+                                                     pOutBuffer, width, height);
+ 
+diff --git a/exynos/multimedia/utils/csc/exynos4/include/color_space_convertor.h b/exynos/multimedia/utils/csc/exynos4/include/color_space_convertor.h
+index 6379813..ccf0bfc 100644
+--- a/exynos/multimedia/utils/csc/exynos4/include/color_space_convertor.h
++++ b/exynos/multimedia/utils/csc/exynos4/include/color_space_convertor.h
+@@ -424,4 +424,17 @@ void csc_ABGR8888_to_YUV420SP(
+     unsigned char *rgb_src,
+     unsigned int width,
+     unsigned int height);
++
++void csc_ABGR8888_to_YUV420SP_NEON(
++    unsigned char *y_dst,
++    unsigned char *uv_dst,
++    unsigned char *rgb_src,
++    unsigned int width,
++    unsigned int height);
++
++void csc_interleave_memcpy_neon(
++    unsigned char *dest,
++    unsigned char *src1,
++    unsigned char *src2,
++    unsigned int src_size);
+ #endif /*COLOR_SPACE_CONVERTOR_H_*/
+diff --git a/exynos4/hal/libcamera/SecCamera.cpp b/exynos4/hal/libcamera/SecCamera.cpp
+index 68bdc5f..db746e3 100644
+--- a/exynos4/hal/libcamera/SecCamera.cpp
++++ b/exynos4/hal/libcamera/SecCamera.cpp
+@@ -4349,7 +4349,7 @@ status_t SecCamera::dump(int fd)
+     String8 result;
+     snprintf(buffer, 255, "dump(%d)\n", fd);
+     result.append(buffer);
+-    ::write(fd, result.string(), result.size());
++    ::write(fd, result.c_str(), result.size());
+     return NO_ERROR;
+ }
+ 
+diff --git a/exynos4/hal/libcamera/SecCameraHWInterface.cpp b/exynos4/hal/libcamera/SecCameraHWInterface.cpp
+index a30c989..4e8ad28 100644
+--- a/exynos4/hal/libcamera/SecCameraHWInterface.cpp
++++ b/exynos4/hal/libcamera/SecCameraHWInterface.cpp
+@@ -247,7 +247,7 @@ void CameraHardwareSec::initDefaultParameters(int cameraId)
+             parameterString.append(CameraParameters::FOCUS_MODE_CONTINUOUS_PICTURE);
+         }
+         p.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES,
+-              parameterString.string());
++              parameterString.c_str());
+         p.set(CameraParameters::KEY_FOCUS_MODE,
+               CameraParameters::FOCUS_MODE_AUTO);
+         p.set(CameraParameters::KEY_FOCUS_DISTANCES,
+@@ -280,7 +280,7 @@ void CameraHardwareSec::initDefaultParameters(int cameraId)
+     parameterString.append(CameraParameters::EFFECT_NEGATIVE);
+     parameterString.append(",");
+     parameterString.append(CameraParameters::EFFECT_SEPIA);
+-    p.set(CameraParameters::KEY_SUPPORTED_EFFECTS, parameterString.string());
++    p.set(CameraParameters::KEY_SUPPORTED_EFFECTS, parameterString.c_str());
+ 
+     if (cameraId == SecCamera::CAMERA_ID_BACK) {
+         parameterString = CameraParameters::FLASH_MODE_ON;
+@@ -291,7 +291,7 @@ void CameraHardwareSec::initDefaultParameters(int cameraId)
+         parameterString.append(",");
+         parameterString.append(CameraParameters::FLASH_MODE_TORCH);
+         p.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES,
+-              parameterString.string());
++              parameterString.c_str());
+         p.set(CameraParameters::KEY_FLASH_MODE,
+               CameraParameters::FLASH_MODE_OFF);
+ 
+@@ -330,7 +330,7 @@ void CameraHardwareSec::initDefaultParameters(int cameraId)
+     parameterString.append(",");
+     parameterString.append(CameraParameters::SCENE_MODE_SUNSET);
+     p.set(CameraParameters::KEY_SUPPORTED_SCENE_MODES,
+-          parameterString.string());
++          parameterString.c_str());
+     p.set(CameraParameters::KEY_SCENE_MODE,
+           CameraParameters::SCENE_MODE_AUTO);
+ 
+@@ -344,7 +344,7 @@ void CameraHardwareSec::initDefaultParameters(int cameraId)
+     parameterString.append(",");
+     parameterString.append(CameraParameters::WHITE_BALANCE_CLOUDY_DAYLIGHT);
+     p.set(CameraParameters::KEY_SUPPORTED_WHITE_BALANCE,
+-          parameterString.string());
++          parameterString.c_str());
+ 
+     p.set(CameraParameters::KEY_JPEG_THUMBNAIL_QUALITY, "100");
+ 
+@@ -396,7 +396,7 @@ void CameraHardwareSec::initDefaultParameters(int cameraId)
+     parameterString.append(",");
+     parameterString.append(CameraParameters::ANTIBANDING_OFF);
+     p.set(CameraParameters::KEY_SUPPORTED_ANTIBANDING,
+-          parameterString.string());
++          parameterString.c_str());
+ 
+     p.set(CameraParameters::KEY_ANTIBANDING, CameraParameters::ANTIBANDING_OFF);
+ 
+@@ -1796,7 +1796,7 @@ status_t CameraHardwareSec::dump(int fd) const
+         result.append(buffer);
+     } else
+         result.append("No camera client yet.\n");
+-    write(fd, result.string(), result.size());
++    write(fd, result.c_str(), result.size());
+     return NO_ERROR;
+ }
+ 
+@@ -3244,7 +3244,7 @@ char *HAL_camera_device_get_parameters(struct camera_device *dev)
+     String8 str;
+     CameraParameters parms = obj(dev)->getParameters();
+     str = parms.flatten();
+-    return strdup(str.string());
++    return strdup(str.c_str());
+ }
+ 
+ static void HAL_camera_device_put_parameters(struct camera_device *dev, char *parms)
+diff --git a/exynos4/hal/libhwc/hwcomposer.cpp b/exynos4/hal/libhwc/hwcomposer.cpp
+index 271b834..3c5e4ff 100644
+--- a/exynos4/hal/libhwc/hwcomposer.cpp
++++ b/exynos4/hal/libhwc/hwcomposer.cpp
+@@ -1473,7 +1473,7 @@ static void hwc_dump(struct hwc_composer_device_1* dev, char *buff, int buff_len
+     else
+         ctx->is_overlay_supported = is_overlay_supported;
+ 
+-    strlcpy(buff, tmp.string(), buff_len);
++    strlcpy(buff, tmp.c_str(), buff_len);
+ }
+ 
+ /*****************************************************************************/
+diff --git a/exynos4/hal/libhwc/hwcomposer_vsync.cpp b/exynos4/hal/libhwc/hwcomposer_vsync.cpp
+index e79b88c..d1be765 100644
+--- a/exynos4/hal/libhwc/hwcomposer_vsync.cpp
++++ b/exynos4/hal/libhwc/hwcomposer_vsync.cpp
+@@ -17,8 +17,6 @@
+ #include "hwcomposer.h"
+ #include "hwcomposer_vsync.h"
+ 
+-#include <cutils/threads.h>
+-
+ #include <utils/threads.h>
+ 
+ #include <sys/prctl.h>
+diff --git a/exynos4/interfaces/health/Android.bp b/exynos4/interfaces/health/Android.bp
+deleted file mode 100644
+index 8d002b8..0000000
+--- a/exynos4/interfaces/health/Android.bp
++++ /dev/null
+@@ -1,31 +0,0 @@
+-cc_binary {
+-        name: "android.hardware.health@2.0-service.exynos4",
+-        init_rc: ["android.hardware.health@2.0-service.exynos4.rc"],
+-        proprietary: true,
+-        relative_install_path: "hw",
+-        srcs: [
+-            "HealthService.cpp",
+-        ],
+-
+-        cflags: [
+-            "-Wall",
+-            "-Werror",
+-        ],
+-
+-        static_libs: [
+-            "android.hardware.health@2.0-impl",
+-            "android.hardware.health@1.0-convert",
+-            "libhealthservice",
+-            "libbatterymonitor",
+-        ],
+-
+-        shared_libs: [
+-            "libbase",
+-            "libcutils",
+-            "libhidlbase",
+-            "libutils",
+-            "android.hardware.health@2.0",
+-        ],
+-
+-        header_libs: ["libhealthd_headers"],
+-    }

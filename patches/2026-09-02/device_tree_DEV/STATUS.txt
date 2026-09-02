@@ -1,0 +1,7 @@
+ M .github/copilot-instructions.md
+ M BoardConfig.mk
+ M docker-build.sh
+ M n8010.mk
+?? BUILD_NOTES.md
+?? android_device_samsung_n8010
+?? vendorsetup.sh

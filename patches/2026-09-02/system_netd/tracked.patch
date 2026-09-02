@@ -1,0 +1,28 @@
+diff --git a/server/netd.rc b/server/netd.rc
+index d8250c2d..361b542d 100644
+--- a/server/netd.rc
++++ b/server/netd.rc
+@@ -6,8 +6,21 @@ service netd /system/bin/netd
+     socket dnsproxyd stream 0660 root inet
+     socket mdns stream 0660 root system
+     socket fwmarkd stream 0660 root inet
+-    onrestart restart zygote
+-    onrestart restart zygote_secondary
++    # N8010 COMPAT: onrestart-Kopplung an zygote entfernt (GT-N8010).
++    #
++    # Auf diesem Geraet kann netd nicht dauerhaft laufen (kein funktionsfaehiger
++    # BPF-Stack auf armv7/Kernel 3.4). Mit dieser Kopplung reisst jeder netd-Abbruch
++    # zygote mit — beobachtet als
++    #   init: Service 'netd'   exited with status 1
++    #   init: Service 'zygote' received signal 9
++    # in einer Endlosschleife: kein Reboot, aber auch kein Boot ("Samsung-Logo,
++    # keine Bewegung").
++    #
++    # Folge der Entfernung: startet netd spaeter neu, kennt zygote die neuen
++    # Netzwerk-Sockets nicht. Auf einem Geraet, dessen netd ohnehin nicht laeuft,
++    # ist das der bessere Kompromiss.
++    # onrestart restart zygote
++    # onrestart restart zygote_secondary
+     # b/121354779: netd itself is not updatable, but on startup it dlopen()s the resolver library
+     # from the DNS resolver APEX. Mark it as updatable so init won't start it until all APEX
+     # packages are ready.

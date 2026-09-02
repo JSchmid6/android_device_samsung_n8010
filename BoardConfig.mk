@@ -17,8 +17,11 @@
 # Include n80xx BoardConfigCommon
 -include device/samsung/n80xx-common/BoardConfigCommon.mk
 
+# n8010 is a non-Treble device: override smdk4412-common's VINTF enforcement
+PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := false
+
 # Inline kernel building
-TARGET_KERNEL_CONFIG := lineageos_n8000_defconfig
+TARGET_KERNEL_CONFIG := lineageos_n8010_defconfig
 
 N8010 := true
 

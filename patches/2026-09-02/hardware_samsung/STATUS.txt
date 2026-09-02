@@ -1,0 +1,14 @@
+ M AdvancedDisplay/Android.bp
+ M AdvancedDisplay/src/org/lineageos/settings/device/AdvancedDisplayActivity.java
+ M Android.mk
+ M doze/src/org/lineageos/settings/doze/SamsungDozeActivity.java
+ M doze/src/org/lineageos/settings/doze/SamsungDozeSettings.java
+ M exynos/multimedia/openmax/component/video/enc/SEC_OMX_Venc.c
+ M exynos/multimedia/utils/csc/exynos4/include/color_space_convertor.h
+ M exynos4/hal/libcamera/SecCamera.cpp
+ M exynos4/hal/libcamera/SecCameraHWInterface.cpp
+ M exynos4/hal/libhwc/hwcomposer.cpp
+ M exynos4/hal/libhwc/hwcomposer_vsync.cpp
+ D exynos4/interfaces/health/Android.bp
+?? exynos4/interfaces/health/Android.bp.disabled.bak
+?? nfc/

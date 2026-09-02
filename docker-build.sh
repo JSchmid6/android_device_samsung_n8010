@@ -82,9 +82,10 @@ cmd_init() {
 # Sync source
 cmd_sync() {
     log_info "Syncing LineageOS source (this will take a while)..."
+    log_warn "Using -j1 to avoid repository corruption and rate limits"
     docker exec -u build $CONTAINER_NAME bash -c "
         cd /lineage/src && \
-        repo sync -c -j\$(nproc) --force-sync --no-clone-bundle --no-tags
+        repo sync -c -j1 --force-sync --no-clone-bundle --no-tags
     "
 }
 
@@ -93,7 +94,8 @@ cmd_breakfast() {
     log_info "Setting up device tree for $DEVICE..."
     docker exec -u build $CONTAINER_NAME bash -c "
         cd /lineage/src && \
-        ln -sf /lineage/device/samsung/android_device_samsung_n8010 device/samsung/n8010 && \
+        rm -rf device/samsung/n8010 && \
+        cp -r /lineage/device/samsung/android_device_samsung_n8010 device/samsung/n8010 && \
         source build/envsetup.sh && \
         breakfast $DEVICE
     "

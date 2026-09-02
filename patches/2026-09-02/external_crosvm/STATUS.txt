@@ -1,0 +1,4 @@
+ D Cargo.lock
+ D tools/contrib/cros_tracing_analyser/Cargo.lock
+ D tools/contrib/crosvmdump/Cargo.lock
+ D tools/contrib/memstats_chart/Cargo.lock

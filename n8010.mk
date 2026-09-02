@@ -31,5 +31,11 @@ DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
 
 $(call inherit-product-if-exists, vendor/samsung/n8010/n8010-vendor.mk)
 
+# Software KeyMint service (AIDL KeyMint 3.0, software-only)
+# Required for Android 14: odsign creates keys with TAG_MAX_BOOT_LEVEL=30 which
+# Samsung's legacy Keymaster 3.0 HIDL HAL does not support. Without this service,
+# odsign silently crashes and wait_for_prop odsign.key.done 1 blocks forever.
+PRODUCT_PACKAGES += android.hardware.security.keymint-service
+
 # Vendor properties
 -include $(LOCAL_PATH)/vendor_prop.mk
