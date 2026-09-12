@@ -1,0 +1,5 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): 00e8f1713252b4d6b6a0439ce696b2cda42aef49
+Branch n8010-b33 Spitze: da3e63d47415b129d68ba7aebc2b27cb3e86e618
+
+da3e63d4 Revert "config: Remove TARGET_DISABLE_POSTRENDER_CLEANUP"
+984aa986 Revert "config: Remove TARGET_PROCESS_SDK_VERSION_OVERRIDE"

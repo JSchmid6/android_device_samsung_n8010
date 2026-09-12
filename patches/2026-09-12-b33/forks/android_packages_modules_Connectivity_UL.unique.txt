@@ -1,0 +1,14 @@
+    76e1ed20e9 2024-10-19 html6405: BpfHandler.cpp: we must not wait until the BPF programs are loaded (for BPF less devices)
+    fce09cc548 2024-06-27 khalvat-M: [UL] netbpfload: Support no-bpf usecase
+    e0cfcd4436 2024-06-20 Alberto Ponces: Revert "netdupdatable: add back abort() on init() fail"
+    40ee2f8970 2024-04-16 z3DD3r: [UL] clatcoordinator: Support no-bpf usecase
+    fa7f86e6ce 2024-04-16 z3DD3r: [UL] dnsresolver: Support no-bpf usecase
+    dc76351e44 2024-04-14 Dmitry Gruzd: [UL] [DNM] netbpfload: Disable reboot on failure
+    c89b53a5ad 2023-01-20 koron393: Bring back traffic indicators for legacy devices
+    35b91cfa36 2022-10-26 Pierre-Hugues Husson: Support non-working BPF maps on old BPF-less kernel
+    c022d6947d 2022-10-26 Pierre-Hugues Husson: Allow failing to load bpf programs, for BPF-less devices
+    84e052815a 2024-04-19 Yaroslav Zviezda: [UL] mdns: disable SocketNetlinkMonitor
+    dce6db99b2 2024-04-01 Yaroslav Zviezda: Revert "remove inprocess tethering"
+    89f24904ca 2024-04-01 Yaroslav Zviezda: Revert "Use new soong support to install privapp xml"
+    3db805ff60 2023-11-29 Yaroslav Zviezda: Revert "remove inprocess tethering"
+    97adfb2482 2024-03-31 Yaroslav Zviezda: Revert "remove out-of-process flag"

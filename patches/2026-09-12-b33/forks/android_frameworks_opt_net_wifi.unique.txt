@@ -1,0 +1,5 @@
+    c0d3bf987 2024-04-07 Yaroslav Zviezda: Revert "Remove makefile_goal workaround for libwifi-hal-*"
+    9df90feec 2024-04-07 Yaroslav Zviezda: Revert "Add static_libs to cc_wifi_defaults property"
+    0008ba4dd 2024-04-07 Yaroslav Zviezda: Revert "Add nxp static library path to frameworks."
+    7e581c84e 2024-04-07 Yaroslav Zviezda: Revert "libwifi-hal: Do not reference mokey namespace"
+    56c7095e2 2024-04-07 Yaroslav Zviezda: Revert "Migrate libwifi-hal-qcom to Android.bp"

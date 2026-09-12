@@ -1,0 +1,66 @@
+From 984aa986b184be373e9b2a6219eac4d632701d74 Mon Sep 17 00:00:00 2001
+From: Khalvat-M <mmba313@gmail.com>
+Date: Tue, 25 Oct 2022 06:39:51 +0330
+Subject: [PATCH 1/2] Revert "config: Remove
+ TARGET_PROCESS_SDK_VERSION_OVERRIDE"
+
+This reverts commit 50fb6998709eae4cb592e0bb22cf5c76beab5326.
+
+(cherry picked from commit 5a3408c425d4ee6212c0f5c234a0ab67215e12c6)
+Change-Id: I6f1ccb29d9f02bf2a1ade94121d2c76dc20d81c4
+---
+ build/soong/Android.bp     | 17 +++++++++++++++++
+ config/BoardConfigSoong.mk |  2 ++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/build/soong/Android.bp b/build/soong/Android.bp
+index af0511b0..e4bd63ec 100644
+--- a/build/soong/Android.bp
++++ b/build/soong/Android.bp
+@@ -166,6 +166,23 @@ gralloc_handle_ubwcp_format {
+     },
+ }
+ 
++soong_config_module_type {
++    name: "target_process_sdk_version_overrides",
++    module_type: "cc_defaults",
++    config_namespace: "lineageGlobalVars",
++    value_variables: ["target_process_sdk_version_override"],
++    properties: ["cppflags"],
++}
++
++target_process_sdk_version_overrides {
++    name: "process_sdk_version_overrides_defaults",
++    soong_config_variables: {
++        target_process_sdk_version_override: {
++            cppflags: ["-DSDK_VERSION_OVERRIDES=\"%s\""],
++        },
++    },
++}
++
+ soong_config_module_type {
+     name: "target_shim_libs",
+     module_type: "cc_defaults",
+diff --git a/config/BoardConfigSoong.mk b/config/BoardConfigSoong.mk
+index 0bb89feb..776e1da0 100644
+--- a/config/BoardConfigSoong.mk
++++ b/config/BoardConfigSoong.mk
+@@ -48,6 +48,7 @@ SOONG_CONFIG_lineageGlobalVars += \
+     target_powershare_path \
+     target_powershare_enabled \
+     target_powershare_disabled \
++    target_process_sdk_version_override \
+     target_surfaceflinger_udfps_lib \
+     target_trust_usb_control_path \
+     target_trust_usb_control_enable \
+@@ -123,6 +124,7 @@ SOONG_CONFIG_lineageGlobalVars_target_power_libperfmgr_mode_extension_lib := $(T
+ SOONG_CONFIG_lineageGlobalVars_target_powershare_path := $(TARGET_POWERSHARE_PATH)
+ SOONG_CONFIG_lineageGlobalVars_target_powershare_enabled := $(TARGET_POWERSHARE_ENABLED)
+ SOONG_CONFIG_lineageGlobalVars_target_powershare_disabled := $(TARGET_POWERSHARE_DISABLED)
++SOONG_CONFIG_lineageGlobalVars_target_process_sdk_version_override := $(TARGET_PROCESS_SDK_VERSION_OVERRIDE)
+ SOONG_CONFIG_lineageGlobalVars_target_surfaceflinger_udfps_lib := $(TARGET_SURFACEFLINGER_UDFPS_LIB)
+ SOONG_CONFIG_lineageGlobalVars_target_trust_usb_control_path := $(TARGET_TRUST_USB_CONTROL_PATH)
+ SOONG_CONFIG_lineageGlobalVars_target_trust_usb_control_enable := $(TARGET_TRUST_USB_CONTROL_ENABLE)
+-- 
+2.48.1
+

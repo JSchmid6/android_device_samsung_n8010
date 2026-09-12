@@ -1,0 +1,50 @@
+From 36c3a13e1e8318067a6f9cc2a8dd868c2f4dafab Mon Sep 17 00:00:00 2001
+From: html6405 <peter.schelchshorn@mhs-solutions.at>
+Date: Tue, 6 Sep 2022 15:46:55 +0200
+Subject: [PATCH 4/4] Revert "audio: use binder threadpool"
+
+This reverts commit d90c47420af3aa59c6fc864c30023ec62b0a26ac.
+
+(cherry picked from commit 7ce5cd1b0310d360f8ebfa317cb38e90d203b3e8)
+---
+ audio/common/all-versions/default/service/Android.bp  | 1 -
+ audio/common/all-versions/default/service/service.cpp | 4 ----
+ 2 files changed, 5 deletions(-)
+
+diff --git a/audio/common/all-versions/default/service/Android.bp b/audio/common/all-versions/default/service/Android.bp
+index e2e0a93798..5086629032 100644
+--- a/audio/common/all-versions/default/service/Android.bp
++++ b/audio/common/all-versions/default/service/Android.bp
+@@ -57,7 +57,6 @@ cc_binary {
+     shared_libs: [
+         "libcutils",
+         "libbinder",
+-        "libbinder_ndk",
+         "libhidlbase",
+         "liblog",
+         "libutils",
+diff --git a/audio/common/all-versions/default/service/service.cpp b/audio/common/all-versions/default/service/service.cpp
+index 95976558db..59f1e17a15 100644
+--- a/audio/common/all-versions/default/service/service.cpp
++++ b/audio/common/all-versions/default/service/service.cpp
+@@ -20,7 +20,6 @@
+ #include <string>
+ #include <vector>
+ 
+-#include <android/binder_process.h>
+ #include <binder/ProcessState.h>
+ #include <cutils/properties.h>
+ #include <hidl/HidlTransportSupport.h>
+@@ -54,9 +53,6 @@ int main(int /* argc */, char* /* argv */ []) {
+         ::android::ProcessState::self()->startThreadPool();
+     }
+ 
+-    ABinderProcess_setThreadPoolMaxThreadCount(1);
+-    ABinderProcess_startThreadPool();
+-
+     const int32_t defaultValue = -1;
+     int32_t value =
+         property_get_int32("persist.vendor.audio.service.hwbinder.size_kbyte", defaultValue);
+-- 
+2.48.1
+

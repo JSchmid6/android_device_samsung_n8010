@@ -1,0 +1,60 @@
+    969b5754c48a 2022-09-22 Danny Lin: [PATCH 3/3] Add support for app signature spoofing
+    39419c7c8777 2023-12-28 html6405: Revert "Compute PermissionInfo.FLAG_INSTALLED instead of mutating ParsedPermission."
+    6538954ea83a 2018-08-31 Danny Baumann: CameraServiceProxy: Loosen UID check conditionally
+    3ae4a53a276c 2015-07-09 Sauhard Pande: Camera: Add feature extensions
+    2effbc00971e 2023-11-20 Yaroslav Zviezda: Camera: build fixes for restored HAL1 support
+    fb02e8dd2e5a 2021-10-28 Kyle Harrison: Camera: Restore camera HALv1 support [2/2]
+    058c7275546d 2022-09-18 Yaroslav Zviezda: Revert Camera Injection
+    04147cd4da46 2022-10-20 Dominggoes Isakh: Revert "Camera: Add support for readout timestamp"
+    16e41b49fc97 2023-11-19 Yaroslav Zviezda: Revert "Camera: Add support for extension specific metadata"
+    6d95353f91b0 2023-11-19 Yaroslav Zviezda: Revert "Update torch brightness max level description."
+    c6e6517ba578 2023-11-19 Yaroslav Zviezda: Revert "Camera: Unhide readout timestamp APIs"
+    78989f2e7f3e 2023-11-19 Yaroslav Zviezda: Revert "Camera: Address API review feedback for readout timestamp"
+    53aa729e547f 2023-06-22 khalvat-M: Revert "DO NOT MERGE CameraManager: Provide flag for overriding camera output to portrait."
+    4fa599b40f5d 2023-03-22 Khalvat-M: Revert "DO NOT MERGE CameraManager: Enable override to portrait by default for devices with the system property turned on."
+    70848bdddf0c 2023-11-19 Yaroslav Zviezda: Revert "Per-app compat treatment for overrideToPortrait."
+    14820602a766 2023-11-19 Yaroslav Zviezda: Revert "RESTRICT AUTOMERGE Camera: Fix missing onPhysicalCameraUnavailable"
+    6178b2f47e38 2023-11-19 Yaroslav Zviezda: Revert "Camera: Use a single handler thread for device state callbacks"
+    5f32c7e834b8 2023-11-19 Yaroslav Zviezda: Revert "Camera: Clarify doc for registerAvailabilityCallback"
+    7a51abeea0a8 2023-06-22 khalvat-M: Revert "DO NOT MERGE Force slowJpegMode on certain camera1 apps"
+    5d0de2622437 2023-11-19 Yaroslav Zviezda: Revert "CameraManager: Swap propertyName / packageName in call to getProperty()"
+    6da157dab4de 2023-11-19 Yaroslav Zviezda: Revert "CameraManager: Make the rotate and crop property public."
+    8c0e0175fed8 2023-11-19 Yaroslav Zviezda: Revert "Camera: Physical camera avail callbacks can happen for unavail camera"
+    83d80f9d0465 2023-11-19 Yaroslav Zviezda: Revert "CameraManager: Add TestApi entrypoints for setting overrideToPortrait."
+    057706240f7b 2023-11-19 Yaroslav Zviezda: Revert "Camera: cosmetic, fix typos"
+    9b3db28189e8 2023-11-19 Yaroslav Zviezda: Revert "Camera: Move the device state listener to CameraManagerGlobal"
+    8ab0a39f8c02 2023-11-19 Yaroslav Zviezda: Revert "Camera2: Add documentation for the TestApi getCameraCharacteristics."
+    d656ca388d7a 2023-11-19 Yaroslav Zviezda: Revert "Camera: Use characteristic from user app for extension"
+    991738be24c9 2023-11-19 Yaroslav Zviezda: Revert "Camera: Release advanced extension references"
+    bf5fc278620e 2023-11-19 Yaroslav Zviezda: Revert "cameraservice: Add metrics for extension sessions"
+    4481a236acc2 2023-11-19 Yaroslav Zviezda: Revert "Camera: Improve error handling of device state listeners"
+    98723dd7e938 2022-09-12 Yaroslav Zviezda: CachedAppOptimizer: revert freezer to cgroups v1
+    00b620d6c09b 2021-11-06 Yaroslav Zviezda: Revert "CachedAppOptimizer: don't hardcode freezer path"
+    7810aacbbd9e 2021-11-06 Yaroslav Zviezda: Revert "CachedAppOptimizer: remove native freezer enabling code"
+    7777f800da8d 2021-11-06 Yaroslav Zviezda: Revert "CachedAppOptimizer: use new cgroup api for freezer path"
+    aec786cf879f 2023-10-18 Pierre-Hugues Husson: Ignore cgroup creation errors
+    ac83453e314c 2023-12-27 html6405: Revert "Revert "Treat process group creation failure due to a dead process as non-fatal""
+    44271d1b1ecf 2023-12-03 Yaroslav Zviezda: am: allow to tune killing cached processes until/post boot completed
+    a9bc44a41b0a 2023-07-16 Yaroslav Zviezda: batterysaver: add property to disable night mode on battery saver
+    708d369f6a3b 2022-06-13 Roman Stratiienko: Don't use PATTERNED style ripple effect by default
+    8d73b1b8f97e 2022-06-09 Roman Stratiienko: Don't use stretch effect by default
+    53f6b242f43d 2023-07-12 Yaroslav Zviezda: Disable multiprocess WebView for Go devices
+    436e2369a65b 2022-02-15 html6405: LocationResult.java: don't throw exception on incomplete location.
+    00ee326453c7 2021-11-16 html6405: DisplayPowerController: make it possible to disable colorfade via overlay.
+    75e93b9f38e7 2021-12-28 html6405: Location.java: Adding 1024 weeks for chips with GPSRollover issue
+    fdca6bba4d42 2021-11-16 html6405: ColorFade: fix EGL crash on exynos4 mali blobs .
+    250748292d9f 2020-10-08 Ido Ben-Hur: fixup! SystemUI: Fix uneven DND icon padding in status bar
+    92b09a3db3dc 2023-08-13 resist15: SystemUI: Add SCREEN_GESTURE as a CameraLaunchSourceModel
+    8cd56db6f517 2023-07-06 alk3pInjection: SystemUI: Respect the old good "Show passwords" preference
+    d825f6fe4a8d 2021-10-12 Danny Lin: appop: Save discrete app op history for more permissions
+    5fc786dba664 2020-12-23 cjh1249131356: SystemUI: Make center clock follow paddingTop
+    6980e7304b98 2023-12-10 Michael Bestas: DNM Revert "Forward port CM Screen Security settings (1/2)"
+    110590f6393d 2023-12-07 Tommy Webb: Temp build fix: Remove dependency on mockito-kotlin
+    7dafbb3eaaa0 2023-02-23 Wolfram Liebchen: SystemUI: Fix position and orientation of arrow keys in navbar
+    89b1e47cce80 2017-06-06 Gaoxiang Chen: Camera: Skip stream size check for whitelisted apps..
+    4c96caea43d6 2022-11-12 LuK1337: SystemUI: Disable clock auto hide feature for QS
+    8012beaf1294 2018-07-15 Michael Bestas: SystemUI: Add tunables for clock AM/PM style
+    539e522bc485 2018-07-15 Luca Stefani: SystemUI: Add tunables for clock position
+    85a95a60064b 2015-10-23 beanstown106: SystemUI: Allow to enable Lockscreen Media Art
+    dc94054621b1 2019-09-20 LuK1337: SystemUI: Add navbar layout inversion tuning
+    86c9872aa282 2017-10-03 Rashed Abdel-Tawab: SystemUI: Allow using tuner API for LineageSettings

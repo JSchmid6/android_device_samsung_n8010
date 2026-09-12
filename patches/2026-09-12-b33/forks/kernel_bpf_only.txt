@@ -1,0 +1,991 @@
+f29c7c3c576 2025-01-19 html6405: sec_keyboard.c: wait 5 seconds before disabling, this allows to use the wakelock bug workaround made in n80xx-common.
+76f1ab40a54 2025-01-19 html6405: sec_keyboard.c: add debugging messages
+025502ff3d0 2025-01-19 html6405: Revert "cgroup: Add compat cgroup2 fs"
+f4ef96c8f46 2025-01-11 html6405: lineageos_n8000_defconfig: update defconfig
+06f76048c38 2025-01-11 html6405: lineageos_i925_defconfig: update defconfig
+1e3c0345be9 2025-01-11 html6405: lineageos_n5120_defconfig: update defconfig
+ed1510b1734 2025-01-10 html6405: lineageos_i9305_defconfig: update defconfig
+58bdc285c6f 2025-01-09 html6405: lineageos_t0lte_defconfig: update defconfig
+080752a453a 2025-01-06 html6405: lineageos_n5100_defconfig: update defconfig
+6cf5c07150c 2024-10-26 html6405: lineageos_n7100_defconfig: update defconfig
+937fc199578 2024-10-28 html6405: lineageos_i9300_defconfig: disable CONFIG_HOTPLUG_CPU
+326d2fb7da7 2024-10-14 html6405: lineageos_i9300_defconfig: enable in-kernel config
+0e5ef80f2e6 2024-10-19 Yaroslav Zviezda: i9300: update defconfig
+a2674c3263b 2024-06-29 html6405: drivers:usb: hub.c: set to KK branch
+e0a0a2ccda4 2024-06-29 html6405: drivers:usb: reset to 3.0
+67f4ef0e452 2024-06-28 html6405: drivers:usb: ehci-s5p.c: merge KK branch, use s5p_ehci_bus_resume
+82c3317023d 2024-06-26 html6405: drivers:usb: merge KK branch for relevant Qualcomm MDM9x15 drivers
+07d3a8485ca 2025-01-08 html6405: signal.c: kill shutdown bug with installed magisk, because of busy data partition through magisk. The device reboots instead of shutting down. Lets treat magisk always as SIG_FORCED
+7ff7b594efe 2025-01-07 html6405: Revert "watchdog: HACK: don't panic on CPU hard lockup"
+afbcd2e1210 2025-01-07 html6405: Revert "HACK: watchdog: also show backtrace on CPU hard lockup"
+67e28c58272 2025-01-10 html6405: Revert "ipv6 addrconf: extend ifa_flags to u32"
+d27aa4b8195 2025-01-10 html6405: Revert "BACKPORT: ipv4: add support for IFA_FLAGS nl attribute"
+7cb42c86647 2013-12-08 Jiri Pirko: BACKPORT: ipv4: add support for IFA_FLAGS nl attribute
+6a3282d7e9d 2013-12-06 Jiri Pirko: ipv6 addrconf: extend ifa_flags to u32
+d2e454e8060 2013-05-16 Nicolas Dichtel: ipv6: add support of peer address
+7497499ec91 2018-03-19 Jack Ma: BACKPORT: netfilter: xt_conntrack: Support bit-shifting for CONNMARK & MARK targets.
+ef16724c187 2024-10-19 Sultan Alsawaf: sched/core: Use SCHED_RR in place of SCHED_FIFO for all users
+311d448064b 2024-10-19 Yaroslav Zviezda: bpf: fixup 41f72e09d9c6d1111ba1519204c195131c29697c
+e2b00819aee 2024-10-19 Yaroslav Zviezda: ARM: allow to configure timer frequency
+cc81f0284b6 2013-12-17 Will Deacon: ARM: kconfig: select HAVE_EFFICIENT_UNALIGNED_ACCESS for CPUv6+ && MMU
+9d3b80fa2e0 2024-06-26 Yaroslav Zviezda: i9300: remove deprecated options
+baedfc08ac9 2024-06-26 Yaroslav Zviezda: build fixes after renameat2 backporting
+3be6e3665f3 2024-06-26 Yaroslav Zviezda: add d_is_negative
+b9a913ee0d2 2024-06-26 Miklos Szeredi: ARM: add renameat2 syscall
+65f936ed211 2016-09-27 Miklos Szeredi: libfs: support RENAME_NOREPLACE in simple_rename()
+999d5edde9e 2014-04-01 Miklos Szeredi: security: add flags to rename hooks
+e40e1cd3d06 2014-07-23 Miklos Szeredi: BACKPORT: fs: call rename2 if exists
+26fab145572 2014-04-01 Miklos Szeredi: BACKPORT: vfs: add RENAME_NOREPLACE flag
+ee7ca80ad29 2014-04-01 Miklos Szeredi: BACKPORT: vfs: add renameat2 syscall
+01e85eff6af 2024-06-25 Yaroslav Zviezda: i9300: update defconfig
+9a28cdcf866 2024-06-25 Yaroslav Zviezda: build fixes
+5e9daecf05e 2013-10-15 Eric Dumazet: tcp: must unclone packets before mangling them
+2777ae57bec 2014-09-23 Al Viro: nick kvfree() from apparmor
+7d3ba62eeef 2024-06-25 Yaroslav Zviezda: Revert "security: selinux: Add Per-File-Encryption hooks"
+5079c5b3691 2012-10-02 David Howells: UAPI: Partition the header include path sets and add uapi/ header directories
+a27ad5d7c2f 2013-02-02 Jesper Nilsson: kbuild: Fix destination-y for installed headers
+bcfb3f4ffc8 2013-06-12 Laura Abbott: arm: Add definitions for pte_mkexec/pte_mknexec
+c22b1461846 2012-10-02 David Howells: UAPI: Set up uapi/asm/Kbuild.asm
+a6f946c6239 2013-01-02 David Howells: UAPI: Strip _UAPI prefix on header install no matter the whitespace
+c7adc32ead1 2012-11-26 David Howells: UAPI: strip the _UAPI prefix from header guards during header installation
+644ee682c23 2013-07-09 Laura Abbott: arm: mm: Add export symbol for set_memory_* functions
+a7205d5b0b3 2013-06-12 Laura Abbott: arm: mm: Define set_memory_* functions for ARM
+f4509b9c1e0 2024-06-25 Connor O'Brien: UPSTREAM: security: selinux: allow per-file labeling for bpffs
+61869f753fe 2024-04-21 Yaroslav Zviezda: TREBLE/BPF: Allow to report arbitrary kernel version to userspace
+50cfd43a393 2024-04-20 Yaroslav Zviezda: bpf: fix compilation
+c2d6ab86ca9 2024-04-20 Yaroslav Zviezda: net: xt_bpf: we have no PTR_ERR_OR_ZERO, opencode it
+617c3b61f44 2023-11-22 Derek: cgroup: Add compat cgroup2 fs
+09a724b659f 2016-06-30 Martin KaFai Lau: cgroup: Add cgroup_get_from_fd
+ea2dcd5a135 2016-11-04 Daniel Borkmann: bpf: fix map not being uncharged during map creation failure
+308bfee7edb 2020-03-20 Greg Kroah-Hartman: bpf: Explicitly memset the bpf_attr structure
+1c819a9851e 2017-08-22 Shubham Bansal: arm: eBPF JIT compiler
+8b600a61e70 2017-10-18 Chenbo Feng: UPSTREAM: selinux: bpf: Add addtional check for bpf object file receive
+cb99d456833 2017-10-18 Chenbo Feng: UPSTREAM: selinux: bpf: Add selinux check for eBPF syscall operations
+663889ca2e5 2017-10-18 Chenbo Feng: BACKPORT: security: bpf: Add LSM hooks for bpf object related syscall
+f64c5890df3 2014-05-26 Amir Samuelov: security: selinux: Add Per-File-Encryption hooks
+c8b56d565e8 2015-07-21 Nicolas Schichan: ARM: net: fix condition for load_order > 0 when translating load instructions.
+81f938b0412 2013-07-24 Ben Dooks: ARM: net: fix arm instruction endian-ness in bpf_jit_32.c
+b6524bc9e52 2016-07-22 Daniel Borkmann: bpf, events: fix offset in skb copy handler
+cff80aa9a09 2014-01-05 Yann Droneaud: perf: Introduce a flag to enable close-on-exec in perf_event_open()
+03d14588c3b 2017-06-10 Chenbo Feng: FROMLIST: Remove the redundant skb->dev initialization in ip6_fragment
+811b9515192 2020-03-09 Shakeel Butt: cgroup: memcg: net: do not associate sock with unrelated cgroup
+56df0e8b66e 2020-07-02 Cong Wang: cgroup: fix cgroup_sk_alloc() for sk_clone_lock()
+593eb4c5008 2019-09-04 Sami Tolvanen: ANDROID: bpf: validate bpf_func when BPF_JIT is enabled with CFI
+26a41bf6403 2017-04-26 Eric Dumazet: UPSTREAM: bpf: restore skb->sk before pskb_trim() call
+b2c5dca2efa 2017-10-23 Yonghong Song: BACKPORT: bpf: permit multiple bpf attachments for a single perf event
+b4de65c7e3b 2017-10-02 Alexei Starovoitov: BACKPORT: bpf: multi program support for cgroup+bpf
+f8643b7b605 2017-02-10 Alexei Starovoitov: BACKPORT: bpf: introduce BPF_F_ALLOW_OVERRIDE flag
+f3fb5e350a0 2017-04-11 Willem de Bruijn: BACKPORT: UPSTREAM: bpf: pass sk to helper functions
+5118ce86107 2016-11-23 Daniel Mack: UPSTREAM: cgroup: add support for eBPF programs
+80ef6bafdec 2015-12-07 Tejun Heo: sock, cgroup: add sock->sk_cgroup
+6f578740029 2017-06-09 Chenbo Feng: FROMLIST: bpf: Remove duplicate tcp_filter hook in ipv6
+8b11958e1d3 2017-06-09 Chenbo Feng: FROMLIST: ipv6: Initial skb->dev and skb->protocol in ip6_output
+89d4165d6b4 2016-11-23 Daniel Mack: net: ipv4, ipv6: run cgroup eBPF egress programs
+0ef3b177a8f 2017-04-05 Chenbo Feng: BACKPORT [FROMLIST] New getsockopt option to get socket cookie
+a7a3666a3a3 2017-06-02 Chenbo Feng: FROMLIST: [net-next,v2,1/2] bpf: Allow CGROUP_SKB eBPF program to access sk_buff
+9e780275719 2017-03-22 Chenbo Feng: BACKPORT: UPSTREAM: Add a eBPF helper function to retrieve socket uid
+6fe054d2038 2017-03-22 Chenbo Feng: BACKPORT: UPSTREAM: Add a helper function to get socket cookie in eBPF
+2fadf6f98fd 2015-03-11 Eric Dumazet: net: add real socket cookies
+805d157db13 2016-07-14 Daniel Borkmann: perf, events: add non-linear data support for raw records
+4d18837e2dd 2015-03-10 Eric Dumazet: net: constify sock_diag_check_cookie()
+490c0e832ff 2019-06-04 Joel Fernandes: BACKPORT: Add support for BPF_FUNC_probe_read_str
+9ab0fb9f77c 2018-05-10 Jayant Chowdhary: bpf: Fix un-initialized variable in bpf_trace_printk
+20f2e3215e8 2017-08-16 Daniel Borkmann: bpf: fix bpf_trace_printk on 32 bit archs
+fb4e7bb2822 2017-06-06 Daniel Borkmann: FROMLIST: bpf: cgroup skb progs cannot access ld_abs/ind
+5fedbd7d722 2020-02-24 Thomas Gleixner: bpf: Remove recursion prevention from rcu free callback
+4120ec42e2b 2021-01-27 Bui Quang Minh: bpf: Check for integer overflow when using roundup_pow_of_two()
+abfa844a9b7 2021-06-16 Maciej Żenczykowski: FROMGIT: bpf: Do not change gso_size during bpf_skb_change_proto()
+82d7e0db884 2017-05-25 Daniel Borkmann: bpf: add bpf_clone_redirect to bpf_helper_changes_pkt_data
+af63ba5ab93 2021-02-09 Jesper Dangaard Brouer: bpf: Remove MTU check in __bpf_skb_max_len
+36ca7925ad7 2016-11-23 Daniel Mack: UPSTREAM: net: filter: run cgroup eBPF ingress programs
+996c4507dc8 2016-09-23 Daniel Borkmann: bpf: use bpf_get_smp_processor_id_proto instead of raw one
+16b8f40c7e9 2015-12-11 Julia Lawall: bpf: Constify bpf_verifier_ops structure
+40694c899f1 2016-06-28 Daniel Borkmann: bpf, trace: fetch current cpu only once
+564308a2f97 2016-06-28 Daniel Borkmann: bpf, trace: add BPF_F_CURRENT_CPU flag for bpf_perf_event_read
+afc4d5e1a48 2017-06-02 Chenbo Feng: FROMLIST: [net-next,v2,1/2] bpf: Allow CGROUP_SKB eBPF program to access sk_buff
+15ab57e810a 2016-09-06 Arnd Bergmann: perf, bpf: fix conditional call to bpf_overflow_handler
+012d587f0b6 2019-12-18 Alexander Lobakin: net, sysctl: Fix compiler warning when only cBPF is present
+053fe7c75cd 2018-12-11 Daniel Borkmann: bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K
+6e463856354 2021-01-22 Daniel Borkmann: bpf: Fix buggy rsh min/max bounds tracking
+df21f67decf 2017-05-03 Chenbo Feng: ANDROID: Fix missing uapi headers
+a825c7028a2 2016-09-23 Daniel Borkmann: bpf: add helper to invalidate hash
+8c6567367e4 2016-04-18 Alexei Starovoitov: perf, bpf: minimize the size of perf_trace_() tracepoint handler
+a71d581df69 2017-10-23 Yonghong Song: UPSTREAM: bpf: use the same condition in perf event set/free bpf handler
+ea61dee448d 2019-08-17 Daniel Borkmann: bpf: add bpf_jit_limit knob to restrict unpriv allocations
+3f556ffe0ba 2019-08-16 Daniel Borkmann: bpf: restrict access to core bpf sysctls
+9fd5cc758ff 2019-08-16 Daniel Borkmann: bpf: get rid of pure_initcall dependency to enable jits
+fa3ed7f1418 2019-06-06 Valdis Klētnieks: bpf: silence warning messages in core
+b5115a4c4b0 2019-05-14 Chenbo Feng: UPSTREAM: bpf: relax inode permission check for retrieving bpf program
+d3ea3bc9bfc 2019-05-09 Alexei Starovoitov: bpf: convert htab map to hlist_nulls
+0b32fb6b7f7 2019-05-09 Alexei Starovoitov: bpf: fix struct htab_elem layout
+d80fdbf60a7 2018-12-03 Alexei Starovoitov: bpf: check pending signals while verifying programs
+faab9b7eb69 2018-05-15 Alexei Starovoitov: bpf: Prevent memory disambiguation attack
+76e5e205886 2018-12-05 Ben Hutchings: bpf/verifier: Pass instruction index to check_mem_access() and check_xadd()
+cb68ca227f3 2018-12-05 Ben Hutchings: bpf/verifier: Add spi variable to check_stack_write()
+27ad73def3c 2018-05-03 Jakub Kicinski: bpf: fix references to free_bpf_prog_info() in comments
+5c4dda8d5bd 2017-04-24 Teng Qin: bpf: map_get_next_key to return first key on NULL
+46fe510afcb 2018-03-19 Chenbo Feng: bpf: skip unnecessary capability check
+8d19c4836ca 2017-12-02 Al Viro: BACKPORT: fix "netfilter: xt_bpf: Fix XT_BPF_MODE_FD_PINNED mode of 'xt_bpf_info_v1'"
+96a41476b48 2017-12-01 Jann Horn: UPSTREAM: netfilter: xt_bpf: add overflow checks
+1e2f86365b7 2017-10-09 Shmulik Ladkani: UPSTREAM: netfilter: xt_bpf: Fix XT_BPF_MODE_FD_PINNED mode of 'xt_bpf_info_v1'
+cab138f54f6 2016-12-06 Willem de Bruijn: UPSTREAM: netfilter: xt_bpf: support ebpf
+316c2dc7f47 2016-09-01 Alexei Starovoitov: perf, bpf: add perf events core support for BPF_PROG_TYPE_PERF_EVENT programs
+6782a3b800e 2016-03-28 Wang Nan: perf/core: Set event's default ::overflow_handler()
+6d3b4742edd 2018-03-08 Eric Dumazet: bpf: add schedule points in percpu arrays management
+b16c52ff2f3 2018-03-08 Daniel Borkmann: bpf: fix mlock precharge on arraymaps
+2496b8ac12a 2018-03-08 Daniel Borkmann: bpf: fix wrong exposure of map_flags into fdinfo for lpm
+61e948c1577 2017-08-24 Sami Tolvanen: bpf: fix function type for __bpf_prog_run
+836e2e5901e 2018-01-29 Daniel Borkmann: bpf: reject stores into ctx via st and xadd
+a1bcd7e8b4b 2018-01-29 Alexei Starovoitov: bpf: fix 32-bit divide by zero
+5a3863e3491 2018-01-29 Eric Dumazet: bpf: fix divides by zero
+0903341594e 2018-01-29 Daniel Borkmann: bpf: arsh is not supported in 32 bit alu thus reject it
+87cdf2072dd 2018-01-29 Alexei Starovoitov: bpf: introduce BPF_JIT_ALWAYS_ON config
+121bce5be15 2018-01-29 Alexei Starovoitov: bpf: fix bpf_tail_call() x64 JIT
+6310242a8c8 2018-01-10 Daniel Borkmann: bpf, array: fix overflow in max_entries and undefined behavior in index_mask
+309ae546f41 2018-01-07 Alexei Starovoitov: bpf: prevent out-of-bounds speculation
+daf5fe94cb5 2017-03-15 Alexei Starovoitov: bpf: refactor fixup_bpf_calls()
+3913b02ca89 2017-03-15 Alexei Starovoitov: bpf: move fixup_bpf_calls() function
+d2b9c37c60f 2017-12-23 Ben Hutchings: bpf/verifier: Fix states_equal() comparison of pointer and UNKNOWN
+fe5943143cb 2017-12-22 Jann Horn: bpf: fix incorrect sign extension in check_alu_op()
+0e05da9a7b1 2017-12-22 Jann Horn: bpf: reject out-of-bounds stack pointer calculation
+bdd33d23fb3 2017-12-22 Alexei Starovoitov: bpf: fix branch pruning logic
+3f66a727a3c 2017-12-22 Alexei Starovoitov: bpf: adjust insn_aux_data when patching insns
+138c9f5e78c 2017-11-14 Eric Dumazet: bpf: fix lockdep splat
+61a57a6218d 2017-10-18 Chenbo Feng: BACKPORT: bpf: Add file mode configuration into bpf maps
+aa1cd706cab 2017-09-15 Edward Cree: bpf/verifier: reject BPF_ALU64|BPF_END
+808a9533e1f 2017-07-21 Edward Cree: bpf/verifier: fix min/max handling in BPF_SUB
+ab85afaf7fe 2017-07-21 Daniel Borkmann: bpf: fix mixed signed/unsigned derived min/max value bounds
+c66f3248711 2017-03-31 Daniel Borkmann: bpf, verifier: fix alu ops against map_value{, _adj} register types
+ecff301ad71 2017-05-18 Daniel Borkmann: bpf: adjust verifier heuristics
+36d94ab59a3 2017-07-02 John Fastabend: bpf, verifier: add additional patterns to evaluate_reg_imm_alu
+27dbe950cb3 2017-06-29 Daniel Borkmann: bpf: prevent leaking pointer via xadd on unpriviledged
+0f44aa00c25 2017-01-18 Daniel Borkmann: bpf: don't trigger OOM killer under pressure with map alloc
+adea8877b5c 2017-06-06 Daniel Borkmann: FROMLIST: bpf: cgroup skb progs cannot access ld_abs/ind
+2a094c0edd3 2017-06-02 Chenbo Feng: FROMLIST: [net-next,v2,2/2] bpf: Remove the capability check for cgroup skb eBPF program
+56f8b64c47b 2017-06-02 Chenbo Feng: FROMLIST: [net-next,v2,1/2] bpf: Allow CGROUP_SKB eBPF program to access sk_buff
+7064efdd99e 2016-11-23 Daniel Mack: UPSTREAM: bpf: add new prog type for cgroup socket filtering
+c8d472b12b5 2016-11-23 Daniel Mack: UPSTREAM: bpf: add BPF_PROG_ATTACH and BPF_PROG_DETACH commands
+9c86f113109 2017-05-08 Daniel Borkmann: bpf: don't let ldimm64 leak map addresses on unprivileged
+32ffe17b0f1 2017-04-29 Yonghong Song: bpf: enhance verifier to understand stack pointer arithmetic
+be1c8014e66 2017-03-24 Alexei Starovoitov: bpf: improve verifier packet range checks
+0352b344889 2016-12-18 Daniel Borkmann: bpf: fix mark_reg_unknown_value for spilled regs on map value marking
+de4892d94ab 2016-12-15 Daniel Borkmann: bpf: fix regression on verifier pruning wrt map lookups
+82adcefb6b7 2016-12-07 Alexei Starovoitov: bpf: fix state equivalence
+4a27c61b1c6 2016-10-18 Thomas Graf: bpf: Detect identical PTR_TO_MAP_VALUE_OR_NULL registers
+53b9f53bc21 2016-11-29 Josef Bacik: bpf: fix states equal logic for varlen access
+1486529198d 2016-11-14 Josef Bacik: bpf: fix range arithmetic for bpf map access
+a60ddcf6252 2016-11-04 Daniel Borkmann: bpf: fix htab map destruction when extra reserve is in use
+211df876bae 2016-09-28 Josef Bacik: bpf: allow access into map value arrays
+fe46bca13da 2016-09-27 Shaohua Li: bpf: clean up put_cpu_var usage
+62e3bf3680f 2016-09-24 Mickaël Salaün: bpf: Set register type according to is_valid_access()
+7600f51d2cd 2016-09-21 Jakub Kicinski: bpf: recognize 64bit immediate loads as consts
+2be5d646bcb 2016-09-21 Jakub Kicinski: bpf: enable non-core use of the verfier
+0424d540b17 2016-09-21 Jakub Kicinski: bpf: expose internal verfier structures
+c1c316ce61f 2016-09-21 Jakub Kicinski: bpf: don't (ab)use instructions to store state
+9228516e0ef 2016-09-20 Daniel Borkmann: bpf: direct packet write and access for helpers for clsact progs
+29a3844b10c 2016-09-20 Daniel Borkmann: bpf, verifier: enforce larger zero range for pkt on overloading stack buffs
+187c4ac442e 2016-09-09 Daniel Borkmann: bpf: add BPF_CALL_x macros for declaring helpers
+ec5978fcd49 2016-08-05 Daniel Borkmann: bpf: fix checksum fixups on bpf_skb_store_bytes
+75a804180a4 2016-08-05 Daniel Borkmann: bpf: also call skb_postpush_rcsum on xmit occasions
+378fa588559 2016-06-10 Daniel Borkmann: bpf: enforce recursion limit on redirects
+d1c8eed3c1c 2016-09-09 Daniel Borkmann: bpf: add own ctx rewriter on ifindex for clsact progs
+84303aeb3d1 2016-07-14 Daniel Borkmann: bpf, perf: split bpf_perf_event_output
+e471bb43f80 2016-09-09 Daniel Borkmann: bpf: add BPF_SIZEOF and BPF_FIELD_SIZEOF macros
+5295c49393f 2016-09-01 Alexei Starovoitov: bpf: introduce BPF_PROG_TYPE_PERF_EVENT program type
+6788f56c3d6 2016-08-11 Alexei Starovoitov: bpf: allow bpf_get_prandom_u32() to be used in tracing
+fb16aea8163 2016-09-09 Daniel Borkmann: bpf: minor cleanups in helpers
+a63a2685ea8 2016-08-18 Daniel Borkmann: bpf: get rid of cgroup helper related ifdefs
+12b8033dc01 2016-08-18 Daniel Borkmann: bpf: enable event output helper also for xdp types
+4e2d818278b 2016-08-18 Daniel Borkmann: bpf: add bpf_skb_change_tail helper
+b0a352e9546 2016-02-24 Linus Lüssing: Add skb_postpush_rcsum helper
+c8d0336ba30 2016-08-11 Daniel Borkmann: bpf: fix write helpers with regards to non-linear parts
+4c47d6d60cb 2020-06-16 Taehee Yoo: net: core: reduce recursion limit value
+b2ef5d95e2e 2016-09-08 Daniel Borkmann: bpf: fix range propagation on direct packet access
+3ea1f916570 2016-09-01 Alexei Starovoitov: bpf: perf_event progs should only use preallocated maps
+2007d36396b 2016-09-01 Alexei Starovoitov: bpf: support 8-byte metafield access
+d842a8ec757 2016-08-11 Alexei Starovoitov: bpf: allow helpers access the packet directly
+bffa42a46ed 2016-08-12 Daniel Borkmann: bpf: fix bpf_skb_in_cgroup helper naming
+e76dbce465a 2016-07-25 Sargun Dhillon: bpf: Add bpf_probe_write_user BPF helper to be called in tracers
+e44c3e4ad23 2016-07-18 Andrew Morton: kernel/trace/bpf_trace.c: work around gcc-4.4.4 anon union initialization bug
+3ad39ed0e64 2016-07-06 Alexei Starovoitov: bpf: introduce bpf_get_current_task() helper
+99435252150 2016-07-03 Daniel Borkmann: bpf: add bpf_get_hash_recalc helper
+3e452c4326f 2016-08-05 Alexei Starovoitov: bpf: restore behavior of bpf_map_update_elem
+4b4ec7d409a 2016-08-02 Jakub Kicinski: bpf: fix method of PTR_TO_PACKET reg id generation
+a781add2a6a 2016-07-19 Brenden Blanco: bpf: enable direct packet data write for xdp progs
+0b5cc22c28f 2016-07-19 Brenden Blanco: bpf: add XDP prog type for early driver filter
+5ff577fcc14 2016-03-15 Daniel Borkmann: cls_bpf: reset class and reuse major in da
+11427f9022a 2018-04-06 Davide Caratti: net/sched: fix NULL dereference in the error path of tcf_bpf_init()
+bd11c015909 2016-05-05 Alexei Starovoitov: bpf: wire in data and data_end for cls_act_bpf
+cd3cf6e4674 2016-01-06 Daniel Borkmann: bpf: cleanup bpf_prog_run_{save,clear}_cb helpers
+eb70e89f0a1 2016-07-19 Brenden Blanco: bpf: add bpf_prog_add api for bulk prog refcnt
+b574594e521 2016-07-16 Daniel Borkmann: bpf: bpf_event_entry_gen's alloc needs to be in atomic context
+f4fcad99a06 2016-07-14 Daniel Borkmann: bpf: avoid stack copy and use skb ctx for event output
+a712c9a13cd 2016-07-11 Paul Gortmaker: bpf: make inode code explicitly non-modular
+052efcb05c3 2016-06-30 Martin KaFai Lau: cgroup: bpf: Add bpf_skb_in_cgroup_proto
+b7facf7aa08 2016-06-28 Daniel Borkmann: bpf: add bpf_skb_change_type helper
+573ba50fad2 2016-06-28 Daniel Borkmann: bpf: add bpf_skb_change_proto helper
+b75f787eff3 2016-06-30 Martin KaFai Lau: cgroup: bpf: Add BPF_MAP_TYPE_CGROUP_ARRAY
+32820684997 2016-06-30 Daniel Borkmann: bpf: refactor bpf_prog_get and type check into helper
+9df3261245d 2016-06-30 Daniel Borkmann: bpf: generally move prog destruction to RCU deferral
+3c103ef8498 2016-06-28 Daniel Borkmann: bpf: don't use raw processor id in generic helper
+b9e9d512b9e 2016-06-28 Daniel Borkmann: bpf: minor cleanups on fd maps and helpers
+48989c557ee 2016-06-15 Daniel Borkmann: bpf, maps: flush own entries on perf map release
+a040d2ae661 2016-06-15 Daniel Borkmann: bpf, maps: extend map_fd_get_ptr arguments
+5727ff88530 2016-06-15 Daniel Borkmann: bpf, maps: add release callback
+d0a5cdbef67 2016-06-15 Alexei Starovoitov: bpf: fix matching of data/data_end in verifier
+b38ef59244c 2016-05-22 Daniel Borkmann: bpf, inode: disallow userns mounts
+f0f95f6535c 2016-05-19 Alexei Starovoitov: bpf: teach verifier to recognize imm += ptr pattern
+cbbba912ca4 2016-05-19 Alexei Starovoitov: bpf: support decreasing order in direct packet access
+777f297c79b 2016-05-20 Eric W. Biederman: bpf: Use mount_nodev not mount_ns to mount the bpf filesystem
+f45099a65f2 2016-05-18 Daniel Borkmann: bpf: rather use get_random_int for randomizations
+7b9057dec5d 2016-05-13 Daniel Borkmann: bpf: add generic constant blinding for use in jits
+a8818a5f9ca 2016-05-13 Daniel Borkmann: bpf: move bpf_jit_enable declaration
+7126e7106e0 2016-06-04 Daniel Borkmann: bpf, trace: use READ_ONCE for retrieving file ptr
+53db9c05919 2016-04-18 Daniel Borkmann: bpf, trace: add BPF_F_CURRENT_CPU flag for bpf_perf_event_output
+021c164397a 2016-04-16 Arnd Bergmann: bpf: avoid warning for wrong pointer cast
+d80641c42f1 2016-05-13 Daniel Borkmann: bpf: prepare bpf_int_jit_compile/bpf_prog_select_runtime apis
+726d857b537 2016-05-13 Daniel Borkmann: bpf: add bpf_patch_insn_single helper
+3169ddc16b8 2016-05-13 Daniel Borkmann: bpf: minor cleanups in ebpf code
+eec75667782 2016-05-05 Alexei Starovoitov: bpf: improve verifier state equivalence
+2dfc82b6dce 2016-05-05 Alexei Starovoitov: bpf: direct packet access
+57ba6fdc302 2016-05-05 Alexei Starovoitov: bpf: cleanup verifier code
+4dd7e5e948f 2016-04-27 Alexei Starovoitov: bpf: fix check_map_func_compatibility logic
+87f523d3e7f 2016-04-27 Alexei Starovoitov: bpf: fix refcnt overflow
+36a007b39be 2016-04-26 Jann Horn: bpf: fix double-fdput in replace_map_fd_with_map_ptr()
+0d83610bc22 2016-04-18 Daniel Borkmann: bpf: add event output helper for notifications/sampling/logging
+c16504e25c0 2016-04-13 Daniel Borkmann: bpf: convert relevant helper args to ARG_PTR_TO_RAW_STACK
+fde1259387f 2016-03-16 Daniel Borkmann: bpf, dst: add and use dst_tclassid helper
+b7a2eb52fde 2016-03-16 Daniel Borkmann: bpf: make skb->tc_classid also readable
+1717d068890 2016-03-04 Daniel Borkmann: bpf: make helper function protos static
+a85169889f4 2016-03-04 Daniel Borkmann: bpf: add flags to bpf_skb_store_bytes for clearing hash
+dc0cd9b971b 2016-03-04 Daniel Borkmann: bpf: allow bpf_csum_diff to feed bpf_l3_csum_replace as well
+d4de1c5ffb8 2015-08-17 Tom Herbert: net: Add inet_proto_csum_replace_by_diff utility function
+1211bfda341 2016-02-19 Daniel Borkmann: bpf: fix csum update in bpf_l4_csum_replace helper for udp
+b0c8efdee85 2016-02-19 Daniel Borkmann: bpf: don't emit mov A,A on return
+a5adc09d476 2016-02-19 Daniel Borkmann: bpf: remove artificial bpf_skb_{load, store}_bytes buffer limitation
+e17ad45b905 2016-02-19 Daniel Borkmann: bpf: add generic bpf_csum_diff helper
+ec6376e2496 2016-04-13 Daniel Borkmann: bpf, verifier: add ARG_PTR_TO_RAW_STACK type
+264d492180b 2016-04-13 Daniel Borkmann: bpf, verifier: add bpf_call_arg_meta for passing meta data
+c39a3830b63 2016-04-12 Alexei Starovoitov: bpf/verifier: reject invalid LD_ABS | BPF_DW instruction
+a23fe24a608 2016-04-06 Alexei Starovoitov: bpf: simplify verifier register state assignments
+effdb5b39c3 2016-04-05 Daniel Borkmann: bpf, verifier: further improve search pruning
+bb9749c3ad6 2016-04-06 Alexei Starovoitov: bpf: sanitize bpf tracepoint access
+e6a9f427242 2012-08-26 Patrick McHardy: net: core: add function for incremental IPv6 pseudo header checksum updates
+c46654e6497 2016-04-06 Alexei Starovoitov: bpf: support bpf_get_stackid() and bpf_perf_event_output() in tracepoint programs
+a1f3e324469 2016-04-06 Alexei Starovoitov: bpf: register BPF_PROG_TYPE_TRACEPOINT program type
+8cfa9164fdc 2016-04-06 Alexei Starovoitov: perf, bpf: allow bpf programs attach to tracepoints
+e962ec3c970 2016-04-06 Alexei Starovoitov: perf: split perf_trace_buf_prepare into alloc and update parts
+2dd24d8828c 2016-02-17 Alexei Starovoitov: perf: generalize perf_callchain
+81b9ccce27f 2016-04-05 Hannes Frederic Sowa: tun: use socket locks for sk_{attach,detatch}_filter
+ed96dd6606e 2016-04-06 Alexei Starovoitov: perf: remove unused __addr variable
+6e312226e71 2012-08-07 Frederic Weisbecker: perf: Add attribute to filter out callchains
+8967dc75924 2016-03-25 Al Viro: bpf: reject invalid names right in ->lookup()
+5765c8d378b 2016-03-09 Alexei Starovoitov: bpf: avoid copying junk bytes in bpf_get_current_comm()
+07a90bac822 2016-03-09 Alexei Starovoitov: bpf: bpf_stackmap_copy depends on CONFIG_PERF_EVENTS
+194b8374659 2016-03-07 Alexei Starovoitov: bpf: convert stackmap to pre-allocation
+3c2d1b46805 2016-03-07 Alexei Starovoitov: bpf: check for reserved flag bits in array and stack maps
+b323c081ce1 2016-03-07 Alexei Starovoitov: bpf: pre-allocate hash map elements
+d815db33700 2016-03-07 Alexei Starovoitov: bpf: introduce percpu_freelist
+5c4109153fd 2016-03-07 Alexei Starovoitov: bpf: prevent kprobe+bpf deadlocks
+438dacbdef9 2016-02-19 Daniel Borkmann: bpf: add new arg_type that allows for 0 sized stack buffer
+670442fdff2 2016-02-17 Alexei Starovoitov: bpf: introduce BPF_MAP_TYPE_STACK_TRACE
+8646a9d08e7 2016-01-11 Daniel Borkmann: bpf: export helper function flags and reject invalid ones
+2219b566a0c 2016-01-07 Daniel Borkmann: bpf: add skb_postpush_rcsum and fix dev_forward_skb occasions
+5c661f2712b 2016-06-10 Daniel Borkmann: bpf: reject wrong sized filters earlier
+970bc3bba41 2016-02-19 Daniel Borkmann: bpf: try harder on clones when writing into skb
+f751428675f 2016-03-31 Daniel Borkmann: tun, bpf: fix suspicious RCU usage in tun_{attach, detach}_filter
+96adfa3955a 2015-12-17 Daniel Borkmann: bpf: fix misleading comment in bpf_convert_filter
+722021a1833 2015-12-17 Daniel Borkmann: bpf: add bpf_skb_load_bytes helper
+d4e69bc07a2 2014-09-09 Tejun Heo: percpu: fix locking regression in the failure path of pcpu_alloc()
+bb84c1f2664 2014-09-02 Tejun Heo: percpu: implement asynchronous chunk population
+56d0187f426 2014-09-02 Tejun Heo: percpu: rename pcpu_reclaim_work to pcpu_balance_work
+4bcc43f4ad4 2014-09-02 Tejun Heo: percpu: implmeent pcpu_nr_empty_pop_pages and chunk->nr_populated
+6792312d54e 2014-09-02 Tejun Heo: percpu: make sure chunk->map array has available space
+a10b025ba28 2014-09-02 Tejun Heo: percpu: implement [__]alloc_percpu_gfp()
+46458483db4 2014-09-02 Tejun Heo: percpu: indent the population block in pcpu_alloc()
+f00f680f8c3 2014-09-02 Tejun Heo: percpu: make pcpu_alloc_area() capable of allocating only from populated areas
+9fac8602f25 2014-09-02 Tejun Heo: percpu: restructure locking
+9e139736735 2014-09-02 Tejun Heo: percpu: make percpu-km set chunk->populated bitmap properly
+f03a702b1a9 2014-09-02 Tejun Heo: percpu: move region iterations out of pcpu_[de]populate_chunk()
+7226b4af4b9 2014-09-02 Tejun Heo: percpu: move common parts out of pcpu_[de]populate_chunk()
+51bfa1e08e8 2014-09-02 Tejun Heo: percpu: remove @may_alloc from pcpu_get_pages()
+2773d7d2527 2014-09-02 Tejun Heo: percpu: remove the usage of separate populated bitmap in percpu-vm
+996c37f478e 2014-06-19 Christoph Lameter: percpu: Use ALIGN macro instead of hand coding alignment calculation
+9eabb03dc03 2014-03-28 Jianyu Zhan: percpu: renew the max_contig if we merge the head and previous block
+6a0165e2e51 2014-03-17 Viro: percpu: allocation size should be even
+c104128bbe1 2014-03-06 Al Viro: percpu: speed alloc_pcpu_area() up
+e5aaba392f1 2014-03-06 Al Viro: percpu: store offsets instead of lengths in ->map[]
+fc6d489eb23 2014-03-06 Al Viro: perpcu: fold pcpu_split_block() into the only caller
+208e14ba0ba 2016-02-19 Sasha Levin: bpf: grab rcu read lock for bpf_percpu_hash_update
+496d2de7149 2016-02-10 Daniel Borkmann: bpf: fix branch offset adjustment on backjumps after patching ctx expansion
+6f853ccb620 2016-02-01 Alexei Starovoitov: bpf: add lookup/update support for per-cpu hash and array maps
+87c4949adcc 2016-02-01 Alexei Starovoitov: bpf: introduce BPF_MAP_TYPE_PERCPU_ARRAY map
+251f0e4e12b 2016-02-01 Alexei Starovoitov: bpf: introduce BPF_MAP_TYPE_PERCPU_HASH map
+0a2634dfebd 2016-01-25 Alexei Starovoitov: perf/bpf: Convert perf_event_array to use struct file
+cb8a695dfdf 2016-01-12 Rabin Vincent: net: bpf: reject invalid shifts
+aae9c4c748f 2015-12-29 tom.leiming@gmail.com: bpf: hash: use per-bucket spinlock
+e6c0331002b 2015-12-29 tom.leiming@gmail.com: bpf: hash: move select_bucket() out of htab's spinlock
+9a92c740455 2015-12-29 tom.leiming@gmail.com: bpf: hash: use atomic count
+4488d01216e 2015-12-17 Daniel Borkmann: bpf: move clearing of A/X into classic to eBPF migration prologue
+a4a4311070c 2015-12-10 Daniel Borkmann: bpf, inode: allow for rename and link ops
+2a1e797364c 2015-11-29 Alexei Starovoitov: bpf: fix allocation warnings in bpf maps and integer overflow
+0956cc41964 2015-11-30 Daniel Borkmann: bpf, array: fix heap out-of-bounds access when updating elements
+87963630485 2015-11-24 Daniel Borkmann: bpf: fix clearing on persistent program array maps
+d88a0991804 2016-01-05 Rabin Vincent: ARM: net: bpf: fix zero right shift
+0706d9f02e3 2016-01-05 Rabin Vincent: net: filter: make JITs zero A for SKF_AD_ALU_XOR_X
+cc329dfe2f5 2015-11-14 Daniel Borkmann: bpf, arm: start flushing icache range from header
+5aef9d1dca6 2015-11-10 Steven Rostedt: bpf_trace: Make dependent on PERF_EVENTS
+40e54701b00 2015-11-03 Daniel Borkmann: bpf, verifier: annotate verbose printer with __printf
+81bb9f41ff8 2015-10-29 Daniel Borkmann: bpf: add support for persistent maps/progs
+cc121273545 2015-10-29 Daniel Borkmann: bpf: consolidate bpf_prog_put{, _rcu} dismantle paths
+40b488a92b1 2015-10-29 Daniel Borkmann: bpf: align and clean bpf_{map,prog}_get helpers
+bd77d9911ea 2015-10-29 Daniel Borkmann: bpf: abstract anon_inode_getfd invocations
+3db80e3847f 2015-10-30 Yang Shi: bpf: convert hashtab lock to raw lock
+cc4d4a91a46 2015-10-23 Alexei Starovoitov: bpf: make tracing helpers gpl only
+c3461acbae8 2015-10-22 Alexei Starovoitov: bpf: fix bpf_perf_event_read() helper
+445c7fe7f29 2015-10-20 Alexei Starovoitov: bpf: introduce bpf_perf_event_output() helper
+a0cae4d4dc1 2015-10-14 Tom Herbert: bpf: Need to call bpf_prog_uncharge_memlock from bpf_prog_put
+3af3e043b34 2015-10-07 Alexei Starovoitov: bpf: charge user for creation of BPF maps and programs
+48695128610 2015-10-07 Alexei Starovoitov: bpf: enable non-root eBPF programs
+d70a62c8061 2015-10-07 Alexei Starovoitov: bpf: fix cb access in socket filter programs
+7a5d9a4d169 2015-10-08 Daniel Borkmann: bpf: split state from prandom_u32() and consolidate {c, e}BPF prngs
+201437c39d8 2015-10-08 Daniel Borkmann: random32: add prandom_seed_full_state helper
+825fdda7f77 2015-10-07 Daniel Borkmann: bpf, skb_do_redirect: clear sender_cpu before xmit
+db8e2dfdbc6 2015-10-06 Alexei Starovoitov: bpf: clear sender_cpu before xmit
+f41306a4469 2015-10-02 Daniel Borkmann: ebpf: include perf_event only where really needed
+a1acf7d7df9 2015-10-02 Nicolas Schichan: ARM: net: support BPF_ALU | BPF_MOD instructions in the BPF JIT.
+dddba34d6f6 2015-10-02 Nicolas Schichan: ARM: net: make BPF_LD | BPF_IND instruction trigger r_X initialisation to 0.
+87cfb89b3a5 2015-10-02 Daniel Borkmann: bpf: fix panic in SO_GET_FILTER with native ebpf programs
+75e58a299f5 2015-09-30 Daniel Borkmann: sched, bpf: make skb->priority writable
+a65d4e6c320 2015-09-30 Daniel Borkmann: sched, bpf: add helper for retrieving routing realms
+f5337e1c7a3 2015-09-30 Daniel Borkmann: ebpf: migrate bpf_prog's flags to bitfield
+16f59148002 2015-09-23 Daniel Borkmann: cls_bpf: further limit exec opcodes subset
+c1ab43294b9 2015-09-23 Daniel Borkmann: cls_bpf: make binding to classid optional
+ad4ccf72960 2015-09-23 Daniel Borkmann: cls_bpf: also dump TCA_BPF_FLAGS
+6042a0057d1 2015-09-23 Daniel Borkmann: sched, bpf: let stack handle !IFF_UP devs on bpf_clone_redirect
+dade2f1d456 2015-09-15 Alexei Starovoitov: bpf: add bpf_redirect() helper
+81c3df65b10 2015-09-15 Daniel Borkmann: cls_bpf: introduce integrated actions
+9e0fcd2e22c 2015-09-10 Tycho Andersen: ebpf: emit correct src_reg for conditional jumps
+9b759569fb7 2015-09-08 Alexei Starovoitov: bpf: fix out of bounds access in verifier log
+4329399c5ae 2015-09-08 Daniel Borkmann: ebpf: fix fd refcount leaks related to maps in bpf syscall
+c3c9cff2779 2015-08-31 Alexei Starovoitov: lib: move strncpy_from_unsafe() into mm/maccess.c
+4b513003502 2015-08-28 Alexei Starovoitov: bpf: add support for %s specifier to bpf_trace_printk()
+bef974e1494 2015-08-25 Alexei Starovoitov: net_sched: act_bpf: remove unnecessary copy
+b325f1ecc8e 2015-08-12 Wei-Chun Chao: bpf: fix bpf_perf_event_read() loop upper bound
+45b26522c77 2015-08-06 Kaixu Xia: bpf: Implement function bpf_perf_event_read() that get the selected hardware PMU conuter
+c52209423ab 2015-08-06 Kaixu Xia: bpf: Add new bpf map type to store the pointer to struct perf_event
+dd83b637d98 2015-08-06 Wang Nan: bpf: Make the bpf_prog_array_map more generic
+3dbc465b018 2015-08-06 Kaixu Xia: perf: add the necessary core perf APIs when accessing events counters in eBPF programs
+a5abce37d92 2013-11-11 Daniel Borkmann: random32: fix off-by-one in seeding requirement
+ce682dd9ae8 2012-06-15 Yan, Zheng: BACKPORT: perf: Introduce perf_pmu_migrate_context()
+6e8cf251df0 2012-06-15 Yan, Zheng: BACKPORT: perf: Allow the PMU driver to choose the CPU on which to install events
+b4bd23efc47 2015-08-03 Daniel Borkmann: act_bpf: properly support late binding of bpf action to a classifier
+38470d332d7 2015-08-01 Daniel Borkmann: ebpf: add skb->hash to offset map for usage in {cls, act}_bpf or filters
+d2676abd3af 2015-07-30 Daniel Borkmann: bpf: also show process name/pid in bpf_jit_dump
+3afdbee5866 2015-07-30 Daniel Borkmann: bpf: provide helper that indicates eBPF was migrated
+7ab6e5eedd9 2015-07-29 Daniel Borkmann: act_bpf: fix memory leaks when replacing bpf programs
+89933a1ba01 2015-07-27 Nicolas Schichan: ARM: net: add support for BPF_ANC | SKF_AD_HATYPE in ARM JIT.
+25097739175 2015-07-27 Nicolas Schichan: ARM: net: add support for BPF_ANC | SKF_AD_PAY_OFFSET in ARM JIT.
+1a39a5234f0 2015-07-27 Nicolas Schichan: ARM: net: add support for BPF_ANC | SKF_AD_PKTTYPE in ARM JIT.
+74ebf0f9d91 2015-07-23 Alex Gartrell: ebpf: Allow dereferences of PTR_TO_STACK registers
+3400f0dbf9c 2015-07-21 Nicolas Schichan: ARM: net: fix vlan access instructions in ARM JIT.
+76c5686d2b8 2015-07-21 Nicolas Schichan: ARM: net: handle negative offsets in BPF JIT.
+c43aebf08a0 2015-07-17 Daniel Borkmann: sched: cls_bpf: fix panic on filter replace
+f88b608cd52 2014-11-19 Jiri Pirko: net: move make_writable helper into common code
+b6ef84bb6bb 2015-07-15 Daniel Borkmann: ebpf: add helper to retrieve net_cls's classid cookie
+0ace58ca9db 2015-07-14 Alexei Starovoitov: tc: act_bpf: fix memory leak
+c9c76c59f9f 2015-07-13 Daniel Borkmann: ebpf: remove self-assignment in interpreter's tail call
+85d11474acb 2015-06-15 Alexei Starovoitov: bpf: disallow bpf tc programs access current->pid,uid
+57388da708c 2015-06-12 Alexei Starovoitov: bpf: let kprobe programs use bpf_get_smp_processor_id() helper
+835041ce1a6 2015-06-12 Alexei Starovoitov: bpf: allow networking programs to use bpf_trace_printk() for debugging
+d20768ef0c7 2015-06-12 Alexei Starovoitov: bpf: introduce current->pid, tgid, uid, gid, comm accessors
+d6c5b7e4dee 2015-06-04 Alexei Starovoitov: bpf: allow programs to write to certain skb fields
+4e985df125d 2015-06-04 Alexei Starovoitov: bpf: make programs see skb->data == L2 for ingress and egress
+052a20fc9a4 2015-06-04 Alexei Starovoitov: bpf: fix build due to missing tc_verd
+4850aa55ab7 2015-06-02 Alexei Starovoitov: bpf: introduce bpf_clone_redirect() helper
+c032b76fc14 2015-05-29 Daniel Borkmann: ebpf: misc core cleanup
+b1eee1c9664 2015-05-29 Daniel Borkmann: ebpf: allow bpf_ktime_get_ns_proto also for networking
+ad5a5df3036 2015-05-28 Alexei Starovoitov: bpf: add missing rcu protection when releasing programs from prog_array
+6d02b9fcbc1 2015-05-27 Alexei Starovoitov: bpf: allow BPF programs access skb->skb_iif and skb->dev->ifindex fields
+cb0875cafc7 2015-05-15 Alexei Starovoitov: perf: Fix race in BPF program unregister
+f312325636a 2015-05-19 Alexei Starovoitov: bpf: allow bpf programs to tail-call other bpf programs
+ba48c024498 2015-05-07 Nicolas Schichan: ARM: net: delegate filter to kernel interpreter when imm_offset() return value can't fit into 12bits.
+9bb8c95b69a 2015-05-06 Nicolas Schichan: ARM: net fix emit_udiv() for BPF_ALU | BPF_DIV | BPF_K intruction.
+ec9e343fa1c 2015-05-06 Daniel Borkmann: seccomp, filter: add and use bpf_prog_create_from_user from seccomp
+f4c6cc8cc2d 2015-05-06 Nicolas Schichan: seccomp: simplify seccomp_prepare_filter and reuse bpf_prepare_filter
+2d9701c410e 2015-05-06 Daniel Borkmann: net: filter: add __GFP_NOWARN flag for larger kmem allocs
+64ebd52fa8d 2014-04-09 Florian Westphal: net: core: don't account for udp header size when computing seglen
+b2befff27ed 2014-02-22 Florian Westphal: net: add and use skb_gso_transport_seglen()
+fec275ba3c1 2015-10-11 Zefan Li: ARM: Fix incorrect backport of 0b59d8806a31
+ea79ff153ac 2015-05-07 Nicolas Schichan: ARM: net: delegate filter to kernel interpreter when imm_offset() return value can't fit into 12bits.
+bfafba4324c 2013-08-20 Mike Snitzer: math64: New separate div64_u64_rem helper
+ed336f0e24e 2015-05-06 Nicolas Schichan: net: filter: add a callback to allow classic post-verifier transformations
+0de7511ebee 2015-04-27 Alexei Starovoitov: bpf: fix 64-bit divide
+3662af4d970 2015-04-15 Alexei Starovoitov: bpf: fix two bugs in verification logic when accessing 'ctx' pointer
+e015e95ac21 2015-04-15 Alexei Starovoitov: bpf: fix bpf helpers to use skb->mac_header relative offsets
+196da2bfe1e 2015-04-14 Alexei Starovoitov: bpf: fix verifier memory corruption
+a86db6361cb 2015-04-01 Alexei Starovoitov: tc: bpf: add checksum helpers
+c821b648f54 2015-04-03 Daniel Borkmann: ebpf: add skb->priority to offset map for usage in {cls, act}_bpf
+9888c4664e4 2015-04-02 Ingo Molnar: bpf: Fix the build on BPF_SYSCALL=y && !CONFIG_TRACING kernels, make it more configurable
+fbe2e5cfe64 2015-03-25 Alexei Starovoitov: tracing: Allow BPF programs to call bpf_trace_printk()
+69f854ee728 2015-03-25 Alexei Starovoitov: tracing: Allow BPF programs to call bpf_ktime_get_ns()
+0a4a98e361c 2015-03-25 Alexei Starovoitov: tracing, perf: Implement BPF programs attached to kprobes
+9465138380a 2015-03-25 Alexei Starovoitov: tracing: Add kprobe flag
+97578d33bc8 2015-03-26 Alexei Starovoitov: tc: bpf: generalize pedit action
+49e59c27efd 2015-03-20 Daniel Borkmann: act_bpf: add initial eBPF support for actions
+68702defdb7 2015-03-20 Daniel Borkmann: ebpf: add sched_act_type and map it to sk_filter's verifier ops
+63111d3c4b3 2015-03-19 Daniel Borkmann: ebpf, filter: do not convert skb->protocol to host endianess during runtime
+684cbbb81f2 2015-03-17 Daniel Borkmann: act_bpf: allow non-default TC_ACT opcodes as BPF exec outcome
+bf76440dfcc 2015-03-16 Alexei Starovoitov: bpf: allow BPF programs access 'protocol' and 'vlan_tci' fields
+8df734a79d3 2015-03-13 Alexei Starovoitov: bpf: allow extended BPF programs access skb fields
+c7dc6e0ae24 2015-03-14 Daniel Borkmann: ebpf: add helper for obtaining current processor id
+898e7e7dd33 2015-03-14 Daniel Borkmann: ebpf: add prandom helper for packet sampling
+b33fcecdd66 2015-03-02 Daniel Borkmann: ebpf: move CONFIG_BPF_SYSCALL-only function declarations
+6c7629d6789 2015-03-02 Daniel Borkmann: filter: refactor common filter attach code into __sk_attach_prog
+5b84eccd4f3 2014-11-10 Takashi Iwai: net: ppp: Don't call bpf_prog_create() in ppp_lock
+acbf8ef48c4 2015-03-12 Daniel Borkmann: ebpf: verifier: check that call reg with ARG_ANYTHING is initialized
+7bfdf2644cb 2015-03-05 Daniel Borkmann: ebpf: bpf_map_*: fix linker error on avr32 and openrisc arch
+20f0faa263f 2015-03-12 Daniel Borkmann: cls_bpf: do eBPF invocation under non-bh RCU lock variant for maps
+83b456c8eb6 2015-03-01 Daniel Borkmann: cls_bpf: add initial eBPF support for programmable classifiers
+57a841f7267 2015-01-22 Daniel Borkmann: net: cls_bpf: fix size mismatch on filter preparation
+46d0fe9719a 2015-01-15 Jiri Pirko: tc: cls_bpf: rename bpf_len to bpf_num_ops
+ccc5b96b1c9 2014-12-02 Jiri Pirko: net_sched: cls_bpf: remove faulty use of list_for_each_entry_rcu
+9aeb2ebe4e3 2014-12-02 Jiri Pirko: net_sched: cls_bpf: remove unnecessary iteration and use passed arg
+730c7777bc4 2014-09-15 WANG Cong: net_sched: fix suspicious RCU usage in cls_bpf_classify()
+fd0bb5a0801 2014-09-12 John Fastabend: net: sched: rcu'ify cls_bpf
+9ee6676d35f 2014-06-13 Pawel Moll: perf: Handle compat ioctl
+a32e4f84a80 2015-03-01 Daniel Borkmann: ebpf: move read-only fields to bpf_prog and shrink bpf_prog_aux
+f388f7dc541 2015-03-01 Daniel Borkmann: ebpf: add sched_cls_type and map it to sk_filter's verifier ops
+ecd5864601d 2015-03-01 Daniel Borkmann: ebpf: remove CONFIG_BPF_SYSCALL ifdefs in socket filter code
+0f4f9c0f2f9 2015-03-01 Daniel Borkmann: ebpf: make internal bpf API independent of CONFIG_BPF_SYSCALL ifdefs
+006f0d8790c 2015-03-01 Daniel Borkmann: ebpf: export BPF_PSEUDO_MAP_FD to uapi
+61894c78845 2015-03-01 Daniel Borkmann: ebpf: constify various function pointer structs
+ad835e90789 2015-01-22 Alexei Starovoitov: bpf: rcu lock must not be held when calling copy_to_user()
+fe1ac1714f2 2015-01-22 Daniel Borkmann: net: act_bpf: fix size mismatch on filter preparation
+a7f1ea850e7 2015-01-15 Jiri Pirko: tc: add BPF based action
+94f027fe0b4 2015-01-22 Daniel Borkmann: net: cls_bpf: fix auto generation of per list handles
+22f30820e29 2014-12-10 Alexei Starovoitov: net: sock: fix access via invalid file descriptor
+667368a73b7 2014-12-01 Alexei Starovoitov: net: sock: allow eBPF programs to be attached to sockets
+b22dac70843 2014-12-01 Alexei Starovoitov: bpf: verifier: add checks for BPF_ABS | BPF_IND instructions
+d3a2208871e 2014-11-18 Alexei Starovoitov: bpf: fix arraymap NULL deref and missing overflow and zero size checks
+7a69d7a0b65 2014-11-13 Alexei Starovoitov: bpf: allow eBPF programs to use maps
+dfd91ec0fdd 2014-11-13 Alexei Starovoitov: bpf: fix BPF_MAP_LOOKUP_ELEM command return code
+6aa325f0973 2014-11-13 Alexei Starovoitov: bpf: add array type of eBPF maps
+00b6b150ee3 2014-11-13 Alexei Starovoitov: bpf: add hashtable type of eBPF maps
+f4faffea7ef 2014-11-13 Alexei Starovoitov: bpf: add 'flags' attribute to BPF_MAP_UPDATE_ELEM command
+b9e207f7469 2014-10-28 Alexei Starovoitov: bpf: reduce verifier memory consumption
+2d6565147cd 2014-09-13 Sasha Levin: net: bpf: correctly handle errors in sk_attach_filter()
+5976de9f470 2014-09-12 Hannes Frederic Sowa: net: filter: constify detection of pkt_type_offset
+b05399232ae 2014-10-23 Alexei Starovoitov: bpf: split eBPF out of NET
+6036bf99a7f 2014-10-20 Alexei Starovoitov: bpf: fix bug in eBPF verifier
+8144892042c 2014-10-14 Alexei Starovoitov: net: filter: move common defines into bpf_common.h
+f8b4683b183 2014-10-10 Li RongQing: net: filter: fix the comments
+43b17a37adc 2014-10-09 Alexei Starovoitov: net: bpf: fix bpf syscall dependence on anon_inodes
+cf9440d61b6 2014-09-29 Alexei Starovoitov: bpf: add search pruning optimization to verifier
+1c76a3f4454 2014-09-26 Alexei Starovoitov: bpf: verifier (add verifier core)
+56f1c3e0a5d 2014-09-26 Alexei Starovoitov: bpf: verifier (add branch/goto checks)
+6776d29791c 2014-09-26 Alexei Starovoitov: bpf: handle pseudo BPF_LD_IMM64 insn
+0ae31d17d13 2014-09-26 Alexei Starovoitov: bpf: verifier (add ability to receive verification log)
+9550379af74 2014-10-28 Russell King: ARM: enable bpf syscall
+a9e23c06ca1 2014-09-26 Alexei Starovoitov: bpf: verifier (add docs)
+09e3742fe11 2014-09-26 Alexei Starovoitov: bpf: handle pseudo BPF_CALL insn
+5dad23f12ea 2014-09-26 Alexei Starovoitov: bpf: expand BPF syscall with program load/unload
+64ccc265488 2014-09-26 Alexei Starovoitov: bpf: add lookup/update/delete/iterate methods to BPF maps
+da6196fba06 2014-09-26 Alexei Starovoitov: bpf: introduce BPF syscall and maps
+12474c83805 2014-09-19 Daniel Borkmann: net: bpf: arm: make hole-faulting more robust
+3e06bf7d2d9 2014-09-10 Daniel Borkmann: net: bpf: only build bpf_jit_binary_{alloc, free}() when jit selected
+c68978acf82 2014-09-08 Daniel Borkmann: net: bpf: be friendly to kmemcheck
+6622eb3fbef 2014-09-08 Daniel Borkmann: net: bpf: arm: address randomize and write protect JIT code
+cd1c12c4c50 2014-09-08 Daniel Borkmann: net: bpf: consolidate JIT binary allocator
+45d8f3ba70a 2014-09-04 Alexei Starovoitov: net: filter: split filter.h and expose eBPF to user space
+86015daf319 2014-09-04 Alexei Starovoitov: net: filter: add "load 64-bit immediate" eBPF instruction
+cba49728a04 2014-09-02 Daniel Borkmann: net: bpf: make eBPF interpreter images read-only
+6820b45f09c 2014-07-30 Alexei Starovoitov: net: filter: split 'struct sk_filter' into socket and bpf parts
+742703d78c7 2014-07-30 Alexei Starovoitov: net: filter: rename sk_convert_filter() -> bpf_convert_filter()
+42ca86b2bcf 2014-07-30 Alexei Starovoitov: net: filter: rename sk_chk_filter() -> bpf_check_classic()
+1f3aefe03aa 2014-07-30 Alexei Starovoitov: net: filter: rename sk_filter_proglen -> bpf_classic_proglen
+c12c0504f81 2014-07-30 Alexei Starovoitov: net: filter: simplify socket charging
+12629f1bcae 2014-07-24 Alexei Starovoitov: net: filter: rename 'struct sock_filter_int' into 'struct bpf_insn'
+7f5fc05561e 2014-07-22 Alexei Starovoitov: net: filter: split filter.c into two files
+eb2c8bcb980 2014-07-12 Eric Dumazet: net: filter: sk_chk_filter() no longer mangles filter
+40461fc8b00 2014-07-03 Zi Shen Lim: net: filter: move load_pointer() into filter.h
+d05777159eb 2014-06-24 Tobias Klauser: net: filter: Use kcalloc/kmalloc_array to allocate arrays
+814e33710f5 2014-06-24 Tobias Klauser: trivial: net: filter: Fix typo in comment
+72b52e7e1f9 2014-06-18 Kees Cook: net: filter: fix upper BPF instruction limit
+5da324f1b1f 2014-06-11 Alexei Starovoitov: net: filter: fix warning on 32-bit arch
+b9c60a22b30 2014-06-06 Alexei Starovoitov: net: filter: cleanup A/X name usage
+4c0a2a9d5d7 2014-06-05 Alexei Starovoitov: net: filter: fix SKF_AD_PKTTYPE extension on big-endian
+625b23d0d3f 2014-06-01 Leon Yu: net: filter: fix possible memory leak in __sk_prepare_filter()
+e1d3019d27f 2014-05-29 Daniel Borkmann: net: filter: improve filter block macros
+be2ca115940 2014-05-29 Daniel Borkmann: net: filter: get rid of BPF_S_* enum
+181880adfe2 2012-10-02 David Howells: UAPI: Plumb the UAPI Kbuilds into the user header installation and checking
+2bae900e5fa 2012-10-02 David Howells: UAPI: Remove the objhdr-y export list
+b754202f825 2012-10-02 David Howells: UAPI: Move linux/version.h
+490e91345a3 2012-10-02 David Howells: UAPI: x86: Differentiate the generated UAPI and internal headers
+e6dd8a1b940 2012-10-02 David Howells: UAPI: (Scripted) Set up UAPI Kbuild files
+ddf252cfa5a 2015-04-30 Manasa Guntaka: kbuild: create and use UAPI header
+a321a7f1fff 2012-04-15 Eric Dumazet: net: cleanup unsigned to unsigned int
+972aa98fc28 2014-05-23 Daniel Borkmann: net: filter: let unattached filters use sock_fprog_kern
+dbf0afe7d79 2014-05-10 Mathias Krause: net: ptp: mark filter as __initdata
+54885b186f4 2014-04-01 Daniel Borkmann: net: ptp: move PTP classifier in its own file
+b80d3146d6d 2013-12-10 Yang Yingliang: net_sched: cls_bpf: use tabs to do indent
+322dda36187 2013-10-28 Daniel Borkmann: net: sched: cls_bpf: add BPF-based classifier
+9c09f5400cd 2014-05-23 Daniel Borkmann: net: filter: remove DL macro
+2086b56fc72 2014-05-19 Alexei Starovoitov: net: filter: cleanup invocation of internal BPF
+b6ff8d86fec 2014-05-13 Alexei Starovoitov: seccomp: JIT compile seccomp filter
+3e7e2b910f2 2014-05-13 Alexei Starovoitov: net: filter: x86: internal BPF JIT
+aa798a78fb5 2014-05-13 David S. Miller: net: filter: Fix redefinition warnings on x86-64.
+4ad29ecb356 2014-05-08 Alexei Starovoitov: net: filter: make BPF conversion more readable
+ab1befbbd7b 2014-05-01 Daniel Borkmann: net: filter: misc/various cleanups
+3727a734068 2014-05-01 Daniel Borkmann: net: filter: make register naming more comprehensible
+2560bd55c9f 2014-05-01 Daniel Borkmann: net: filter: simplify label names from jump-table
+02fa7b24e56 2014-04-22 Alexei Starovoitov: net: filter: initialize A and X registers
+9147848beac 2014-04-21 Chema Gonzalez: filter: added BPF random opcode
+63d2afd9490 2014-04-14 Daniel Borkmann: net: filter: seccomp: fix wrong decoding of BPF_S_ANC_SECCOMP_LD_W
+b63941bcd8e 2014-04-13 Mathias Krause: filter: prevent nla extensions to peek beyond the end of the message
+39068577856 2014-04-05 Daniel Borkmann: net: filter: be more defensive on div/mod by X==0
+83cd26f6bc5 2014-04-14 Daniel Borkmann: seccomp: fix populating a0-a5 syscall args in 32-bit x86 BPF
+9b806953417 2014-03-28 Alexei Starovoitov: net: filter: rework/optimize internal BPF interpreter's instruction set
+99c2354e32d 2014-03-28 Daniel Borkmann: net: isdn: use sk_unattached_filter api
+7c3f431d94d 2014-03-28 Daniel Borkmann: net: ppp: use sk_unattached_filter api
+aa82b70443d 2014-03-28 Daniel Borkmann: net: ptp: do not reimplement PTP/BPF classifier
+65c41164e23 2014-03-28 Daniel Borkmann: net: ptp: use sk_unattached_filter_create() for BPF
+b18fa294e68 2014-03-28 Daniel Borkmann: net: filter: move filter accounting to filter core
+0e78978176c 2014-03-28 Daniel Borkmann: net: filter: keep original BPF program around
+54c2218b027 2014-03-28 Daniel Borkmann: net: filter: add jited flag to indicate jit compiled filters
+14797fd28e8 2013-05-20 Daniel Borkmann: arm: bpf_jit: can call module_free() from any context
+628733c5f05 2016-11-10 Eric Dumazet: tcp: take care of truncations done by sk_filter()
+afcb0d7016a 2014-01-15 Eric Dumazet: bpf: do not use reciprocal divide
+ef590a90e2e 2013-03-19 Daniel Borkmann: filter: add ANC_PAY_OFFSET instruction for loading payload start offset
+61c5cedb642 2013-01-16 Vincent Bernat: sk-filter: Add ability to lock a socket filter program
+9e50a22651e 2012-12-28 Daniel Borkmann: net: filter: return -EINVAL if BPF_S_ANC* operation is not supported
+4797437c75f 2012-11-01 Pavel Emelyanov: sk-filter: Add ability to get socket filter program (v2)
+51ca5c36dc7 2012-10-27 Eric Dumazet: net: filter: add vlan tag access
+9206a725d1c 2012-09-24 Daniel Borkmann: filter: add XOR instruction for use with X/K
+cefe579e21b 2012-09-07 Eric Dumazet: filter: add MOD operation
+f55385051f9 2012-03-31 Jiri Pirko: filter: add XOR operation
+589ee87a8df 2013-03-19 Daniel Borkmann: net: flow_dissector: add __skb_get_poff to get a start offset to payload
+b147ca45f67 2013-03-19 Daniel Borkmann: flow_keys: include thoff into flow_keys for later usage
+f14b227d6c2 2014-04-13 Mathias Krause: filter: prevent nla extensions to peek beyond the end of the message
+572539bf003 2012-03-31 Jiri Pirko: filter: Allow to create sk-unattached filters
+d1ab984ed8d 2013-03-10 Chen Gang: ARM:net: an issue for k which is u32, never < 0
+f328d62bfef 2013-02-13 Nicolas Schichan: ARM: net: bpf_jit: fix emit_swap16() for non ARMv6+.
+64ac6822e56 2012-12-10 Schichan Nicolas: ARM: 7598/1: net: bpf_jit_32: fix sp-relative load/stores offsets.
+abbdd27c572 2012-12-10 Schichan Nicolas: ARM: 7597/1: net: bpf_jit_32: fix kzalloc gfp/size mismatch.
+7192c697ae0 2012-11-07 Daniel Borkmann: ARM: net: bpf_jit_32: add VLAN instructions for BPF JIT
+baad1f0d071 2012-11-07 Daniel Borkmann: ARM: net: bpf_jit_32: add XOR instruction for BPF JIT
+e1d8bd61bee 2012-06-11 Mircea Gherzan: ARM: 7421/1: bpf_jit: BPF_S_ANC_ALU_XOR_X support
+1911c05b620 2013-01-18 Willem de Bruijn: netfilter: x_tables: add xt_bpf match
+a7e07138f3a 2013-04-08 Li Zefan: cgroup: implement cgroup_is_descendant()
+aa7d8fa3cec 2013-03-12 Li Zefan: cgroup: remove cgroup_is_descendant()
+703cfad9f5e 2012-11-09 Tejun Heo: cgroup: implement generic child / descendant walk macros
+b3d3df0ea49 2012-08-27 Al Viro: new helpers: fdget()/fdput()
+c14793dfd71 2013-01-07 Eric Dumazet: net: introduce skb_transport_header_was_set()
+59de7697e3d 2012-08-07 Jiri Olsa: perf: Add perf_output_skip function to skip bytes in sample
+1f2cdbb3106 2012-08-07 Frederic Weisbecker: perf: Factor __output_copy to be usable with specific copy function
+81e5f556074 2012-05-04 Alexander Duyck: skb: Add inline helper for getting the skb end offset from head
+c188866a150 2012-07-11 Andrew Vagin: perf/trace: Add ability to set a target task for events
+0a9c468cc37 2024-01-07 html6405: cpufreq.c: stop overclocking CONFIG_MACH_M0 by default
+fb60d4b03d1 2024-01-05 html6405: mach-exynos: Makefile: build sec-reboot.o for CONFIG_MACH_T0
+d9980aadf15 2017-03-23 Chenbo Feng: netfilter: xt_qtaguid: squashed commits to get network monitoring working in A14
+eaabae892a2 2024-01-02 Peter Schelchshorn: net: usbnet: set to 3.0 state, fix mobile data
+5f2aba72321 2024-01-03 html6405: Revert "lineageos_n7100_defconfig: disable CONFIG_NETFILTER_XT_MATCH_QTAGUID to fix "qtaguid: iface_stat: stat_update() lo not found""
+d93ac1879a4 2024-01-03 html6405: lineageos_n7100_defconfig: set CONFIG_VIDEO_SAMSUNG_MEMSIZE_FIMD to 12288
+7fd35c51460 2024-01-03 html6405: lineage_i9300_defconfig: set CONFIG_VIDEO_SAMSUNG_MEMSIZE_FIMD to 12288
+d502e2234d7 2023-11-12 html6405: mach-exynos: Makefile: Disable midas-sensor build for kona devices, otherwise we face an address collision for accelerometer.
+e7e45bfd82b 2023-10-29 Peter Schelchshorn: mdm_hsic_pm.c: fix wakelock problem.
+e7c6c6b9c9f 2017-03-23 RGIB: smdk4412 : qcom modem : mdm9xx5 driver from N8000XXUDOF1
+20cf78405d1 2023-10-28 Peter Schelchshorn: io.h: remove CONFIG_NEED_MACH_IO_H and IO_SPACE_LIMIT definitions, include them from mach/io.h as common
+1f85746c0a2 2023-04-10 Peter Schelchshorn: Revert "platform: hack: ignore failed inserting resources for mdm_hsic_pm0 and mdm2_modem devices."
+01ade75e2fc 2023-04-10 Peter Schelchshorn: make-koffee.sh: create support for kona devices
+522eb2475c1 2023-04-10 Peter Schelchshorn: lineageos_n5120_defconfig: update defconfig
+ba3b1327846 2023-01-21 Peter Schelchshorn: Remove old, not needed script files
+5ea4cad9759 2023-03-10 html6405: lineageos_n7100_defconfig: disable CONFIG_USE_MUIC and CONFIG_SAMSUNG_MUIC to fix build
+ae325a15aea 2023-03-06 html6405: lineageos_n8000_defconfig: remove doubled CONFIG_KEYBOARD_XTKBD
+6f659368b4e 2023-03-06 html6405: lineageos_n8000_defconfig: reduce ION heap to 102400
+6e79b366d00 2023-02-21 html6405: lineageos_i9300_defconfig: increase ION heap to 143360
+ab56cfcd5d9 2023-02-21 html6405: lineageos_i9300_defconfig: disable CONFIG_USE_MUIC and CONFIG_SAMSUNG_MUIC to fix build
+5caa4472eac 2023-02-14 html6405: lineageos_n5100_defconfig: increase ION heap to 143360
+f2529ec514a 2023-02-02 html6405: lineageos_n5100_defconfig: update defconfig
+73d671e1fdb 2023-02-02 html6405: mdnie_table_kona.h: import from lineageos-19.1 branch
+656b85753d9 2023-02-02 html6405: drivers/misc: Makefile: build max77693-muic
+8f10e9838b0 2022-10-22 Peter Schelchshorn: lineageos_i9300_defconfig: enable debugging info
+de0132ec767 2023-01-15 html6405: lineageos_i9300_defconfig: set PEGASUSQ as default governor
+8ed9b208ce0 2023-01-08 Peter Schelchshorn: lineageos_n8000_defconfig: set PEGASUSQ as default governor
+83c63a70445 2023-01-08 Peter Schelchshorn: sec_battery_px.c: remove direct HZ references, __pm_wakeup_event expects milliseconds
+6d9da963367 2023-01-01 Peter Schelchshorn: midas_wm1811.c: stop stuttering down the whole system on A13
+980025bb9ab 2023-01-01 Peter Schelchshorn: lineageos_n8000_defconfig: disable modules
+e0305d8f0b7 2023-01-01 Peter Schelchshorn: module.c: remove unused finished_loading function
+52aab849567 2023-01-01 Peter Schelchshorn: module.c: remove unused *old variable
+9add954c099 2023-01-01 Peter Schelchshorn: sec_jack.c: remove unused *pdata variable
+6db388c9f55 2023-01-01 Peter Schelchshorn: Revert "lineageos_n8000_defconfig: disable CONFIG_SEC_DEV_JACK"
+a49dbe0bef2 2022-11-07 Peter Schelchshorn: sec_keyboard.c: wake up device when connecting, disconnecting and when pressing any button. This is needed only needed for A13.
+0f98b1b11f6 2022-11-06 Peter Schelchshorn: anykernel_boeffla-n8000: anykernel.sh: allow to be flashed on a n8010
+efc96a93899 2022-11-06 Peter Schelchshorn: lineageos_n8000_defconfig: disable CONFIG_SEC_DEV_JACK
+28626fed065 2022-11-05 Peter Schelchshorn: sec_jack.c: __pm_wakeup_event expects milliseconds
+6c8d0553f8d 2022-10-24 html6405: lineageos_n8013_defconfig: update defconfig
+35fa7f84e93 2022-10-22 Peter Schelchshorn: mach-p4notepq.c: fix hard lockup
+c5dba7b088c 2022-10-22 Peter Schelchshorn: lineageos_n8000_defconfig: enable debugging info
+0d40c22d2cb 2022-10-21 Peter Schelchshorn: anykernel_boeflla-n8000: fix device name
+891a20e9d22 2022-10-21 Peter Schelchshorn: lineageos_n8000_defconfig: update defconfig
+87a4294ac75 2022-08-24 nyyu: BACKPORT random: replace non-blocking pool with a Chacha20-based CRNG
+4e955d6a34f 2014-08-26 Daniel Borkmann: random: add and use memzero_explicit() for clearing data
+9d23de653c8 2015-07-16 Martin Willi: crypto: chacha20 - Export common ChaCha20 helpers
+3e37247f6f5 2015-06-01 Martin Willi: crypto: chacha20 - Add a generic ChaCha20 stream cipher implementation
+08f2c32524e 2013-03-04 Theodore Ts'o: random: fix locking dependency with the tasklist_lock
+ea394495722 2012-10-15 Jiri Kosina: random: make it possible to enable debugging without rebuild
+143c7538d55 2012-11-06 Jarod Wilson: random: prime last_data value per fips requirements
+1a3234ac6ce 2012-10-15 Jiri Kosina: random: fix debug format strings
+3ac7a3f39c1 2011-07-17 Thomas Gleixner: locking: Various static lock initializer fixes
+d4a9478aa01 2014-06-14 Torsten Duwe: random: add_hwgenerator_randomness() for feeding entropy from devices
+423491f4313 2022-09-27 html6405: lineageos_n7100_defconfig: disable CONFIG_NETFILTER_XT_MATCH_QTAGUID to fix "qtaguid: iface_stat: stat_update() lo not found"
+ddd793e057f 2022-09-21 html6405: lineageos_n7100_defconfig: enable debugging
+bac342fb4af 2022-09-18 Peter Schelchshorn: platform: hack: ignore failed inserting resources for mdm_hsic_pm0 and mdm2_modem devices.
+80c05da2576 2022-09-17 Peter Schelchshorn: mach-exynos: drop sources for CONFIG_SEC_DEBUG
+776cf83af4e 2022-09-17 Peter Schelchshorn: lineageos_t0lte_defconfig: enable debugging
+2b16299dc85 2022-09-17 Peter Schelchshorn: qcserial: add support for MDM9x15 modem
+4e3a874544d 2022-09-17 Peter Schelchshorn: make-koffee.sh: create support for t0lte
+5637ca555d5 2022-09-17 Peter Schelchshorn: lineageos_t0lte_defconfig: update from lineageos_n7100_defconfig
+26b0f3e8957 2022-09-17 Peter Schelchshorn: lineageos_n7100_defconfig: disable CONFIG_RT_GROUP_SCHED
+d8e1835b7f8 2022-09-16 html6405: Revert "lineageos_i9300_defconfig: enable cgroup subsystems"
+4ab0820164f 2018-09-30 Dominggoes Isakh: cypress-touchkey: Switch from wakelocks to wakeup sources
+839c00d3aa0 2022-09-09 html6405: lineageos_i9300_defconfig: disable CONFIG_RT_GROUP_SCHED
+952f956eda1 2022-09-08 html6405: Revert "lineageos_i9300_defconfig: display boot log"
+89d9737a47f 2022-09-07 html6405: lineageos_i9300_defconfig: display boot log
+d470bc0f429 2022-09-07 html6405: lineageos_i9300_defconfig: enable cgroup subsystems
+f6e3b696eea 2022-09-03 Peter Schelchshorn: lineageos_n7100_defconfig: CONFIG_TCP: disable modules
+cf96e18388f 2022-09-03 Peter Schelchshorn: Makefile: add -fno-pic to KBUILD_CFLAGS_MODULE
+8a8c7db81ee 2022-09-02 html6405: lineageos_n8013_defconfig: update defconfig
+0406cb02b32 2022-08-30 html6405: drivers: net: usb: bring back MSM_RMNET_USB
+40a3bdb9cd4 2022-06-21 html6405: MDM: Modem: Merge changes from GT-N7105_EUR_KK_Opensource
+949ac6275e7 2022-08-30 html6405: lineageos_i9300_defconfig: update from lineage_n7100_defconfig
+941de33606d 2022-08-30 html6405: s3cfb_s6e8aa0.c: remove s6e8ax0_suspended and dev_attr_brightness_config reference to fix build.
+a72db49bc81 2020-01-13 Dominggoes Isakh: mdnie: Add dummy outdoor tables for m0
+1007bbd1fa0 2022-04-12 html6405: sound: boeffla audio: treat kona devices like p4note.
+6feee4daa65 2022-04-12 html6405: sound: make boeffla audio support also for kona devices.
+6c7427fd78b 2022-08-30 html6405: Revert "boeffla_sound: implement incall boost"
+9f83e56b743 2018-02-11 Samuel Pascua: boeffla_sound: implement incall boost
+783e7cbd96f 2014-09-24 andip71: Boeffla Sound: Fixed bug in improved sysfs input validation
+fa6f5bf0fa0 2014-09-22 andip71: Boeffla Sound: Improved sysfs input validation
+423bd898006 2014-02-10 andip71: Boeffla-Sound: Engine 1.6.6
+f1e8ac2fbd5 2014-01-14 andip71: Boeffla-Sound: Engine 1.6.5
+e88aa66b0de 2013-08-26 andip71: Boeffla-Sound: Engine 1.6.4
+a01ee2b137d 2013-08-21 andip71: Boeffla-Sound: Engine 1.6.3
+5c33c371779 2013-05-29 yank555-lu: Boeffla Sound: FM radio not available with LTE models
+992a86ec00c 2013-01-04 andip71: Boeffla-Sound: Engine 1.6.0
+9283b4ed1d3 2022-08-28 Peter Schelchshorn: lineageos_n7100_defconfig: disable CONFIG_USB_ACM usb modem to fix RIL.
+58ac8cd22db 2022-08-28 Peter Schelchshorn: drivers: net: mac80211: partly revert to lineage-16-i9100-rebase state.
+251607d64e2 2022-08-28 Peter Schelchshorn: net: wireless: util.c: revert cfg80211_classify8021d to lineage-16.0-i9100-rebase state
+5a60d0fca62 2022-08-28 Peter Schelchshorn: mac80211: sta_info.C revert to: "mac80211: use del_timer_sync for final sta cleanup timer deletion"
+78b50175751 2022-08-28 Peter Schelchshorn: lineageos_n7100_defconfig: enable configs for kali nethunter
+4b8a3e326e3 2022-08-28 Peter Schelchshorn: lineageos_n7100_defconfig: enable exfat support.
+11029d98b93 2020-02-11 Dominggoes Isakh: cypress-touchkey: BLN: Disable BLN when blink brightness is set to 0
+ab45e3ce034 2020-02-11 Dominggoes Isakh: cypress-touchkey: BLN: Calculate correct brightness from RGB
+3b88f0e3fa2 2013-07-03 Oleg Nesterov: signals: eventpoll: do not use sigprocmask()
+1d0f42270d6 2013-05-01 Colin Cross: futex: Use freezable blocking call
+c1ad8572fff 2016-02-04 Johannes Berg: ipv6: add option to drop unsolicited neighbor advertisements
+32055aaf8d2 2015-04-09 Johannes Berg: ipv4: add option to drop gratuitous ARP packets
+28a88cc2deb 2015-04-09 Johannes Berg: ipv6: add option to drop unicast encapsulated in L2 multicast
+bc3f041d434 2015-04-09 Johannes Berg: ipv4: add option to drop unicast encapsulated in L2 multicast
+214db308ec5 2022-08-27 Peter Schelchshorn: sched.h: remove NICE_TO_PRIO and PRIO_TO_NICE definitions, let's use tha macros from prio.h
+f22150862e5 2021-07-16 html6405: Partly restore old sec_battery_alarm function.
+38a37a5e1c6 2018-10-01 Dominggoes Isakh: power_supply_core: Switch from wakelocks to wakeup sources
+acfd1882210 2018-09-30 Dominggoes Isakh: max17042_fuelgauge_u1: Switch from wakelocks to wakeup sources
+20fc3490fbd 2018-09-30 Dominggoes Isakh: sec_battery_u1: Switch from wakelocks to wakeup sources
+faa5b7805da 2018-09-30 Dominggoes Isakh: max17042: Switch from wakelocks to wakeup sources
+9185304c2c5 2018-09-30 Dominggoes Isakh: mmc: Switch from wakelocks to wakeup sources
+2e4da84de2f 2018-09-30 Dominggoes Isakh: s3c_udc_otg: Switch from wakelocks to wakeup sources
+747bbe87d7b 2022-08-27 Peter Schelchshorn: scripts: kconfig: add missing zconf.hash.c file
+d4bf25ee21a 2022-08-20 Peter Schelchshorn: make-koffee.sh: update build script to build for n8000.
+18475f02ab2 2022-08-26 html6405: lineageos_n8013_defconfig: update from lineageos_n7100_defconfig
+bd7a5804c1e 2021-10-09 html6405: cpufreq.c: set 1600MHz at boot for t0lte devices.
+45d1eae4df5 2018-09-30 Dominggoes Isakh: shost: Switch from wakelocks to wakeup sources
+256416b9e58 2018-09-30 Dominggoes Isakh: exynos_ss_udc: Switch from wakelocks to wakeup sources
+5bdbc4d43e6 2018-09-30 Dominggoes Isakh: bcm4330: Switch from wakelocks to wakeup sources
+0a26a97a602 2021-03-02 Dominggoes Isakh: cpufreq: Fix voltage control for Exynos 4210
+cbd3dc757c8 2013-02-24 andip71: mali: add GPU overclocking frequencies
+3545bff7075 2014-01-06 andip71: mali: GPU control corrections
+aad7c073427 2020-08-20 Dominggoes Isakh: cpufreq-4210: Allow OC up to 1400Mhz for 1200Mhz CPU
+b94d43f1360 2020-08-20 Dominggoes Isakh: cpufreq-4x12: Fix faulty/missing voltages 1704Mhz
+0795e133301 2018-01-06 pascua28: cpufreq: Dynamic voltage stepping
+65db3e94ed3 2013-02-19 andip71: cpufreq: CPU undervolting interface
+e6daac51939 2020-07-15 Dominggoes Isakh: cpufreq-4x12: Add support up to 1704Mhz
+921a1d446c9 2022-08-26 html6405: drivers: sensorhub: atmel: import from lineageos-19.1 branch to fix all sensors.
+b3945018df9 2022-08-25 html6405: lineageos_n7100_defconfig: update from lineageos-19.1 branch.
+e25460bd387 2022-08-25 html6405: fs: cifs: fix wrong reference, change midState to mid_state
+e1e24d5c4e2 2022-08-25 html6405: lineageos_n7100_defconfig: enable CONFIG_CRYPTO_USER
+2937d6bf54b 2020-07-06 Dominggoes Isakh: mdnie: Apply mdnie settings when resuming, except for EXYNOS4210
+7f465971060 2013-10-25 Eric Dumazet: tcp: gso: fix truesize tracking
+4ac8316a3a4 2013-11-13 Eric Dumazet: tcp: tsq: restore minimal amount of queueing
+e5840e73447 2013-09-27 Eric Dumazet: tcp: TSQ can use a dynamic limit
+ed5760570ca 2013-05-15 Eric Dumazet: tcp: gso: do not generate out of order packets
+ce5030886dc 2013-04-13 Eric Dumazet: tcp: tcp_tso_segment() small optimization
+3a0d3b7e244 2013-04-12 Eric Dumazet: tcp: GSO should be TSQ friendly
+9861b7023fc 2012-07-11 Eric Dumazet: tcp: TCP Small Queues
+69dff200881 2014-03-14 Eric W. Biederman: net: Replace u64_stats_fetch_begin_bh to u64_stats_fetch_begin_irq
+20d98c99f38 2011-06-21 stephen hemminger: xen: convert to 64 bit stats interface
+4f12636558c 2015-05-21 Eric Dumazet: tcp: fix a potential deadlock in tcp_get_info()
+d2b0effee5c 2015-05-20 Marcelo Ricardo Leitner: tcp: add tcpi_segs_in and tcpi_segs_out to tcp_info
+b13cb2e8863 2015-04-28 Eric Dumazet: tcp: add tcpi_bytes_received to tcp_info
+1eb62f8aa85 2015-04-28 Eric Dumazet: tcp: add tcpi_bytes_acked to tcp_info
+11d4187951c 2014-02-13 Eric Dumazet: tcp: add pacing_rate information into tcp_info
+4b7ea0b75fc 2013-09-29 Eric Dumazet: net: add missing sk_max_pacing_rate doc
+b043b6f1c37 2013-09-24 Eric Dumazet: net: introduce SO_MAX_PACING_RATE
+48c87800b02 2013-08-27 Eric Dumazet: tcp: TSO packets automatic sizing
+14a9674992d 2014-01-02 Li RongQing: ipv6: fix the use of pcpu_tstats in ip6_tunnel
+32387acb1da 2013-10-08 John Stultz: net: Explicitly initialize u64_stats_sync structures for lockdep
+e185fbec3cb 2013-02-05 Stephen Hemminger: tcp: remove Appropriate Byte Count support
+519f83992e2 2012-04-12 stephen hemminger: tunnel: implement 64 bits statistics
+278cf75d2cd 2021-03-12 Dominggoes Isakh: Revert "selinux: rate-limit netlink message warnings in selinux_nlmsg_perm()"
+cc7ff92134d 2020-04-28 Paul Moore: selinux: properly handle multiple messages in selinux_netlink_send()
+c58a7adbf18 2015-12-24 Vladis Dronov: selinux: rate-limit netlink message warnings in selinux_nlmsg_perm()
+f294a7ea803 2015-06-04 Marek Milkovic: selinux: Print 'sclass' as string when unrecognized netlink message occurs
+618b4f58cd8 2014-11-12 Richard Guy Briggs: selinux: convert WARN_ONCE() to printk() in selinux_nlmsg_perm()
+ac17545289d 2014-09-18 Richard Guy Briggs: selinux: cleanup error reporting in selinux_nlmsg_perm()
+70a79f5df52 2013-03-27 Hong zhi guo: selinux: replace obsolete NLMSG_* with type safe nlmsg_*
+dc5e2c86930 2012-06-26 David S. Miller: selinux: netlink: Move away from NLMSG_PUT().
+4adcd3357bb 2013-05-23 singhome_lee: Avoid to create duplicate filename for misc devices.
+cdf2581121a 2013-11-12 Oleg Nesterov: list: introduce list_next_entry() and list_prev_entry()
+604d5021f52 2019-08-31 Russell King: ARM: mm: fix alignment handler faults under memory pressure
+9baa89dec6f 2013-07-18 Ben Dooks: ARM: alignment: correctly decode instructions in BE8 mode.
+df9b3a8a612 2019-03-24 Luca Weiss: ipv4: Pass struct flowi4 directly to rt_fill_info
+952f6b3adf8 2012-09-06 Eric W. Biederman: scm: Don't use struct ucred in NETLINK_CB and struct scm_cookie.
+2a1ec3606ff 2012-11-16 Eric W. Biederman: net: Allow userns root to force the scm creds
+7710974b720 2012-05-23 Eric W. Biederman: userns: Convert net/core/scm.c to use kuids and kgids
+7b296840637 2012-03-14 Eric W. Biederman: userns: Replace user_ns_map_uid and user_ns_map_gid with from_kuid and from_kgid
+f6deaaad88e 2011-11-16 Eric W. Biederman: mqueue: Explicitly capture the user namespace to send the notification to.
+71708cb0adf 2012-02-08 Eric W. Biederman: userns: Store uid and gid values in struct cred with kuid_t and kgid_t types
+b0756aa1efa 2011-11-17 Eric W. Biederman: userns: Rework the user_namespace adding uid/gid mapping support
+c1ea864d418 2011-11-17 Eric W. Biederman: userns: Simplify the user_namespace by making userns->creator a kuid.
+d940c5668b1 2011-11-17 Eric W. Biederman: userns: Disassociate user_struct from the user_namespace.
+9a6f2efbef5 2011-11-16 Eric W. Biederman: userns: Add an explicit reference to the parent user namespace
+78dff327371 2011-11-16 Eric W. Biederman: cred: Refcount the user_ns pointed to by the cred.
+43cb0f31158 2021-11-25 Eric Dumazet: tcp: fix more NULL deref after prequeue changes
+45e41deb090 2014-11-25 Eric Dumazet: tcp: fix possible NULL dereference in tcp_vX_send_reset()
+91fb461d9ed 2017-02-24 Xin Long: ipv6: check sk sk_type and protocol early in ip_mroute_set/getsockopt
+db0cda5414a 2012-11-25 Eric Dumazet: ipv4: ipmr: various fixes and cleanups
+af54c47c26f 2021-11-25 Lorenzo Colitti: net: inet: Support UID-based routing in IP protocols.
+626fe851f90 2015-03-15 Eric Dumazet: net: add sk_fullsock() helper
+9852b779f0b 2012-06-15 David S. Miller: ipv6: Fix types of ip6_update_pmtu().
+4504d00bd4c 2021-11-25 David S. Miller: ipv6: Handle PMTU in ICMP error handlers.
+abbe01c1e51 2011-12-22 stephen hemminger: netlink: af_netlink cleanup (v2)
+a96bb887890 2021-04-04 Dominggoes Isakh: Copied some code from android_kernel_samsung_msm8226 for SCM_CREDENTIAL
+36932eae600 2021-04-04 Dominggoes Isakh: Revert "get rid of ->scm_work_list"
+a090d8ced80 2014-06-26 Vinay Krishna Eranna: netlink: Queue the kernel socket after setting the flag
+a430ea30eb5 2012-12-15 Hannes Frederic Sowa: netlink: validate addr_len on bind
+d208cd828d0 2011-08-22 Tim Chen: Scm: Remove unnecessary pid & credential references in Unix socket's send and receive path
+3fdd872a502 2016-11-04 Lorenzo Colitti: net: core: Add a UID field to struct sock.
+94ea929a537 2016-12-30 Eric Biggers: net: socket: don't set sk_uid to garbage value in ->setattr()
+30501bc0c25 2016-11-04 Lorenzo Colitti: net: core: Add a UID field to struct sock.
+b88fe9e18f3 2012-08-29 Masatake YAMATO: net: Providing protocol type via system.sockprotoname xattr of /proc/PID/fd entries
+66941515547 2015-07-24 Sabrina Dubroca: BACKPORT: tcp: fix recv with flags MSG_WAITALL | MSG_PEEK
+24987f081d4 2013-09-22 Joe Perches: BACKPORT: sock.h: Remove extern from function prototypes
+75b9315e35f 2013-04-14 Daniel Borkmann: BACKPORT: net: sock: make sock_tx_timestamp void
+3e830141557 2012-05-17 Eric Dumazet: BACKPORT: net: include/net/sock.h cleanup
+e85d3e1bd4f 2012-05-08 Pablo Neira Ayuso: netfilter: remove ip_queue support
+fa3cf5271aa 2015-06-04 Stephen Smalley: selinux: update netlink socket classes
+3d8fedac3e7 2015-06-04 Stephen Smalley: selinux: Remove unused permission definitions
+887bbd2f2fd 2022-08-25 html6405: lineageos_n7100_defconfig: disable CGOUP_DEBUG
+9465904530d 2021-04-05 Dominggoes Isakh: af_unix: Missing unix_sock_inherit_flags
+f87c3a87777 2022-08-25 html6405: Revert "Revert "selinux: nlmsgtab: add SOCK_DESTROY to the netlink mapping tables""
+5bc179dc00c 2012-09-06 John Stultz: PM / wakeup: Use irqsave/irqrestore for events_lock
+3c3ff7e48ef 2017-07-24 Greg Hackmann: alarmtimer: don't rate limit one-shot timers
+e9cb015d13e 2017-05-30 Thomas Gleixner: alarmtimer: Rate limit periodic intervals
+c08fb83a3b5 2018-07-02 Thomas Gleixner: alarmtimer: Prevent overflow for relative nanosleep
+c7879064a15 2012-09-13 John Stultz: alarmtimer: Rename alarmtimer_remove to alarmtimer_dequeue
+b3414ab477f 2013-12-18 Manu Gautam: USB: android: Fix crash when F_FS gets descriptors before it is enabled
+422563d0ddf 2013-05-28 Pavankumar Kondeti: USB: android: Fix a NULL pointer dereference
+da2d36c6f9c 2012-08-02 Ido Shayevitz: usb: gadget: Add support for more than one configuration in android gadget
+ac589ede7a0 2020-08-19 Dominggoes Isakh: Revert "usb: gadget: Add support for more than one configuration in android gadget"
+e40f80dde9a 2016-06-15 Daniel Micay: add toggle for disabling newly added USB devices
+c1216175248 2021-02-20 html6405: Enable fast charging for USB and AC charging.
+b1e3aae6cb1 2021-07-24 html6405: Implement dummy outdoor tables for p4note devices.
+5c7e6fe696b 2011-11-17 Eric W. Biederman: userns: Use cred->user_ns instead of cred->user->user_ns
+40fa6d5efb0 2012-06-24 Al Viro: get rid of ->scm_work_list
+370559f6558 2020-12-22 Dominggoes Isakh: Revert "net: fix incorrect credentials passing"
+fbe9d6fc808 2022-08-24 html6405: Revert "tmpfs: fix shared mempolicy leak"
+3d95f8cc775 2022-08-24 html6405: Revert "splice: fix racy pipe->buffers uses"
+05a315b551d 2022-08-24 html6405: lineageos_n7100_defconfig: update DM_VERITY and LOW_MEMORY_KILLER configs.
+0e91afbf3c5 2012-07-27 majianpeng: dm: replace simple_strtoul
+9ff9fef7074 2012-07-27 Joe Thornber: dm: remove unused flush target method
+c0949832118 2010-06-09 Will Drewry: CHROMIUM: dm: boot time specification of dm=
+09402dde46a 2015-02-27 Mikulas Patocka: dm: hold suspend_lock while suspending device during device deletion
+0080aebe413 2015-02-17 Mikulas Patocka: dm: fix a race condition in dm_get_md
+04ddd825171 2014-01-06 Mikulas Patocka: dm: wait until embedded kobject is released before destroying a device
+86a88b79683 2013-10-31 Mikulas Patocka: dm: allocate buffer for messages with small number of arguments using GFP_NOIO
+94d61adb018 2013-08-28 Dave Chinner: list: add a new LRU list type
+4f21f96fcd6 2018-01-23 Gustavo A. R. Silva: android: binder: Use true and false for boolean values
+2b33807d40e 2017-11-27 Todd Kjos: binder: fix proc->files use-after-free
+ca4bed49a98 2021-05-06 Luca Stefani: binder: Return EFAULT if we fail BINDER_ENABLE_ONEWAY_SPAM_DETECTION
+f628971cce8 2020-10-26 Zhang Qilong: binder: change error code from postive to negative in binder_transaction
+f01aa8d3adb 2020-10-09 Todd Kjos: binder: fix UAF when releasing todo list
+0d5a3bf08e7 2019-07-15 Hridya Valsaraju: binder: prevent transactions to context manager from its own process.
+aeafa2b10d8 2021-08-30 Todd Kjos: binder: make sure fd closes complete
+1ab84fb22e2 2020-07-18 Randy Dunlap: android: binder.h: drop a duplicated word
+0c8a803e1f4 2021-09-10 Li Li: binder: fix freeze race
+587edaec883 2021-04-09 Hang Lu: binder: tell userspace to dump current backtrace when detected oneway spamming
+0c5660f137e 2021-03-15 Marco Ballesio: binder: BINDER_GET_FROZEN_INFO ioctl
+7f5b2118cf2 2021-03-15 Marco Ballesio: binder: BINDER_FREEZE ioctl
+94de94b18b6 2012-07-24 seungho1.park: android: lowmemorykiller: add lmk parameters tunning code.
+8e14d005805 2022-08-24 html6405: Revert "Revert "Remove ENHANCED_LMK_ROUTINE added by Samsung""
+99592f2b400 2022-08-24 html6405: Revert "Revert "lowmemorykiller: fixes for new oom_score_adj""
+c0f2819e42b 2022-08-24 html6405: Revert "Revert "lowmemorykiller: maintain LMK rbtree with signal->adj_node""
+c6e1a63a5bc 2022-08-24 html6405: Revert "Revert "drivers:lmk: Fix null pointer issue""
+e4825519c4f 2022-08-24 html6405: Revert "Revert "drivers:lmk: Fix double delete issue""
+3f61dfe1489 2022-08-24 html6405: Revert "Revert "staging:android:lmk: read rb tree root with spinlock""
+a046cfcff4b 2022-08-24 html6405: Revert "Revert "staging: android: lowmemorykiller: select a new task to kill""
+70727c9b9de 2022-08-24 html6405: Revert "Revert "staging: android: lowmemorykiller: implement task's adj rbtree""
+06eeee12522 2022-08-24 html6405: Revert "Revert "staging: android: lowmemorykiller: fix build breakage on kernel 3.0""
+4bb13dd8beb 2022-08-24 html6405: Revert "Revert "lowmemorykiller: make default lowmemorykiller debug message useful""
+3d553eeb2c3 2022-08-24 html6405: Revert "Revert "staging: android: lowmemorykiller: Change default debug_level to 1""
+76a03187d7d 2022-08-24 html6405: Revert "Revert "staging: android: lowmemorykiller: Don't count reserved free memory""
+936b913c859 2022-08-24 html6405: Revert "Revert "staging: android: lowmemorykiller: Add config option to support oom_adj values""
+bc8cc51f38d 2022-08-24 html6405: Revert "Revert "Staging: android: lowmemorykiller.c""
+9d4a7b0932b 2022-08-24 html6405: Revert "Revert "staging: android, lowmemorykiller: convert to use oom_score_adj""
+4d47c226fb5 2022-08-24 html6405: Revert "Revert "staging: android/lowmemorykiller: Do not kill kernel threads""
+d92ed7402ae 2022-08-24 html6405: Revert "Revert "staging: android/lowmemorykiller: No need for task->signal check""
+959230edba3 2022-08-24 html6405: Revert "Revert "staging: android/lowmemorykiller: Better mm handling""
+83f3ae73a9f 2022-08-24 html6405: Revert "Revert "staging: android/lowmemorykiller: Don't grab tasklist_lock""
+75db967d73f 2022-08-24 html6405: Revert "Revert "Staging: android: fixed 80 characters warnings in lowmemorykiller.c""
+5c828ea1559 2022-08-24 html6405: Revert "lowmemorykiller: update from Chrono Kernel"
+a994f16b9bc 2022-08-24 html6405: Revert "lmk: set debug level to 2"
+f754c170924 2009-05-12 Daniel Walker: fs.h: create static inline struct inode *file_inode(struct file *f) for memfd backport.
+deb19d19e31 2014-08-08 Russell King: ARM: wire up getrandom syscall
+d38b75057e5 2012-10-16 Kees Cook: ARM: add finit_module syscall to ARM
+b66864e1961 2012-10-15 Kees Cook: module: add syscall to load module from fd
+8c5ecfa7077 2012-09-26 Rusty Russell: module: signature checking hook
+a1b130b214c 2013-02-28 Cyrill Gorcunov: ARM: 7665/1: Wire up kcmp syscall
+708ebb9c958 2012-06-01 Cyrill Gorcunov: syscalls, x86: add __NR_kcmp syscall
+58c1930114a 2014-08-09 Russell King: ARM: wire up memfd_create syscall
+c636f1848ff 2014-06-10 Kees Cook: ARM: add seccomp syscall
+b4a2ffaf2d8 2019-12-07 Dominggoes Isakh: shm: Add definitions from: "add sealing API"-commit
+04686a622d4 2014-08-08 David Herrmann: shm: add memfd_create() syscall
+1d3c59afbde 2013-09-17 Syed Rameez Mustafa: ARM: smp: fix incorrect per-cpu definition of regs_before_stop
+aa004e6f8aa 2013-08-08 Tingting Yang: ARM: smp: Save CPU registers before IPI_CPU_STOP processing
+b4987b846db 2012-07-26 Eric W. Biederman: userns: Allow unprivileged users to create new namespaces
+990f7480eba 2012-07-26 Eric W. Biederman: userns: Allow unprivileged use of setns.
+3099acc7d80 2017-12-22 Harsh Shandilya: BACKPORT: UPSTREAM: android: binder: Use octal permissions
+e74af8fa777 2017-08-21 Christian Brauner: [BACKPORT]: binder: free memory on error
+b6e4bf026a6 2018-05-07 Minchan Kim: BACKPORT: UPSTREAM: ANDROID: binder: change down_write to down_read
+b1b6b59ff38 2018-08-13 Sherry Yang: [BACKPORT]android: binder: no outgoing transaction when thread todo has transaction
+e5019bb40b1 2019-06-12 Todd Kjos: binder: fix possible UAF when freeing buffer
+c66b6aae33e 2019-04-24 Todd Kjos: UPSTREAM: binder: check for overflow when alloc for security context
+6158ab5c206 2018-11-06 Todd Kjos: UPSTREAM: binder: fix race that allows malicious free of live buffer
+10b394192f2 2019-07-09 Martijn Coenen: BACKPORT: binder: Set end of SG buffer area properly.
+147d3147454 2019-01-14 Todd Kjos: FROMGIT: binder: create node flag to request sender's security context
+62ce099a0ef 2014-09-04 Victor Kamensky: ARM: 8137/1: fix get_user BE behavior for target variable with size of 8 bytes
+5051486b060 2015-12-05 Russell King: UPSTREAM: ARM: fix uaccess_with_memcpy() with SW_DOMAIN_PAN
+9086197b787 2015-08-19 Russell King: BACKPORT: ARM: uaccess: provide uaccess_save_and_enable() and uaccess_restore()
+6d471d0fd23 2012-06-15 Will Deacon: ARM: 7425/1: extable: ensure fixup entries are 4-byte aligned
+4af75a86b32 2018-03-28 Martijn Coenen: UPSTREAM: ANDROID: binder: prevent transactions into own process.
+64f9c75ef01 2018-02-16 Martijn Coenen: UPSTREAM: ANDROID: binder: synchronize_rcu() when using POLLFREE.
+3d2dff05732 2018-01-05 Martijn Coenen: UPSTREAM: ANDROID: binder: remove waitqueue when thread exits.
+af89a0012e7 2017-12-20 Martijn Coenen: ANDROID: binder: Remove obsolete proc waitqueue.
+0d2632dd29d 2017-11-27 Martijn Coenen: UPSTREAM: android: binder: fix type mismatch warning
+fa9422d9d6a 2017-11-14 Martijn Coenen: ANDROID: binder: clarify deferred thread work.
+36b78105b21 2017-10-19 Martijn Coenen: ANDROID: binder: Add thread->process_todo flag.
+6e27582d17d 2017-09-26 Ganesh Mahendran: ANDROID: binder: fix node sched policy calculation
+acde949b152 2017-09-27 Ganesh Mahendran: ANDROID: binder: init desired_prio.sched_policy before use it
+7b1b2b554e9 2017-08-24 Martijn Coenen: ANDROID: binder: fix transaction leak.
+be041325918 2017-05-08 Martijn Coenen: ANDROID: binder: Add tracing for binder priority inheritance.
+e063f96cc87 2017-09-25 Todd Kjos: FROMLIST: binder: fix use-after-free in binder_transaction()
+a2baf6b5920 2017-03-22 Tim Murray: binder: make FIFO inheritance a per-context option
+69be42e499f 2017-09-05 Xu YiPing: FROMLIST: binder: fix an ret value override
+8e088f1c39c 2017-05-22 Xu YiPing: FROMLIST: binder: fix memory corruption in binder_transaction binder
+33e1e3181c0 2013-07-03 Andrew Morton: include/linux/mm.h: add PAGE_ALIGNED() helper
+6707da570ea 2017-08-03 Sherry Yang: FROMLIST: android: binder: Move buffer out of area shared with user space
+2847e82bd0d 2017-06-30 Sherry Yang: FROMLIST: android: binder: Refactor prev and next buffer into a helper function
+e71400b6c23 2017-06-22 Sherry Yang: FROMLIST: android: binder: Add allocator selftest
+74aa7f9249e 2017-08-10 Martijn Coenen: ANDROID: binder: don't queue async transactions to thread.
+3ca86700937 2017-08-10 Martijn Coenen: ANDROID: binder: don't enqueue death notifications to thread todo.
+5b0fc5deeb3 2017-08-10 Martijn Coenen: ANDROID: binder: call poll_wait() unconditionally.
+2ae6f1e2b4c 2017-07-27 Martijn Coenen: ANDROID: binder: Don't BUG_ON(!spin_is_locked()).
+15474e9437d 2017-05-26 Martijn Coenen: ANDROID: binder: don't check prio permissions on restore.
+9c4c84a9a9d 2017-06-20 Colin Cross: Add BINDER_GET_NODE_DEBUG_INFO ioctl
+60db17e4a4c 2017-06-23 Martijn Coenen: ANDROID: binder: add RT inheritance flag to node.
+09a8d70c73f 2017-06-07 Martijn Coenen: ANDROID: binder: improve priority inheritance.
+7351e313dce 2017-06-07 Martijn Coenen: ANDROID: binder: add min sched_policy to node.
+c85c7629eaf 2017-06-06 Martijn Coenen: ANDROID: binder: add support for RT prio inheritance.
+131a2c2f070 2014-05-08 Dongsheng Yang: sched: Consolidate open coded implementations of nice level frobbing into nice_to_rlimit() and rlimit_to_nice()
+8348f33efea 2014-02-11 Dongsheng Yang: sched/prio: Add 3 macros of MAX_NICE, MIN_NICE and NICE_WIDTH in prio.h
+e13190c7b5c 2014-02-11 Dongsheng Yang: sched/prio: Use DEFAULT_PRIO to define NICE_TO_PRIO() and PRIO_TO_NICE()
+839a58dc5e6 2014-01-27 Dongsheng Yang: sched: Expose some macros related to priority
+b965d3e26fc 2014-01-27 Dongsheng Yang: sched: Move the priority specific bits into a new header file
+f0bf8856984 2017-06-06 Martijn Coenen: ANDROID: binder: push new transactions to waiting threads.
+17f8d2dad5d 2017-06-02 Martijn Coenen: ANDROID: binder: remove proc waitqueue
+746aed51dab 2016-11-14 Todd Kjos: FROMLIST: binder: remove global binder lock
+93b1609a2ce 2017-05-22 Martijn Coenen: FROMLIST: binder: fix death race conditions
+9b7fba15ee0 2017-04-21 Todd Kjos: FROMLIST: binder: protect against stale pointers in print_binder_transaction
+ec335b1fd7f 2016-10-20 Todd Kjos: FROMLIST: binder: protect binder_ref with outer lock
+7c93099c458 2017-05-25 Todd Kjos: FROMLIST: binder: use inner lock to protect thread accounting
+610b88bba67 2017-06-02 Martijn Coenen: FROMLIST: binder: protect transaction_stack with inner lock.
+4b624ba31ca 2017-05-25 Todd Kjos: FROMLIST: binder: protect proc->threads with inner_lock
+1dfc0ab4172 2017-06-12 Todd Kjos: FROMLIST: binder: protect proc->nodes with inner lock
+b2a83432c61 2013-05-29 Jiri Pirko: list: introduce list_first_entry_or_null
+d73285e916a 2017-06-08 Todd Kjos: FROMLIST: binder: add spinlock to protect binder_node
+b49ccc6b59f 2016-10-20 Todd Kjos: FROMLIST: binder: add spinlocks to protect todo lists
+09bf56fe2a7 2017-03-21 Todd Kjos: FROMLIST: binder: use inner lock to sync work dq and node counts
+1348c48e14e 2017-05-29 Todd Kjos: FROMLIST: binder: introduce locking helper functions
+212a1643673 2017-05-09 Todd Kjos: FROMLIST: binder: use node->tmp_refs to ensure node safety
+a68bacbfc45 2017-05-08 Todd Kjos: FROMLIST: binder: refactor binder ref inc/dec for thread safety
+ddef576a83b 2017-05-12 Todd Kjos: FROMLIST: binder: make sure accesses to proc/thread are safe
+648d25e4da2 2017-05-26 Todd Kjos: FROMLIST: binder: make sure target_node has strong ref
+0c0e6e06011 2017-04-21 Todd Kjos: FROMLIST: binder: guarantee txn complete / errors delivered in-order
+ba974502789 2017-03-30 Todd Kjos: FROMLIST: binder: refactor binder_pop_transaction
+afb322a2c31 2017-05-24 Todd Kjos: FROMLIST: binder: use atomic for transaction_log index
+37571b815b6 2017-03-15 Martijn Coenen: FROMLIST: binder: add more debug info when allocation fails.
+42987f9243b 2017-04-21 Todd Kjos: FROMLIST: binder: protect against two threads freeing buffer
+c121489627d 2017-05-01 Todd Kjos: FROMLIST: binder: remove dead code in binder_get_ref_for_node
+8366cbf1e90 2017-01-06 Todd Kjos: FROMLIST: binder: don't modify thread->looper from other threads
+906497ef6a5 2017-05-09 Todd Kjos: FROMLIST: binder: avoid race conditions when enqueuing txn
+09b8fe7cceb 2017-05-24 Todd Kjos: FROMLIST: binder: refactor queue management in binder_thread_read
+8a3b40047f2 2013-03-12 Mirsal Ennaime: drivers: android: binder: Move the node release code to a separate function
+67fda7fcd51 2017-03-22 Todd Kjos: FROMLIST: binder: add log information for binder transaction failures
+7efaf5f8b0f 2017-05-25 Todd Kjos: FROMLIST: binder: make binder_last_id an atomic
+a0ca81bbb87 2016-10-13 Badhri Jagan Sridharan: FROMLIST: binder: change binder_stats to atomics
+ab740dd336a 2016-10-17 Todd Kjos: FROMLIST: binder: add protection for non-perf cases
+eb7f3c63956 2017-05-24 Todd Kjos: FROMLIST: binder: remove binder_debug_no_lock mechanism
+48116d6bd36 2016-10-10 Todd Kjos: FROMLIST: binder: move binder_alloc to separate file
+8877ff28c09 2022-08-24 html6405: binder: binder.c: fix build for kuid_t
+f125ecdeb70 2015-01-13 Christian Borntraeger: kernel: Change ASSIGN_ONCE(val, x) to WRITE_ONCE(x, val)
+175b6ca6e8e 2014-11-25 Christian Borntraeger: kernel: Provide READ_ONCE and ASSIGN_ONCE
+06348fe68f4 2016-10-10 Todd Kjos: FROMLIST: binder: separate out binder_alloc functions
+d90c9f3ae4e 2017-04-21 Todd Kjos: FROMLIST: binder: remove unneeded cleanup code
+f2649ffcc1a 2016-10-10 Todd Kjos: FROMLIST: binder: separate binder allocator structure from binder proc
+bbe4989992b 2015-09-01 Riley Andrews: FROMLIST: binder: Use wake up hint for synchronous transactions.
+e455bfa366a 2014-09-08 Dmitry Voytik: staging: binder: fix coding style issues
+b53a2d340bb 2014-09-03 William Panlener: staging: android: Break up a long line in binder_send_failed_reply
+65d37547d5a 2014-07-13 Lucas Tanure: staging: android: Clean up else statement from binder_send_failed_reply
+c14b4bce8a8 2014-06-03 Tair Rzayev: staging: android: binder.c: binder_ioctl() cleanup
+b3146386e72 2017-05-29 Todd Kjos: FROMLIST: binder: introduce locking helper functions
+d83365e06d5 2022-08-23 html6405: lineageos_n7100_defconfig: update defconfig.
+b88b3f1f9fc 2021-01-12 html6405: cpufreq: import zzmoove from lineageos-19.1 branch.
+5d445c23bdb 2022-08-22 html6405: tspdrv.c: switch from wake_lock to wakeup sources.
+da555a4a99f 2022-08-22 html6405: gpio_input.c: switch from wake_lock to wakeup sources.
+62dbfd7f17b 2022-08-22 html6405: gpio_matrix.c: switch from wake_lock to wakeup sources.
+8d574be74b1 2022-08-22 html6405: evdev.c: switch from wake_lock to wakeup sources.
+bc0466ed453 2022-08-22 html6405: host_notifier.c: switch from wake_lock to wakeup sources.
+b091261acdd 2022-08-22 html6405: dhd_linux.c: switch from wake_lock to wakeup sources.
+a71eb3d648f 2022-08-22 html6405: sec_jack.c: switch from wake_lock to wakeup sources.
+0a27cd4b1ca 2021-04-14 html6405: Add dummy outdoor tables for t0.
+34374d78f11 2022-08-23 html6405: drivers: media: video: samsung: remove s6e8ax0_suspende and s6e8ax0_fix_fence references.
+bbca0176ca1 2022-08-23 html6405: drivers: media: video: s5c73m3.c: switch from wake lock to wakeup sources.
+6ea16d020ad 2022-08-23 html6405: drivers: muic: max77693-muic_di.c: switch from wake lock to wakeup sources.
+47ac71e0acd 2022-08-23 html6405: drivers: muic: max77693-muic.c: switch from wake lock to wakeup sources.
+79dc3e01e30 2022-08-23 html6405: drivers: muic: max77693-muic_di.c: switch from wake lock to wakeup sources.
+09dc4973ee3 2022-08-23 html6405: drivers: sensorhub: atmel: ssp_sensorhub.c: switch from wake lock to wakeup sources.
+90196f046d9 2022-08-23 html6405: drivers: sensorhub: atmel: ssp_input.c: switch from wake lock to wakeup sources.
+f721e849c85 2022-08-23 html6405: drivers: sensorhub: atmel: ssp_dev.c: switch from early suspend to fb_notifier and from wake lock to wakeup source.
+b37be28d970 2022-08-23 html6405: drivers: sensorhub: atmel: ssp_sensorhub.h: switch from wakelock to wakeup sources.
+6114dd447fe 2022-08-23 html6405: drivers: sensorhub: atmel: ssp.h: switch from earlysuspend to fb notifier.
+00bb9ca7088 2022-08-23 html6405: Revert "power: autosleep: add powersuspend hook"
+4cd55606cef 2018-10-01 Dominggoes Isakh: process: Remove has_wake_lock check
+fa7017d7407 2012-03-28 Rafael J. Wysocki: PM / Sleep: Move disabling of usermode helpers to the freezer
+c21096582fe 2012-03-28 Rafael J. Wysocki: PM / Hibernate: Disable usermode helpers right before freezing tasks
+76019cdf01a 2022-08-22 html6405: Revert "PM: Add user-space wake lock api."
+0360bc26113 2013-02-06 Zhang Rui: PM: Introduce suspend state PM_SUSPEND_FREEZE
+897e0832354 2011-12-07 Srivatsa S. Bhat: PM / Sleep: Replace mutex_[un]lock(&pm_mutex) with [un]lock_system_sleep()
+f3812bf0afb 2013-01-15 yank555-lu: cpufreq: 1600MHz CPU OC
+925b56498d4 2019-06-27 Shilin Victor: pegasusq: fix stutterings on suspend / resume for SMDK4412
+a1c47836ed0 2021-10-29 html6405: s3cfb_s6evr02.c: struct lcd_info: switch from early suspend to fb_notifier callbacks.
+287d9851797 2021-10-29 html6405: s3cfb_ea8061.c: struct lcd_info: switch from early suspend to fb_notifier callbacks.

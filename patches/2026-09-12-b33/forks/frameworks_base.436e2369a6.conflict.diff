@@ -1,0 +1,70 @@
+diff --cc location/java/android/location/LocationResult.java
+index 67f47756984f,4fc40ab4cd63..000000000000
+--- a/location/java/android/location/LocationResult.java
++++ b/location/java/android/location/LocationResult.java
+@@@ -126,55 -106,13 +126,65 @@@ public final class LocationResult imple
+          final int size = mLocations.size();
+          for (int i = 0; i < size; ++i) {
+              Location location = mLocations.get(i);
+++<<<<<<< HEAD
+ +            if (Flags.locationValidation()) {
+ +                if (location.getLatitude() < -90.0
+ +                        || location.getLatitude() > 90.0
+ +                        || location.getLongitude() < -180.0
+ +                        || location.getLongitude() > 180.0
+ +                        || Double.isNaN(location.getLatitude())
+ +                        || Double.isNaN(location.getLongitude())) {
+ +                    throw new BadLocationException("location must have valid lat/lng");
+ +                }
+ +                if (!location.hasAccuracy()) {
+ +                    throw new BadLocationException("location must have accuracy");
+ +                }
+ +                if (location.getAccuracy() < 0 || location.getAccuracy() > MAX_ACCURACY_M) {
+ +                    throw new BadLocationException("location must have reasonable accuracy");
+ +                }
+ +                if (location.getTime() < 0) {
+ +                    throw new BadLocationException("location must have valid time");
+ +                }
+ +                if (prevElapsedRealtimeNs > location.getElapsedRealtimeNanos()) {
+ +                    throw new BadLocationException(
+ +                            "location must have valid monotonically increasing realtime");
+ +                }
+ +                if (location.getElapsedRealtimeNanos()
+ +                        > SystemClock.elapsedRealtimeNanos()) {
+ +                    throw new BadLocationException("location must not have realtime in the future");
+ +                }
+ +                if (!location.isMock()) {
+ +                    if (location.getProvider() == null) {
+ +                        throw new BadLocationException("location must have valid provider");
+ +                    }
+ +                    if (location.getLatitude() == 0 && location.getLongitude() == 0) {
+ +                        throw new BadLocationException("location must not be at 0,0");
+ +                    }
+ +                }
+ +
+ +                if (location.hasSpeed() && (location.getSpeed() < 0
+ +                        || location.getSpeed() > MAX_SPEED_MPS)) {
+ +                    Log.w(TAG, "removed bad location speed: " + location.getSpeed());
+ +                    location.removeSpeed();
+ +                }
+ +            } else {
+ +                if (!location.isComplete()) {
+ +                    throw new IllegalArgumentException(
+ +                            "incomplete location at index " + i + ": " + mLocations);
+ +                }
+ +                if (location.getElapsedRealtimeNanos() < prevElapsedRealtimeNs) {
+ +                    throw new IllegalArgumentException(
+ +                            "incorrectly ordered location at index " + i + ": " + mLocations);
+ +                }
+++=======
++             /* if (!location.isComplete()) {
++                 throw new IllegalArgumentException(
++                         "incomplete location at index " + i + ": " + mLocations);
++             }*/
++             if (location.getElapsedRealtimeNanos() < prevElapsedRealtimeNs) {
++                 throw new IllegalArgumentException(
++                         "incorrectly ordered location at index " + i + ": " + mLocations);
+++>>>>>>> 436e2369a65b (LocationResult.java: don't throw exception on incomplete location.)
+              }
+              prevElapsedRealtimeNs = location.getElapsedRealtimeNanos();
+          }

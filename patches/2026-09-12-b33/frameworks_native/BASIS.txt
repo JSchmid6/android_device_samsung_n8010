@@ -1,0 +1,20 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): 8d723cfc08c7f1940b5c9cfb2f07fcf9bab4a15a
+Branch n8010-b33 Spitze: 3d8557c4c9ce19184cd02fa29a3ae8b4f7467c6f
+
+3d8557c4c9 renderengine: gles: unconditionally skip PostRenderCleanup
+2b18ae9ce5 KeyLayoutMap.cpp: don't LOG_ALWAYS_FATAL_IF if there's no kernel config.
+a4855ebc6a Revert "Remove contention from Render Engine early return"
+1112a63b85 [UL] renderengine, gles: convert to c_str
+61cb75d887 [UL] renderengine,skia: fixup after 1607d39462b695da0ce9ac417f951e9dfa280b9b
+623a6a7872 Revert "Remove useFramebufferCache parameter in drawLayers()"
+ea1aeb6022 Revert "Delete GLESRenderEngine"
+ede6d0a90a Revert "Delete genTextures and deleteTextures from RenderEngine"
+58ca82eb43 Revert "RenderEngine, SF: gate HDR priming behind property"
+768500a5fe Revert "Split RenderEngineType into two enums"
+fc9ab7c719 Revert "vulkan_renderengine: Check for support first"
+3b36fef95d SurfaceFlinger: Disable SF HWC backpressure
+d308575a76 Disable gpuservice on old BPF-less kernel
+2cd4bd1574 Disable gpu service
+7356778b74 SurfaceFlinger: Don't cleanup resources from previous frame
+2cb2e3dffc libbinder: make threadpool shrinking non-fatal
+c0ce6a47ff n8010: lokale Aenderungen aus dem Build-Baum (Stand Build 32)

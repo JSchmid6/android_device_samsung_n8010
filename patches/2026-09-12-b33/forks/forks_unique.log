@@ -1,0 +1,256 @@
+=== bionic: 10 Fork-Commits, davon 9 ohne Gegenstueck bei uns
+    777991efe 2023-12-25 html6405: Revert "Rewrite renameat()."
+    b8347cc02 2019-12-10 Dominggoes Isakh: Hack: Ignore invalid pthread_t to %s
+    c3ad5e7a2 2019-12-10 Dominggoes Isakh: linker: Apply TARGET_PROCESS_SDK_VERSION_OVERRIDE on dlopen
+    37146fb23 2018-01-23 Roopesh Rajashekharaiah Nataraja: Add inaddr.h header file
+    92b1ad452 2021-03-20 Danny Lin: Switch to jemalloc memory allocator
+    932094c95 2018-09-25 Ethan Chen: bionic: Squash of pre-P mutex behavior restoration
+    5fa88fcd4 2020-01-16 Tom Marshall: bionic: Support wildcards in cached hosts file
+    31754a987 2016-06-17 Tom Marshall: bionic: Sort and cache hosts file data for fast lookup
+    bb8f2d6b1 2018-08-29 Danny Baumann: Implement per-process target SDK version override.
+=== system/core: 8 Fork-Commits, davon 7 ohne Gegenstueck bei uns
+    c22ee608c 2024-01-05 html6405: healthd_mode_charger: Allow home, volume up and down keys to wake up and boot the device while charging
+    715ec0952 2020-03-08 Shilin Victor: init: reboot to recovery on fatal errors
+    620093a90 2023-11-29 Yaroslav Zviezda: Revert "remove inprocess tethering"
+    b0e446492 2021-12-28 Yaroslav Zviezda: Revert "libprocessgroup: switch freezer to cgroup v2"
+    783011c01 2023-02-20 Yaroslav Zviezda: reboot must be fast on legacy too
+    f06a3ae10 2015-06-24 Sauhard Pande: Camera: Add feature extensions
+    3747b8ce6 2022-10-26 Pierre-Hugues Husson: Fix support for devices without cgroupv2 support
+=== system/vold: 1 Fork-Commits, davon 1 ohne Gegenstueck bei uns
+    c4f01a8 2024-10-29 html6405: Revert "Add time_offset=<UTC offset> to mount arguments"
+=== system/libhidl: 2 Fork-Commits, davon 2 ohne Gegenstueck bei uns
+    f9662aa 2020-06-11 Dominggoes Isakh: HidlSupport: Fix zero-termination for legacy blobs
+    5cdece4 2022-08-24 anrui2032: Revert "delete gBn/sConstructorMap"
+=== frameworks/native: 16 Fork-Commits, davon 16 ohne Gegenstueck bei uns
+    5255e5d255 2023-12-03 Yaroslav Zviezda: renderengine: gles: unconditionally skip PostRenderCleanup
+    8d7170ed2a 2024-10-20 html6405: KeyLayoutMap.cpp: don't LOG_ALWAYS_FATAL_IF if there's no kernel config.
+    bcd66b6be2 2024-03-31 Yaroslav Zviezda: Revert "Remove contention from Render Engine early return"
+    a88f414373 2024-04-06 Yaroslav Zviezda: [UL] renderengine, gles: convert to c_str
+    dfa99621e5 2024-04-06 Yaroslav Zviezda: [UL] renderengine,skia: fixup after 1607d39462b695da0ce9ac417f951e9dfa280b9b
+    e74c3b111b 2024-08-03 html6405: Revert "Remove useFramebufferCache parameter in drawLayers()"
+    6db912d6f3 2024-08-03 html6405: Revert "Delete GLESRenderEngine"
+    2413c003c4 2024-08-03 html6405: Revert "Delete genTextures and deleteTextures from RenderEngine"
+    56e340d905 2024-08-03 html6405: Revert "RenderEngine, SF: gate HDR priming behind property"
+    7547d9445b 2024-08-03 html6405: Revert "Split RenderEngineType into two enums"
+    066d06063a 2024-08-03 html6405: Revert "vulkan_renderengine: Check for support first"
+    f91ace6144 2024-05-26 Andy CrossGate Yan: SurfaceFlinger: Disable SF HWC backpressure
+    41a7b59d80 2024-05-07 Pierre-Hugues Husson: Disable gpuservice on old BPF-less kernel
+    148f618880 2022-08-23 ivanmeler: Disable gpu service
+    41c39f7312 2020-11-06 Arne Coucheron: SurfaceFlinger: Don't cleanup resources from previous frame
+    ad889df197 2022-10-21 Yaroslav Zviezda: libbinder: make threadpool shrinking non-fatal
+=== frameworks/av: 44 Fork-Commits, davon 41 ohne Gegenstueck bei uns
+    f0685e6420 2021-12-24 html6405: Partly revert: wfd: Miracast related build fixes
+    03f911d4e7 2020-01-04 Arne Coucheron: Enable legacy adaptive playback for QCOM_BSP_LEGACY
+    f1837f4f1d 2020-04-13 Pierre-Hugues Husson: There are three SCO devices. Fallback from one to the others if needed
+    237955e91d 2019-08-05 Pierre-Hugues Husson: Fix BT in-call on CAF devices
+    eff8a2ab6c 2016-10-06 Simon Shields: camera/media: Support legacy HALv1 camera in mediaserver
+    ed94e48955 2023-11-08 Yaroslav Zviezda: Restore clearkey hidl code
+    c459431de8 2023-11-28 TARKZiM: libaudiohal: Add missing parts of 2.0 hal
+    93789493bd 2022-02-12 TARKZiM: libaudiohal: Bring back 2.0 HAL
+    74e883f1cf 2023-11-19 Yaroslav Zviezda: wfd: Miracast related build fixes
+    de5a2b0be6 2023-12-03 Yaroslav Zviezda: libcameraservice: HAL1 related build fixes
+    f4843ddf54 2021-10-05 Jayant Chowdhary: cameraserver: fix deadlock scenario in torchModeStatusChanged callback.
+    7bdb3ce2a1 2017-08-30 Manikanta Kanamarlapudi: libstagefright: Free buffers on observer died
+    305d2fa29a 2015-07-08 Shuzhen Wang: Camera: Add extensions to CameraClient
+    66a9cd1761 2017-09-17 Shilin Victor: libcameraservice: Don't pass NULL args on setCallbacks call
+    f3b787b202 2018-05-04 Paras Nagda: stagefright: add changes related to high-framerates in CameraSource
+    c306e36fb1 2014-04-29 Susmitha Gummalla: Camera: Add support for preview frame fd
+    3a1123e561 2020-10-15 Pig: camera: Allow devices to load custom CameraParameter code
+    7cd0e57b8a 2019-03-25 Priyanka Gujjula: libstagefright: Fix memory leak due to lock timeout
+    017bb24f49 2018-04-17 Milos Ratkovic: Camera: check metadata type before releasing frame
+    5d3b11e3c0 2017-09-23 Bruno Martins: camera: include: Don't override possible overlayed header
+    e6c1a90688 2018-01-08 Milos Ratkovic: libstagefright: use 64-bit usage for native_window_set_usage
+    6fd155adc5 2017-08-30 Manikanta Kanamarlapudi: libstagefright: Free buffers on observer died
+    32c11f7411 2017-12-31 Adrian DC: stagefright: ACodec: Resolve empty vendor parameters usage
+    1289bbbc4e 2016-10-09 Arne Coucheron: stagefright: omx: Don't signal dataspace change on legacy QCOM
+    fdf9cc631c 2013-05-01 Steve Kondik: camera: Don't segfault if we get a NULL parameter
+    0883773bce 2015-12-15 Steve Kondik: nuplayer: Avoid crash when codec fails to load
+    9210be98be 2018-10-09 maxwen: camera: Allow to use boottime as timestamp reference
+    4814747688 2021-10-28 Kyle Harrison: Camera: Restore camera HALv1 support [1/2]
+    76e67ca46b 2021-11-02 Dominggoes Isakh: Revert "Camera: Remove old recording path support"
+    d9c391a819 2023-11-19 Yaroslav Zviezda: camera: reset to Android 12.1 state
+    83a96b0ca5 2023-12-28 html6405: Revert "Fix deadlock when notifyPhysicalCameraDevice is called while waitUntilDrained hasn't completed"
+    b5606bf8df 2023-12-28 html6405: Revert "Camera: Handling out-of-order request id"
+    81a1363bca 2023-12-28 html6405: Revert "Implement Camera Id Remapping in CameraService"
+    0da3ad9e6a 2023-12-28 html6405: Revert "Camera: Skip stream size check for whitelisted apps"
+    741e7028ba 2023-12-28 html6405: Revert "Harden remapCameraApi() API"
+    e39ef72dff 2023-12-28 html6405: Revert "Implement CameraIdRemapping for API1"
+    807af59417 2023-12-28 html6405: Revert "Use ERROR_CAMERA_DISCONNECTED on id remap"
+    f7173c6c44 2023-12-28 html6405: Revert "Camera: Ensure 'isSlowJpegModeForced' is always initialized"
+    7aa5afecfd 2022-02-23 html6405: CameraSource.cpp: support PIXEL_FORMAT_YUV420SP_NV21.
+    3b00af5ad9 2016-01-03 Ethan Chen: libstagefright: Support YVU420SemiPlanar camera format
+    9896ae8589 2021-12-24 html6405: libstagefright: Make it possible to skip OMX buffer reallocation
+=== frameworks/base: 264 Fork-Commits, davon 60 ohne Gegenstueck bei uns
+    969b5754c48a 2022-09-22 Danny Lin: [PATCH 3/3] Add support for app signature spoofing
+    39419c7c8777 2023-12-28 html6405: Revert "Compute PermissionInfo.FLAG_INSTALLED instead of mutating ParsedPermission."
+    6538954ea83a 2018-08-31 Danny Baumann: CameraServiceProxy: Loosen UID check conditionally
+    3ae4a53a276c 2015-07-09 Sauhard Pande: Camera: Add feature extensions
+    2effbc00971e 2023-11-20 Yaroslav Zviezda: Camera: build fixes for restored HAL1 support
+    fb02e8dd2e5a 2021-10-28 Kyle Harrison: Camera: Restore camera HALv1 support [2/2]
+    058c7275546d 2022-09-18 Yaroslav Zviezda: Revert Camera Injection
+    04147cd4da46 2022-10-20 Dominggoes Isakh: Revert "Camera: Add support for readout timestamp"
+    16e41b49fc97 2023-11-19 Yaroslav Zviezda: Revert "Camera: Add support for extension specific metadata"
+    6d95353f91b0 2023-11-19 Yaroslav Zviezda: Revert "Update torch brightness max level description."
+    c6e6517ba578 2023-11-19 Yaroslav Zviezda: Revert "Camera: Unhide readout timestamp APIs"
+    78989f2e7f3e 2023-11-19 Yaroslav Zviezda: Revert "Camera: Address API review feedback for readout timestamp"
+    53aa729e547f 2023-06-22 khalvat-M: Revert "DO NOT MERGE CameraManager: Provide flag for overriding camera output to portrait."
+    4fa599b40f5d 2023-03-22 Khalvat-M: Revert "DO NOT MERGE CameraManager: Enable override to portrait by default for devices with the system property turned on."
+    70848bdddf0c 2023-11-19 Yaroslav Zviezda: Revert "Per-app compat treatment for overrideToPortrait."
+    14820602a766 2023-11-19 Yaroslav Zviezda: Revert "RESTRICT AUTOMERGE Camera: Fix missing onPhysicalCameraUnavailable"
+    6178b2f47e38 2023-11-19 Yaroslav Zviezda: Revert "Camera: Use a single handler thread for device state callbacks"
+    5f32c7e834b8 2023-11-19 Yaroslav Zviezda: Revert "Camera: Clarify doc for registerAvailabilityCallback"
+    7a51abeea0a8 2023-06-22 khalvat-M: Revert "DO NOT MERGE Force slowJpegMode on certain camera1 apps"
+    5d0de2622437 2023-11-19 Yaroslav Zviezda: Revert "CameraManager: Swap propertyName / packageName in call to getProperty()"
+    6da157dab4de 2023-11-19 Yaroslav Zviezda: Revert "CameraManager: Make the rotate and crop property public."
+    8c0e0175fed8 2023-11-19 Yaroslav Zviezda: Revert "Camera: Physical camera avail callbacks can happen for unavail camera"
+    83d80f9d0465 2023-11-19 Yaroslav Zviezda: Revert "CameraManager: Add TestApi entrypoints for setting overrideToPortrait."
+    057706240f7b 2023-11-19 Yaroslav Zviezda: Revert "Camera: cosmetic, fix typos"
+    9b3db28189e8 2023-11-19 Yaroslav Zviezda: Revert "Camera: Move the device state listener to CameraManagerGlobal"
+    8ab0a39f8c02 2023-11-19 Yaroslav Zviezda: Revert "Camera2: Add documentation for the TestApi getCameraCharacteristics."
+    d656ca388d7a 2023-11-19 Yaroslav Zviezda: Revert "Camera: Use characteristic from user app for extension"
+    991738be24c9 2023-11-19 Yaroslav Zviezda: Revert "Camera: Release advanced extension references"
+    bf5fc278620e 2023-11-19 Yaroslav Zviezda: Revert "cameraservice: Add metrics for extension sessions"
+    4481a236acc2 2023-11-19 Yaroslav Zviezda: Revert "Camera: Improve error handling of device state listeners"
+    98723dd7e938 2022-09-12 Yaroslav Zviezda: CachedAppOptimizer: revert freezer to cgroups v1
+    00b620d6c09b 2021-11-06 Yaroslav Zviezda: Revert "CachedAppOptimizer: don't hardcode freezer path"
+    7810aacbbd9e 2021-11-06 Yaroslav Zviezda: Revert "CachedAppOptimizer: remove native freezer enabling code"
+    7777f800da8d 2021-11-06 Yaroslav Zviezda: Revert "CachedAppOptimizer: use new cgroup api for freezer path"
+    aec786cf879f 2023-10-18 Pierre-Hugues Husson: Ignore cgroup creation errors
+    ac83453e314c 2023-12-27 html6405: Revert "Revert "Treat process group creation failure due to a dead process as non-fatal""
+    44271d1b1ecf 2023-12-03 Yaroslav Zviezda: am: allow to tune killing cached processes until/post boot completed
+    a9bc44a41b0a 2023-07-16 Yaroslav Zviezda: batterysaver: add property to disable night mode on battery saver
+    708d369f6a3b 2022-06-13 Roman Stratiienko: Don't use PATTERNED style ripple effect by default
+    8d73b1b8f97e 2022-06-09 Roman Stratiienko: Don't use stretch effect by default
+    53f6b242f43d 2023-07-12 Yaroslav Zviezda: Disable multiprocess WebView for Go devices
+    436e2369a65b 2022-02-15 html6405: LocationResult.java: don't throw exception on incomplete location.
+    00ee326453c7 2021-11-16 html6405: DisplayPowerController: make it possible to disable colorfade via overlay.
+    75e93b9f38e7 2021-12-28 html6405: Location.java: Adding 1024 weeks for chips with GPSRollover issue
+    fdca6bba4d42 2021-11-16 html6405: ColorFade: fix EGL crash on exynos4 mali blobs .
+    250748292d9f 2020-10-08 Ido Ben-Hur: fixup! SystemUI: Fix uneven DND icon padding in status bar
+    92b09a3db3dc 2023-08-13 resist15: SystemUI: Add SCREEN_GESTURE as a CameraLaunchSourceModel
+    8cd56db6f517 2023-07-06 alk3pInjection: SystemUI: Respect the old good "Show passwords" preference
+    d825f6fe4a8d 2021-10-12 Danny Lin: appop: Save discrete app op history for more permissions
+    5fc786dba664 2020-12-23 cjh1249131356: SystemUI: Make center clock follow paddingTop
+    6980e7304b98 2023-12-10 Michael Bestas: DNM Revert "Forward port CM Screen Security settings (1/2)"
+    110590f6393d 2023-12-07 Tommy Webb: Temp build fix: Remove dependency on mockito-kotlin
+    7dafbb3eaaa0 2023-02-23 Wolfram Liebchen: SystemUI: Fix position and orientation of arrow keys in navbar
+    89b1e47cce80 2017-06-06 Gaoxiang Chen: Camera: Skip stream size check for whitelisted apps..
+    4c96caea43d6 2022-11-12 LuK1337: SystemUI: Disable clock auto hide feature for QS
+    8012beaf1294 2018-07-15 Michael Bestas: SystemUI: Add tunables for clock AM/PM style
+    539e522bc485 2018-07-15 Luca Stefani: SystemUI: Add tunables for clock position
+    85a95a60064b 2015-10-23 beanstown106: SystemUI: Allow to enable Lockscreen Media Art
+    dc94054621b1 2019-09-20 LuK1337: SystemUI: Add navbar layout inversion tuning
+    86c9872aa282 2017-10-03 Rashed Abdel-Tawab: SystemUI: Allow using tuner API for LineageSettings
+=== hardware/interfaces: 4 Fork-Commits, davon 4 ohne Gegenstueck bei uns
+    7ce5cd1b03 2022-09-06 html6405: Revert "audio: use binder threadpool"
+    c0f21db430 2022-09-06 html6405: Revert "Audio: Load Bluetooth AIDL HAL"
+    b261d657d2 2018-06-07 Purushottam Kushwaha: wifi: Add provision to create/remove dynamic interface(s).
+    968a580253 2023-11-08 Yaroslav Zviezda: Revert "Remove HIDL implementation for the WiFi"
+=== build/make: 8 Fork-Commits, davon 8 ohne Gegenstueck bei uns
+    a4bf19a217 2022-06-13 html6405: build: make: stop building NfcNci if not needed.
+    39c8afef4e 2022-05-30 html6405: build:make:core: transform "already defined by" error into a warning.
+    5c8aa31809 2022-05-03 html6405: tools: common.py: HACK: don't abort if recovery size is 100%, we won't use it anyway.
+    c59dc91c20 2021-03-07 html6405: tools: common.py: HACK: allow recovery image to be used for 99.99% of size.
+    58750eb897 2022-03-08 Dominggoes Isakh: Disable Recovery Patch via BOARD_NO_RECOVERY_PATCH
+    33fdccd59a 2010-06-26 Koushik Dutta: core: Add support for overriding build.prop settings
+    630c103182 2021-12-26 html6405: build: make: core: sysprop.mk: HACK, set BUILD_KEYS to dev-keys.
+    f252ec2eef 2021-03-07 Alessandro Astone: build: Turn redundant path requirements error into a warning
+=== build/soong: 15 Fork-Commits, davon 0 ohne Gegenstueck bei uns
+=== vendor/lineage: 20 Fork-Commits, davon 19 ohne Gegenstueck bei uns
+    d8a6f904 2024-08-15 html6405: createjson.sh: fix permissions
+    ab5a3aa3 2022-10-14 html6405: Revert "apns: Clean up Austrian carriers"
+    046bff37 2022-10-14 html6405: Revert "apns: Clean up Austrian carriers"
+    f71480c5 2022-09-08 html6405: createjson.sh: move to LineageOS 21
+    e019b339 2022-03-15 html6405: bacon.mk: use createjson script for OTA.
+    db8beefc 2022-03-15 html6405: version.mk: set build type to HTML6405.
+    20f99111 2022-04-19 Nolen Johnson: Revert "Remove libbfqio"
+    d3d8c9d0 2022-09-03 TARKZiM: Revert "soong: Drop TARGET_USES_QTI_CAMERA_DEVICE"
+    d0f0a6e7 2015-11-10 Scott Mertz: adb insecure by default
+    81eebae8 2022-01-03 Dominggoes Isakh: kernel: Add BOARD_CUSTOM_KERNEL_MK support
+    57b50ed9 2021-10-27 Kyle Harrison: soong: Update camera_in_mediaserver_defaults
+    edae04eb 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_CAMERA_BOOTTIME_TIMESTAMP"
+    7e4da5ae 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_USES_QCOM_BSP_LEGACY"
+    5220964f 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_HAS_LEGACY_CAMERA_HAL1"
+    bb6320d1 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_SPECIFIC_CAMERA_PARAMETER_LIBRARY"
+    83c3ed2a 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_HAS_MEMFD_BACKPORT"
+    b2043f7e 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_NEEDS_NETD_DIRECT_CONNECT_RULE"
+    513c7d32 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_DISABLE_POSTRENDER_CLEANUP"
+    5a3408c4 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_PROCESS_SDK_VERSION_OVERRIDE"
+=== hardware/samsung: 22 Fork-Commits, davon 22 ohne Gegenstueck bei uns
+    bf8f5e9 2024-08-03 html6405: libhwc: fix build, remove not existing include
+    4614a31 2024-06-21 Tim Zimmermann: hidl: consumerir: Convert to bp
+    6bee02a 2024-05-15 LineageOS Infra: Automatic translation import
+    e3efa9d 2024-04-15 LineageOS Infra: Automatic translation import
+    a1fd7a1 2024-03-12 Ruchit: doze: mk->bp
+    c457306 2024-03-08 Chaohui Wang: samsung: Migrate to CompoundButton.OnCheckedChangeListener
+    f198bc4 2024-03-08 Peter Kalauskas: samsung: Enable use_resource_processor for all sysui deps
+    35174ce 2024-01-20 Simon1511: doze: bump target SDK version
+    cd57aee 2024-02-10 LineageOS Infra: Automatic translation import
+    849675f 2023-10-05 Tim Zimmermann: doze: Specify optional-uses-libs
+    bd61f89 2023-10-15 LineageOS Infra: Automatic translation import
+    6bafa29 2023-09-15 LineageOS Infra: Automatic translation import
+    5a4043c 2023-08-15 LineageOS Infra: Automatic translation import
+    dfd3ab8 2023-08-01 LineageOS Infra: Automatic translation import
+    f0c8943 2023-07-15 LineageOS Infra: Automatic translation import
+    11b7d4b 2023-07-01 LineageOS Infra: Automatic translation import
+    f77505c 2023-06-20 LineageOS Infra: Automatic translation import
+    202a629 2023-06-01 LineageOS Infra: Automatic translation import
+    fe9ce9d 2023-04-24 LineageOS Infra: Automatic translation import
+    f507c7a 2022-10-04 Aaron Kling: mkbootimg: Boot image depends on kernel
+    4f9a1aa 2023-01-10 Michael Bestas: Automatic translation import
+    e263074 2024-01-04 html6405: SEC_OMX_Venc.c: fix build, ignore -Wimplicit-function-declaration
+=== hardware/lineage/interfaces: 10 Fork-Commits, davon 10 ohne Gegenstueck bei uns
+    aa6ba38 2022-11-28 html6405: wifi: fix build for legacy hidl
+    8a6394b 2022-11-28 html6405: Camera: Android.bp: set include path for HardwareAPI.h
+    f4decbd 2022-09-09 html6405: wifi: wifi.h: fix build, undef NAN
+    1ca7b6a 2022-09-09 html6405: wifi: hidl_struct_util.cpp: convertLegacyWifiChannelWidthToHidl: create common return type to fix build
+    ced6b23 2022-09-08 html6405: wifi: fix legacy HIDL for T
+    3e1baf6 2023-12-26 html6405: Revert "wifi: Bump legacy HIDL HAL to v1.6"
+    c8859a8 2023-12-26 html6405: Revert "wifi: Add provision to create/remove dynamic interface(s)."
+    ef8749f 2022-09-02 html6405: Revert "power: Deprecate lineage power HAL"
+    4970c5d 2022-09-02 html6405: Revert "biometrics: Deprecate inscreen HAL"
+    ce05f8a 2022-09-02 html6405: Revert "power: Remove 1.0 HIDL"
+=== frameworks/ex: 1 Fork-Commits, davon 1 ohne Gegenstueck bei uns
+    2a18d3d 2023-12-27 html6405: Revert "Camera Extension sample: Add support extension specific metadata"
+=== frameworks/opt/net/wifi: 5 Fork-Commits, davon 5 ohne Gegenstueck bei uns
+    c0d3bf987 2024-04-07 Yaroslav Zviezda: Revert "Remove makefile_goal workaround for libwifi-hal-*"
+    9df90feec 2024-04-07 Yaroslav Zviezda: Revert "Add static_libs to cc_wifi_defaults property"
+    0008ba4dd 2024-04-07 Yaroslav Zviezda: Revert "Add nxp static library path to frameworks."
+    7e581c84e 2024-04-07 Yaroslav Zviezda: Revert "libwifi-hal: Do not reference mokey namespace"
+    56c7095e2 2024-04-07 Yaroslav Zviezda: Revert "Migrate libwifi-hal-qcom to Android.bp"
+=== frameworks/opt/telephony: 10 Fork-Commits, davon 10 ohne Gegenstueck bei uns
+    427927d93f 2024-06-23 html6405: UiccSlot.java: don't promt to reboot for fakeiccid devices
+    25c8a837e4 2021-11-22 html6405: telephony  add support for fake ICCID
+    6fe2b02123 2022-10-12 Derek: Revert "[Telephony] Remove IOem in Telephony"
+    757ab47845 2022-06-23 Derek: Revert "Remove compat version of ImsService binding"
+    adc573167e 2021-10-09 LibXZR: Ignore PLMN bit when SPN is required
+    0b189d6b48 2021-10-21 Mengjun Leng: Fix data detach isn't informed
+    70ae9f4be6 2016-09-19 Arne Coucheron: Telephony: Add option for using regular poll state for airplane mode
+    ce1ca6b23a 2019-10-29 Arne Coucheron: 2G wants proper signal strength too
+    a44591a2cf 2020-06-11 Bruno Martins: Avoid SubscriptionManager#getUriForSubscriptionId calls with invalid subIds
+    9cd1de9c44 2017-09-06 Bruno Martins: telephony: Squashed support for simactivation feature
+=== packages/services/Telephony: 1 Fork-Commits, davon 1 ohne Gegenstueck bei uns
+    ac0d85db3 2024-06-22 html6405: CellInfoUtil.java: Fix crashes when selecting network, based on: https://github.com/phhusson/platform_packages_services_Telephony/commit/e5290c393d965c8497a9aa4a5ef884ef30d7442a
+=== packages/apps/SetupWizard: 1 Fork-Commits, davon 1 ohne Gegenstueck bei uns
+    de6975c 2024-01-06 html6405: SetupWizardUtils: disable BiometricActivity
+=== system/nfc: 4 Fork-Commits, davon 4 ohne Gegenstueck bei uns
+    9c733855 2025-02-02 html6405: hallimpl: pn54x: update firmware path
+    56f0e0a5 2025-02-02 html6405: hallimpl: pn54x: update fimrware path
+    8913a72b 2025-02-02 html6405: phNxpConfig.cpp: ignore fall-through
+    090c0e57 2025-02-02 html6405: Revert "rm -rf halimpl/"
+=== packages/modules/Connectivity: 14 Fork-Commits, davon 14 ohne Gegenstueck bei uns
+    76e1ed20e9 2024-10-19 html6405: BpfHandler.cpp: we must not wait until the BPF programs are loaded (for BPF less devices)
+    fce09cc548 2024-06-27 khalvat-M: [UL] netbpfload: Support no-bpf usecase
+    e0cfcd4436 2024-06-20 Alberto Ponces: Revert "netdupdatable: add back abort() on init() fail"
+    40ee2f8970 2024-04-16 z3DD3r: [UL] clatcoordinator: Support no-bpf usecase
+    fa7f86e6ce 2024-04-16 z3DD3r: [UL] dnsresolver: Support no-bpf usecase
+    dc76351e44 2024-04-14 Dmitry Gruzd: [UL] [DNM] netbpfload: Disable reboot on failure
+    c89b53a5ad 2023-01-20 koron393: Bring back traffic indicators for legacy devices
+    35b91cfa36 2022-10-26 Pierre-Hugues Husson: Support non-working BPF maps on old BPF-less kernel
+    c022d6947d 2022-10-26 Pierre-Hugues Husson: Allow failing to load bpf programs, for BPF-less devices
+    84e052815a 2024-04-19 Yaroslav Zviezda: [UL] mdns: disable SocketNetlinkMonitor
+    dce6db99b2 2024-04-01 Yaroslav Zviezda: Revert "remove inprocess tethering"
+    89f24904ca 2024-04-01 Yaroslav Zviezda: Revert "Use new soong support to install privapp xml"
+    3db805ff60 2023-11-29 Yaroslav Zviezda: Revert "remove inprocess tethering"
+    97adfb2482 2024-03-31 Yaroslav Zviezda: Revert "remove out-of-process flag"
+=== FERTIG

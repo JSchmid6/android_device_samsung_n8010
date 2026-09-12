@@ -1,0 +1,83 @@
+diff --cc services/core/java/com/android/server/display/DisplayPowerController.java
+index 076bda80487e,c5d5c8e05b1b..000000000000
+--- a/services/core/java/com/android/server/display/DisplayPowerController.java
++++ b/services/core/java/com/android/server/display/DisplayPowerController.java
+@@@ -564,33 -672,19 +564,36 @@@ final class DisplayPowerController impl
+              }
+          };
+  
+ -        HighBrightnessModeController hbmController = createHbmControllerLocked(modeChangeCallback);
+ -
+ -        mBrightnessRangeController = new BrightnessRangeController(hbmController,
+ -                modeChangeCallback, mDisplayDeviceConfig, resources);
+ -
+ +        HighBrightnessModeController hbmController = createHbmControllerLocked(hbmMetadata,
+ +                modeChangeCallback);
+          mBrightnessThrottler = createBrightnessThrottlerLocked();
+  
+ +        mBrightnessRangeController = mInjector.getBrightnessRangeController(hbmController,
+ +                modeChangeCallback, mDisplayDeviceConfig, mHandler, flags,
+ +                mDisplayDevice.getDisplayTokenLocked(),
+ +                mDisplayDevice.getDisplayDeviceInfoLocked());
+ +
+ +        mDisplayBrightnessController =
+ +                new DisplayBrightnessController(context, null,
+ +                        mDisplayId, mLogicalDisplay.getDisplayInfoLocked().brightnessDefault,
+ +                        brightnessSetting, () -> postBrightnessChangeRunnable(),
+ +                        new HandlerExecutor(mHandler), flags);
+ +
+ +        mBrightnessClamperController = mInjector.getBrightnessClamperController(
+ +                mHandler, modeChangeCallback::run,
+ +                new BrightnessClamperController.DisplayDeviceData(
+ +                        mUniqueDisplayId,
+ +                        mThermalBrightnessThrottlingDataId,
+ +                        logicalDisplay.getPowerThrottlingDataIdLocked(),
+ +                        mDisplayDeviceConfig), mContext, flags);
+          // Seed the cached brightness
+          saveBrightnessInfo(getScreenBrightnessSetting());
+ +        mAutomaticBrightnessStrategy =
+ +                mDisplayBrightnessController.getAutomaticBrightnessStrategy();
+  
++         mColorFadeEnabled = resources.getBoolean(
++                 com.android.internal.R.bool.config_colorFade_enabled) && !ActivityManager.isLowRamDeviceStatic();
++ 
+          DisplayWhiteBalanceSettings displayWhiteBalanceSettings = null;
+          DisplayWhiteBalanceController displayWhiteBalanceController = null;
+          if (mDisplayId == Display.DEFAULT_DISPLAY) {
+@@@ -634,19 -725,26 +637,22 @@@
+              mCdsi = null;
+          }
+  
+ -        setUpAutoBrightness(resources, handler);
+ +        setUpAutoBrightness(context, handler);
+  
+++<<<<<<< HEAD
+ +        mColorFadeEnabled = mInjector.isColorFadeEnabled()
+ +                && !resources.getBoolean(
+ +                  com.android.internal.R.bool.config_displayColorFadeDisabled);
+++=======
+++>>>>>>> 00ee326453c7 (DisplayPowerController: make it possible to disable colorfade via overlay.)
+          mColorFadeFadesConfig = resources.getBoolean(
+ -                com.android.internal.R.bool.config_animateScreenLights);
+ +                R.bool.config_animateScreenLights);
+  
+          mDisplayBlanksAfterDozeConfig = resources.getBoolean(
+ -                com.android.internal.R.bool.config_displayBlanksAfterDoze);
+ +                R.bool.config_displayBlanksAfterDoze);
+  
+          mBrightnessBucketsInDozeConfig = resources.getBoolean(
+ -                com.android.internal.R.bool.config_displayBrightnessBucketsInDoze);
+ -
+ -        loadProximitySensor();
+ -
+ -        loadNitBasedBrightnessSetting();
+ -        mBrightnessToFollow = PowerManager.BRIGHTNESS_INVALID_FLOAT;
+ -        mAutoBrightnessAdjustment = getAutoBrightnessAdjustmentSetting();
+ -        mTemporaryScreenBrightness = PowerManager.BRIGHTNESS_INVALID_FLOAT;
+ -        mPendingScreenBrightnessSetting = PowerManager.BRIGHTNESS_INVALID_FLOAT;
+ -        mTemporaryAutoBrightnessAdjustment = PowerManager.BRIGHTNESS_INVALID_FLOAT;
+ -        mPendingAutoBrightnessAdjustment = PowerManager.BRIGHTNESS_INVALID_FLOAT;
+ +                R.bool.config_displayBrightnessBucketsInDoze);
+  
+          mBootCompleted = bootCompleted;
+      }

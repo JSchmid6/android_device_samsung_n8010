@@ -1,0 +1,17 @@
+diff --cc netbpfload/netbpfload.rc
+index e882542ca5,c6fd63d578..0000000000
+--- a/netbpfload/netbpfload.rc
++++ b/netbpfload/netbpfload.rc
+@@@ -98,9 -81,6 +98,12 @@@ service bpfloader /system/bin/netbpfloa
+      #    'cannot prove return value is 0 or 1' or 'unsupported / unknown operation / helper',
+      #    'invalid bpf_context access', etc.
+      #
+++<<<<<<< HEAD
+ +    # Disabled for kernel 3.0.x (Exynos4412/GT-N8010): eBPF is not supported on this kernel.
+ +    # netbpfload fails because /apex/com.android.tethering/bin/netbpfload does not exist
+ +    # on kernels without eBPF support. Making failure non-fatal allows the system to boot.
+++=======
+++>>>>>>> dc76351e44 ([UL] [DNM] netbpfload: Disable reboot on failure)
+      # reboot_on_failure reboot,bpfloader-failed
+      # we're not really updatable, but want to be able to load bpf programs shipped in apexes
+      updatable

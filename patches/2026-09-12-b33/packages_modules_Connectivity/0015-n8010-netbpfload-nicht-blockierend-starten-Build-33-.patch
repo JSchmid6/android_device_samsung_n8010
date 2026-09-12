@@ -1,0 +1,60 @@
+From 2ea5af78fce51ea271b6b7d2d0d39d3ab6124970 Mon Sep 17 00:00:00 2001
+From: Jochen Schmid <Jochen@wejos.de>
+Date: Sat, 12 Sep 2026 20:26:25 +0200
+Subject: [PATCH 15/15] n8010: netbpfload nicht-blockierend starten (Build 33,
+ BPF-Kernel)
+
+Change-Id: I43ee7103c5da0aa9477c13d4566b8bd837b175b0
+---
+ netbpfload/netbpfload.rc | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
+
+diff --git a/netbpfload/netbpfload.rc b/netbpfload/netbpfload.rc
+index e882542ca5..f50578bf1d 100644
+--- a/netbpfload/netbpfload.rc
++++ b/netbpfload/netbpfload.rc
+@@ -15,24 +15,28 @@
+ # considered to have booted successfully.
+ #
+ on load_bpf_programs
+-    # N8010 COMPAT: bpfloader wird gar nicht mehr gestartet (GT-N8010, armv7).
++    # N8010 COMPAT (Build 33): bpfloader wird NICHT-BLOCKIEREND gestartet.
+     #
+-    # Vorgeschichte: hier stand erst "exec_start bpfloader", dann "start bpfloader"
+-    # (nicht-blockierend). Beides half nicht, weil das Problem nicht das Blockieren
+-    # war, sondern dass netbpfload FEHLSCHLAEGT und das Geraet dann neu startet.
++    # Vorgeschichte: Upstream steht hier "exec_start bpfloader" (init wartet, bis
++    # netbpfload fertig ist). Bis Build 32 lief der Kernel 3.4 ohne CONFIG_BPF_SYSCALL,
++    # netbpfload konnte nur scheitern und "reboot_on_failure" startete das Geraet
++    # neu -> der Start war komplett auskommentiert.
+     #
+-    # netbpfload kann auf 32-bit ARM nicht durchlaufen: der ARM32-BPF-JIT hat die
+-    # atomaren Opcodes nicht ("*** NOT YET: opcode c3 ***"), und Kernel 3.4 hat
+-    # ohnehin kein CONFIG_BPF_SYSCALL. Ein Start kann also nur scheitern.
++    # Ab Build 33 laeuft der Kernel-Branch lineage-21.0-BPF (eBPF-Backport + ARM-JIT,
++    # Kernelversion nach aussen 4.9.337) und Connectivity traegt die
++    # Connectivity_UL-Patches ("Support no-bpf usecase", "Allow failing to load bpf
++    # programs", "we must not wait until the BPF programs are loaded"). Damit darf
++    # netbpfload scheitern, ohne dass netd oder init haengen bleiben.
++    #
++    # "start" statt "exec_start": sollte netbpfload doch haengen (Verifier/JIT),
++    # blockiert das nicht mehr die Trigger-Kette bis "on boot" (zygote, adbd).
++    # Sobald bpfloader nachweislich sauber durchlaeuft, kann das wieder auf
++    # "exec_start" (Upstream/html6405) zurueck.
+     #
+     # Dieser Trigger liegt in /system und wird NICHT vom Tethering-APEX
+     # ueberschrieben — im Gegensatz zur service-Definition unten, die per
+-    # "override" aus netbpfload.mainline.rc im APEX ersetzt wird. Deshalb ist das
+-    # hier die Stelle, an der ein Patch tatsaechlich wirkt.
+-    #
+-    # Folge: kein BPF-basiertes Traffic-Accounting. Auf diesem Geraet ohnehin
+-    # nicht erreichbar.
+-    # start bpfloader
++    # "override" aus netbpfload.mainline.rc im APEX ersetzt wird.
++    start bpfloader
+ 
+ service bpfloader /system/bin/netbpfload
+     # netbpfload will do network bpf loading, then execute /system/bin/bpfloader
+-- 
+2.48.1
+

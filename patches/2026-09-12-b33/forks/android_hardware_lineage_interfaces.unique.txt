@@ -1,0 +1,10 @@
+    aa6ba38 2022-11-28 html6405: wifi: fix build for legacy hidl
+    8a6394b 2022-11-28 html6405: Camera: Android.bp: set include path for HardwareAPI.h
+    f4decbd 2022-09-09 html6405: wifi: wifi.h: fix build, undef NAN
+    1ca7b6a 2022-09-09 html6405: wifi: hidl_struct_util.cpp: convertLegacyWifiChannelWidthToHidl: create common return type to fix build
+    ced6b23 2022-09-08 html6405: wifi: fix legacy HIDL for T
+    3e1baf6 2023-12-26 html6405: Revert "wifi: Bump legacy HIDL HAL to v1.6"
+    c8859a8 2023-12-26 html6405: Revert "wifi: Add provision to create/remove dynamic interface(s)."
+    ef8749f 2022-09-02 html6405: Revert "power: Deprecate lineage power HAL"
+    4970c5d 2022-09-02 html6405: Revert "biometrics: Deprecate inscreen HAL"
+    ce05f8a 2022-09-02 html6405: Revert "power: Remove 1.0 HIDL"

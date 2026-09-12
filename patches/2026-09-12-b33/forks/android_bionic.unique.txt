@@ -1,0 +1,9 @@
+    777991efe 2023-12-25 html6405: Revert "Rewrite renameat()."
+    b8347cc02 2019-12-10 Dominggoes Isakh: Hack: Ignore invalid pthread_t to %s
+    c3ad5e7a2 2019-12-10 Dominggoes Isakh: linker: Apply TARGET_PROCESS_SDK_VERSION_OVERRIDE on dlopen
+    37146fb23 2018-01-23 Roopesh Rajashekharaiah Nataraja: Add inaddr.h header file
+    92b1ad452 2021-03-20 Danny Lin: Switch to jemalloc memory allocator
+    932094c95 2018-09-25 Ethan Chen: bionic: Squash of pre-P mutex behavior restoration
+    5fa88fcd4 2020-01-16 Tom Marshall: bionic: Support wildcards in cached hosts file
+    31754a987 2016-06-17 Tom Marshall: bionic: Sort and cache hosts file data for fast lookup
+    bb8f2d6b1 2018-08-29 Danny Baumann: Implement per-process target SDK version override.

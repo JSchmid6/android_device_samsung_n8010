@@ -1,0 +1,4 @@
+    9c733855 2025-02-02 html6405: hallimpl: pn54x: update firmware path
+    56f0e0a5 2025-02-02 html6405: hallimpl: pn54x: update fimrware path
+    8913a72b 2025-02-02 html6405: phNxpConfig.cpp: ignore fall-through
+    090c0e57 2025-02-02 html6405: Revert "rm -rf halimpl/"

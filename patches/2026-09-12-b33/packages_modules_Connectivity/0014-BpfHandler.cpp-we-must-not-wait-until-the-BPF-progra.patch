@@ -1,0 +1,27 @@
+From 17a144b0d512f45ffec3954f34255578f0ff71e0 Mon Sep 17 00:00:00 2001
+From: html6405 <peter.schelchshorn@mhs-solutions.at>
+Date: Sat, 19 Oct 2024 11:04:22 +0200
+Subject: [PATCH 14/15] BpfHandler.cpp: we must not wait until the BPF programs
+ are loaded (for BPF less devices)
+
+(cherry picked from commit 76e1ed20e9b86761c7231eb8e0d8a8c3d1da812b)
+---
+ netd/BpfHandler.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/netd/BpfHandler.cpp b/netd/BpfHandler.cpp
+index b8333526d8..8c80e78d13 100644
+--- a/netd/BpfHandler.cpp
++++ b/netd/BpfHandler.cpp
+@@ -163,7 +163,7 @@ BpfHandler::BpfHandler(uint32_t perUidLimit, uint32_t totalLimit)
+ 
+ Status BpfHandler::init(const char* cg2_path) {
+     // Make sure BPF programs are loaded before doing anything
+-    android::bpf::waitForProgsLoaded();
++    //android::bpf::waitForProgsLoaded();
+     ALOGI("BPF programs are loaded");
+ 
+     RETURN_IF_NOT_OK(initPrograms(cg2_path));
+-- 
+2.48.1
+

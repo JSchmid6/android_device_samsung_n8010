@@ -1,0 +1,4 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): f81d91f911a2833251026bb9943c422dea190bd7
+Branch n8010-b33 Spitze: 78fdc89733cf6c63ac59d804eba5faab2a8849fe
+
+78fdc89 Revert "Add time_offset=<UTC offset> to mount arguments"

@@ -1,0 +1,22 @@
+    bf8f5e9 2024-08-03 html6405: libhwc: fix build, remove not existing include
+    4614a31 2024-06-21 Tim Zimmermann: hidl: consumerir: Convert to bp
+    6bee02a 2024-05-15 LineageOS Infra: Automatic translation import
+    e3efa9d 2024-04-15 LineageOS Infra: Automatic translation import
+    a1fd7a1 2024-03-12 Ruchit: doze: mk->bp
+    c457306 2024-03-08 Chaohui Wang: samsung: Migrate to CompoundButton.OnCheckedChangeListener
+    f198bc4 2024-03-08 Peter Kalauskas: samsung: Enable use_resource_processor for all sysui deps
+    35174ce 2024-01-20 Simon1511: doze: bump target SDK version
+    cd57aee 2024-02-10 LineageOS Infra: Automatic translation import
+    849675f 2023-10-05 Tim Zimmermann: doze: Specify optional-uses-libs
+    bd61f89 2023-10-15 LineageOS Infra: Automatic translation import
+    6bafa29 2023-09-15 LineageOS Infra: Automatic translation import
+    5a4043c 2023-08-15 LineageOS Infra: Automatic translation import
+    dfd3ab8 2023-08-01 LineageOS Infra: Automatic translation import
+    f0c8943 2023-07-15 LineageOS Infra: Automatic translation import
+    11b7d4b 2023-07-01 LineageOS Infra: Automatic translation import
+    f77505c 2023-06-20 LineageOS Infra: Automatic translation import
+    202a629 2023-06-01 LineageOS Infra: Automatic translation import
+    fe9ce9d 2023-04-24 LineageOS Infra: Automatic translation import
+    f507c7a 2022-10-04 Aaron Kling: mkbootimg: Boot image depends on kernel
+    4f9a1aa 2023-01-10 Michael Bestas: Automatic translation import
+    e263074 2024-01-04 html6405: SEC_OMX_Venc.c: fix build, ignore -Wimplicit-function-declaration

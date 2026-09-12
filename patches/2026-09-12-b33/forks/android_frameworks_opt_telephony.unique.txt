@@ -1,0 +1,10 @@
+    427927d93f 2024-06-23 html6405: UiccSlot.java: don't promt to reboot for fakeiccid devices
+    25c8a837e4 2021-11-22 html6405: telephony  add support for fake ICCID
+    6fe2b02123 2022-10-12 Derek: Revert "[Telephony] Remove IOem in Telephony"
+    757ab47845 2022-06-23 Derek: Revert "Remove compat version of ImsService binding"
+    adc573167e 2021-10-09 LibXZR: Ignore PLMN bit when SPN is required
+    0b189d6b48 2021-10-21 Mengjun Leng: Fix data detach isn't informed
+    70ae9f4be6 2016-09-19 Arne Coucheron: Telephony: Add option for using regular poll state for airplane mode
+    ce1ca6b23a 2019-10-29 Arne Coucheron: 2G wants proper signal strength too
+    a44591a2cf 2020-06-11 Bruno Martins: Avoid SubscriptionManager#getUriForSubscriptionId calls with invalid subIds
+    9cd1de9c44 2017-09-06 Bruno Martins: telephony: Squashed support for simactivation feature

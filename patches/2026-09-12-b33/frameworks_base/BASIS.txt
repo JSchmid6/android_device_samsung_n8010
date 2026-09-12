@@ -1,0 +1,13 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): 8d1af64460fa7dbe3d862130749965f71be03ebf
+Branch n8010-b33 Spitze: 9058aabd8b7c80f580c70f894801ac7b0d5d149a
+
+9058aabd8b7c CachedAppOptimizer: revert freezer to cgroups v1
+c6641b76cd51 Revert "CachedAppOptimizer: don't hardcode freezer path"
+29c29f42d193 Revert "CachedAppOptimizer: remove native freezer enabling code"
+0a04893c97ac Revert "CachedAppOptimizer: use new cgroup api for freezer path"
+b1f33adf3e36 Ignore cgroup creation errors
+b1718a5b2069 Revert "Revert "Treat process group creation failure due to a dead process as non-fatal""
+6b424a35eb27 Don't use PATTERNED style ripple effect by default
+566e2a7a51ee Don't use stretch effect by default
+ed1110fb41c9 Location.java: Adding 1024 weeks for chips with GPSRollover issue
+cfc5728bfd6a ColorFade: fix EGL crash on exynos4 mali blobs .

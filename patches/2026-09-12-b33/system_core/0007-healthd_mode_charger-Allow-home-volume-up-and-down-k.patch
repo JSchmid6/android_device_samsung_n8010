@@ -1,0 +1,37 @@
+From 8c2043b7637ca796446587d027f2d55354eaee01 Mon Sep 17 00:00:00 2001
+From: html6405 <peter.schelchshorn@mhs-solutions.at>
+Date: Fri, 5 Jan 2024 11:57:16 +0100
+Subject: [PATCH 7/7] healthd_mode_charger: Allow home, volume up and down keys
+ to wake up and boot the device while charging
+
+(cherry picked from commit c22ee608c7add6c128ad491ab19407958446d3a8)
+---
+ healthd/healthd_mode_charger.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/healthd/healthd_mode_charger.cpp b/healthd/healthd_mode_charger.cpp
+index 26af13b31..0066f11f5 100644
+--- a/healthd/healthd_mode_charger.cpp
++++ b/healthd/healthd_mode_charger.cpp
+@@ -486,7 +486,7 @@ void Charger::SetNextKeyCheck(key_state* key, int64_t timeout) {
+ void Charger::ProcessKey(int code, int64_t now) {
+     key_state* key = &keys_[code];
+ 
+-    if (code == KEY_POWER) {
++    if (code == KEY_POWER || code == 172 || code == KEY_VOLUMEDOWN || code == KEY_VOLUMEUP) {
+         if (key->down) {
+             int64_t reboot_timeout = key->timestamp + POWER_ON_KEY_TIME;
+             if (now >= reboot_timeout) {
+@@ -547,6 +547,9 @@ void Charger::ProcessHallSensor(int code) {
+ 
+ void Charger::HandleInputState(int64_t now) {
+     ProcessKey(KEY_POWER, now);
++    ProcessKey(172, now);
++    ProcessKey(KEY_VOLUMEDOWN, now);
++    ProcessKey(KEY_VOLUMEUP, now);
+ 
+     if (next_key_check_ != -1 && now > next_key_check_) next_key_check_ = -1;
+ 
+-- 
+2.48.1
+

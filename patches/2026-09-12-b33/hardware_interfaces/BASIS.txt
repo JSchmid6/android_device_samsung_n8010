@@ -1,0 +1,7 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): 727cbe0377d351973034826bc6704f531bf12fc6
+Branch n8010-b33 Spitze: 36c3a13e1e8318067a6f9cc2a8dd868c2f4dafab
+
+36c3a13e1e Revert "audio: use binder threadpool"
+0ae43e72de Revert "Audio: Load Bluetooth AIDL HAL"
+5fa02edcac wifi: Add provision to create/remove dynamic interface(s).
+60c502c2ae Revert "Remove HIDL implementation for the WiFi"

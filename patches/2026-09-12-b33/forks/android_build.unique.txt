@@ -1,0 +1,8 @@
+    a4bf19a217 2022-06-13 html6405: build: make: stop building NfcNci if not needed.
+    39c8afef4e 2022-05-30 html6405: build:make:core: transform "already defined by" error into a warning.
+    5c8aa31809 2022-05-03 html6405: tools: common.py: HACK: don't abort if recovery size is 100%, we won't use it anyway.
+    c59dc91c20 2021-03-07 html6405: tools: common.py: HACK: allow recovery image to be used for 99.99% of size.
+    58750eb897 2022-03-08 Dominggoes Isakh: Disable Recovery Patch via BOARD_NO_RECOVERY_PATCH
+    33fdccd59a 2010-06-26 Koushik Dutta: core: Add support for overriding build.prop settings
+    630c103182 2021-12-26 html6405: build: make: core: sysprop.mk: HACK, set BUILD_KEYS to dev-keys.
+    f252ec2eef 2021-03-07 Alessandro Astone: build: Turn redundant path requirements error into a warning

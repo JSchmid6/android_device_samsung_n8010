@@ -1,0 +1,1 @@
+    ac0d85db3 2024-06-22 html6405: CellInfoUtil.java: Fix crashes when selecting network, based on: https://github.com/phhusson/platform_packages_services_Telephony/commit/e5290c393d965c8497a9aa4a5ef884ef30d7442a

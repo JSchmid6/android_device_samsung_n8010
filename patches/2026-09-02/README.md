@@ -392,3 +392,65 @@ nachziehen), dazu die Fork-Commits von bionic, system_core, frameworks_native,
 libhidl, vold als Cherry-Picks auf unsere neueren Upstream-Staende; frameworks_av/
 base nach Sichtung. Stock-Upstream bleibt Basis, damit die Sicherheits-Merges
 von 2024/25 erhalten bleiben.
+
+## Nachtrag 12. September (spaet): Build 33 vorbereitet, waehrend Build 32 lief
+
+Details und die kompletten Patch-Serien: `../2026-09-12-b33/README.md`.
+
+### Kernel-Branch-Entscheidung ist belastbar
+
+GitHub-API: das Kernel-Repo hat `lineage-21.0`, `lineage-21.0-3.0` und
+`lineage-21.0-BPF` (Default-Branch `lineage-20.0-3.4`). Die Device-Trees
+n8010 (Push 19.01.2025) und n80xx-common (Commits bis 04/2025) passen zur
+Spitze von `lineage-21.0-BPF` (f29c7c3c576, 19.01.2025, "sec_keyboard.c: …
+wakelock bug workaround made in n80xx-common"). Auf dem BPF-Branch ist nur
+`lineageos_n8000_defconfig` gepflegt (11.01.2025) — `lineageos_n8013_defconfig`
+ist von 2022 und ohne BPF, obwohl `n80xx-common/BoardConfigCommon.mk` es als
+Default nennt; html6405s n8010-Tree ueberschreibt das seit 2023 mit
+`lineageos_n8000_defconfig` (Commit e1256d1). Unsere `lineageos_n8010_defconfig`
+ist jetzt genau das plus `user_debug=31` und `LOG_BUF_SHIFT=20`.
+
+Was der Branch mitbringt (991 Commits ueber der gemeinsamen Basis): ARM-eBPF-
+JIT, bpf-Syscall, `CONFIG_ANDROID_TREBLE_SPOOF_KERNEL_VERSION_PREFIX="4.9.337"`,
+renameat2-Backport, Revert "cgroup: Add compat cgroup2 fs", USB-Host-Merges
+aus dem KK-Kernel, SCHED_RR/HZ konfigurierbar. `drivers/md/dm-verity.c` hat
+weiter `argc != 10` — unser Patch ist nachgezogen.
+
+### Cherry-Pick-Runde (Worktrees unter `~/n8010-wt/`, Branch `n8010-b33`)
+
+| Repo | uebernommen | Konflikte / uebersprungen |
+|---|---|---|
+| frameworks/native | 16/16 | — |
+| system/core | 6/7 | phh `3747b8ce6c` (createProcessGroup `#if 0`): unsere Variante bleibt |
+| bionic | 7/9 | `92b1ad452` jemalloc (redundant), `777991efe` renameat (schon drin) |
+| system/libhidl | 2/2 | — |
+| system/vold | 1/1 | — |
+| hardware/interfaces | 4/4 | — |
+| packages/modules/Connectivity | 13/14 | `dc76351e44` reboot_on_failure (schon drin) |
+| frameworks/base (Auswahl 12) | 10/12 | `00ee326453` colorfade-Overlay (LOS 21 hat `config_displayColorFadeDisabled`), `436e2369a6` LocationResult (spaeter) |
+| vendor/lineage | 2 | Soong-Defaults `process_sdk_version_overrides_defaults`, `disable_postrender_cleanup_defaults` — ohne die baut der Linker bzw. surfaceflinger nach den Cherry-Picks nicht |
+
+Beim Durchsehen der Build-Dateien fiel auf, dass zwei Fork-Commits Soong-
+Defaults aus html6405s vendor_lineage-Fork referenzieren (bionic: linker,
+frameworks_native: surfaceflinger) — deshalb die zwei vendor_lineage-Reverts.
+`gralloc_10_usage_bits_defaults` gibt es in Stock-vendor_lineage noch; unser
+Gralloc-Hack in frameworks_native bleibt vorerst wie in Build 32.
+
+### bpfloader in Build 33: `start` statt aus
+
+Bisher war `on load_bpf_programs` komplett leer (netbpfload konnte auf dem
+alten Kernel nur scheitern und `reboot_on_failure` warf das Geraet in den
+Neustart). Mit BPF-Kernel und den Connectivity_UL-Patches darf netbpfload
+scheitern, ohne dass netd oder init haengen. Trotzdem `start` statt
+html6405s `exec_start`: sollte netbpfload doch haengen (Verifier/JIT auf
+ARM32), blockiert das sonst die Trigger-Kette bis `on boot` — und damit
+zygote und adbd, das wir gerade erst zum Laufen bringen. Sobald bpfloader
+nachweislich durchlaeuft, zurueck auf `exec_start`.
+
+### Fuer den Build-Baum (nach Build 32)
+
+`werkzeug/apply_b33.sh`: pro Repo `git stash` (lokale Aenderungen bleiben als
+Stash), `git checkout --detach n8010-b33`. Device-Overlay
+`smdk4412-common/overlay/.../config.xml`: `config_colorFade_enabled` →
+`config_displayColorFadeDisabled=true`. Dann `run-build33.sh` (erst
+`mka bootimage` als Kernel-Compile-Test, dann `mka bacon`).

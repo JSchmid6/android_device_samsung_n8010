@@ -1,0 +1,11 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): c9fb1e8640d34e81966f3ff874bc310cabc151bf
+Branch n8010-b33 Spitze: c92fb85a63c27413c0d3ce2dd1a27c114eb25110
+
+c92fb85a6 Hack: Ignore invalid pthread_t to %s
+22002f204 linker: Apply TARGET_PROCESS_SDK_VERSION_OVERRIDE on dlopen
+c118d77a6 Add inaddr.h header file
+b93e57709 bionic: Squash of pre-P mutex behavior restoration
+24caf824b bionic: Support wildcards in cached hosts file
+44972a152 bionic: Sort and cache hosts file data for fast lookup
+e1546b0d4 Implement per-process target SDK version override.
+83287cb9b n8010: lokale Aenderungen aus dem Build-Baum (Stand Build 32)

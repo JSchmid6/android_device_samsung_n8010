@@ -1,0 +1,1365 @@
+From 768500a5fe2ba00290afaaf90c9657ea3de81653 Mon Sep 17 00:00:00 2001
+From: html6405 <peter.schelchshorn@mhs-solutions.at>
+Date: Sat, 3 Aug 2024 21:36:43 +0200
+Subject: [PATCH 08/17] Revert "Split RenderEngineType into two enums"
+
+This reverts commit 696bf933
+
+(cherry picked from commit 7547d9445b2006fad358320a45c53c4fc0f34eac)
+---
+ libs/renderengine/RenderEngine.cpp            |  36 ++--
+ .../benchmark/RenderEngineBench.cpp           |  56 ++++-
+ .../include/renderengine/RenderEngine.h       |  47 ++---
+ libs/renderengine/skia/SkiaGLRenderEngine.cpp |   2 +-
+ libs/renderengine/skia/SkiaRenderEngine.cpp   |   9 +-
+ libs/renderengine/skia/SkiaRenderEngine.h     |   2 +-
+ libs/renderengine/skia/SkiaVkRenderEngine.cpp |   2 +-
+ libs/renderengine/tests/RenderEngineTest.cpp  | 195 +++++++++---------
+ .../tests/RenderEngineThreadedTest.cpp        |   3 +-
+ .../threaded/RenderEngineThreaded.cpp         |   9 +-
+ .../threaded/RenderEngineThreaded.h           |   5 +-
+ services/surfaceflinger/SurfaceFlinger.cpp    |  33 +--
+ .../surfaceflinger/common/FlagManager.cpp     |   2 -
+ .../common/include/common/FlagManager.h       |   1 -
+ 14 files changed, 215 insertions(+), 187 deletions(-)
+
+diff --git a/libs/renderengine/RenderEngine.cpp b/libs/renderengine/RenderEngine.cpp
+index 233134d2db..3e1ac33d57 100644
+--- a/libs/renderengine/RenderEngine.cpp
++++ b/libs/renderengine/RenderEngine.cpp
+@@ -28,28 +28,28 @@ namespace android {
+ namespace renderengine {
+ 
+ std::unique_ptr<RenderEngine> RenderEngine::create(const RenderEngineCreationArgs& args) {
+-    if (args.threaded == Threaded::YES) {
+-        switch (args.graphicsApi) {
+-            case GraphicsApi::GL:
+-                ALOGD("Threaded RenderEngine with SkiaGL Backend");
+-                return renderengine::threaded::RenderEngineThreaded::create([args]() {
+-                    return android::renderengine::skia::SkiaGLRenderEngine::create(args);
+-                });
+-            case GraphicsApi::VK:
+-                ALOGD("Threaded RenderEngine with SkiaVK Backend");
+-                return renderengine::threaded::RenderEngineThreaded::create([args]() {
+-                    return android::renderengine::skia::SkiaVkRenderEngine::create(args);
+-                });
+-        }
+-    }
+-
+-    switch (args.graphicsApi) {
+-        case GraphicsApi::GL:
++    switch (args.renderEngineType) {
++        case RenderEngineType::SKIA_GL:
+             ALOGD("RenderEngine with SkiaGL Backend");
+             return renderengine::skia::SkiaGLRenderEngine::create(args);
+-        case GraphicsApi::VK:
++        case RenderEngineType::SKIA_VK:
+             ALOGD("RenderEngine with SkiaVK Backend");
+             return renderengine::skia::SkiaVkRenderEngine::create(args);
++        case RenderEngineType::SKIA_GL_THREADED: {
++            ALOGD("Threaded RenderEngine with SkiaGL Backend");
++            return renderengine::threaded::RenderEngineThreaded::create(
++                    [args]() {
++                        return android::renderengine::skia::SkiaGLRenderEngine::create(args);
++                    },
++                    args.renderEngineType);
++        }
++        case RenderEngineType::SKIA_VK_THREADED:
++            ALOGD("Threaded RenderEngine with SkiaVK Backend");
++            return renderengine::threaded::RenderEngineThreaded::create(
++                    [args]() {
++                        return android::renderengine::skia::SkiaVkRenderEngine::create(args);
++                    },
++                    args.renderEngineType);
+     }
+ }
+ 
+diff --git a/libs/renderengine/benchmark/RenderEngineBench.cpp b/libs/renderengine/benchmark/RenderEngineBench.cpp
+index 101f519e55..a7f1df9a9b 100644
+--- a/libs/renderengine/benchmark/RenderEngineBench.cpp
++++ b/libs/renderengine/benchmark/RenderEngineBench.cpp
+@@ -29,6 +29,46 @@
+ using namespace android;
+ using namespace android::renderengine;
+ 
++///////////////////////////////////////////////////////////////////////////////
++//  Helpers for Benchmark::Apply
++///////////////////////////////////////////////////////////////////////////////
++
++std::string RenderEngineTypeName(RenderEngine::RenderEngineType type) {
++    switch (type) {
++        case RenderEngine::RenderEngineType::SKIA_GL_THREADED:
++            return "skiaglthreaded";
++        case RenderEngine::RenderEngineType::SKIA_GL:
++            return "skiagl";
++        case RenderEngine::RenderEngineType::SKIA_VK:
++            return "skiavk";
++        case RenderEngine::RenderEngineType::SKIA_VK_THREADED:
++            return "skiavkthreaded";
++    }
++}
++
++/**
++ * Passed (indirectly - see RunSkiaGLThreaded) to Benchmark::Apply to create a
++ * Benchmark which specifies which RenderEngineType it uses.
++ *
++ * This simplifies calling ->Arg(type)->Arg(type) and provides strings to make
++ * it obvious which version is being run.
++ *
++ * @param b The benchmark family
++ * @param type The type of RenderEngine to use.
++ */
++static void AddRenderEngineType(benchmark::internal::Benchmark* b,
++                                RenderEngine::RenderEngineType type) {
++    b->Arg(static_cast<int64_t>(type));
++    b->ArgName(RenderEngineTypeName(type));
++}
++
++/**
++ * Run a benchmark once using SKIA_GL_THREADED.
++ */
++static void RunSkiaGLThreaded(benchmark::internal::Benchmark* b) {
++    AddRenderEngineType(b, RenderEngine::RenderEngineType::SKIA_GL_THREADED);
++}
++
+ ///////////////////////////////////////////////////////////////////////////////
+ //  Helpers for calling drawLayers
+ ///////////////////////////////////////////////////////////////////////////////
+@@ -64,8 +104,7 @@ std::pair<uint32_t, uint32_t> getDisplaySize() {
+     return std::pair<uint32_t, uint32_t>(width, height);
+ }
+ 
+-static std::unique_ptr<RenderEngine> createRenderEngine(RenderEngine::Threaded threaded,
+-                                                        RenderEngine::GraphicsApi graphicsApi) {
++static std::unique_ptr<RenderEngine> createRenderEngine(RenderEngine::RenderEngineType type) {
+     auto args = RenderEngineCreationArgs::Builder()
+                         .setPixelFormat(static_cast<int>(ui::PixelFormat::RGBA_8888))
+                         .setImageCacheSize(1)
+@@ -73,8 +112,7 @@ static std::unique_ptr<RenderEngine> createRenderEngine(RenderEngine::Threaded t
+                         .setPrecacheToneMapperShaderOnly(false)
+                         .setSupportsBackgroundBlur(true)
+                         .setContextPriority(RenderEngine::ContextPriority::REALTIME)
+-                        .setThreaded(threaded)
+-                        .setGraphicsApi(graphicsApi)
++                        .setRenderEngineType(type)
+                         .build();
+     return RenderEngine::create(args);
+ }
+@@ -176,11 +214,8 @@ static void benchDrawLayers(RenderEngine& re, const std::vector<LayerSettings>&
+ //  Benchmarks
+ ///////////////////////////////////////////////////////////////////////////////
+ 
+-template <class... Args>
+-void BM_blur(benchmark::State& benchState, Args&&... args) {
+-    auto args_tuple = std::make_tuple(std::move(args)...);
+-    auto re = createRenderEngine(static_cast<RenderEngine::Threaded>(std::get<0>(args_tuple)),
+-                                 static_cast<RenderEngine::GraphicsApi>(std::get<1>(args_tuple)));
++void BM_blur(benchmark::State& benchState) {
++    auto re = createRenderEngine(static_cast<RenderEngine::RenderEngineType>(benchState.range()));
+ 
+     // Initially use cpu access so we can decode into it with AImageDecoder.
+     auto [width, height] = getDisplaySize();
+@@ -224,5 +259,4 @@ void BM_blur(benchmark::State& benchState, Args&&... args) {
+     benchDrawLayers(*re, layers, benchState, "blurred");
+ }
+ 
+-BENCHMARK_CAPTURE(BM_blur, SkiaGLThreaded, RenderEngine::Threaded::YES,
+-                  RenderEngine::GraphicsApi::GL);
++BENCHMARK(BM_blur)->Apply(RunSkiaGLThreaded);
+diff --git a/libs/renderengine/include/renderengine/RenderEngine.h b/libs/renderengine/include/renderengine/RenderEngine.h
+index 7047358e62..818d0350c0 100644
+--- a/libs/renderengine/include/renderengine/RenderEngine.h
++++ b/libs/renderengine/include/renderengine/RenderEngine.h
+@@ -33,7 +33,7 @@
+ #include <memory>
+ 
+ /**
+- * Allows to override the RenderEngine backend.
++ * Allows to set RenderEngine backend to GLES (default) or SkiaGL (NOT yet supported).
+  */
+ #define PROPERTY_DEBUG_RENDERENGINE_BACKEND "debug.renderengine.backend"
+ 
+@@ -92,14 +92,11 @@ public:
+         REALTIME = 4,
+     };
+ 
+-    enum class Threaded {
+-        NO,
+-        YES,
+-    };
+-
+-    enum class GraphicsApi {
+-        GL,
+-        VK,
++    enum class RenderEngineType {
++        SKIA_GL = 3,
++        SKIA_GL_THREADED = 4,
++        SKIA_VK = 5,
++        SKIA_VK_THREADED = 6,
+     };
+ 
+     static std::unique_ptr<RenderEngine> create(const RenderEngineCreationArgs& args);
+@@ -179,9 +176,10 @@ public:
+     // query is required to be thread safe.
+     virtual bool supportsBackgroundBlur() = 0;
+ 
++    // Returns the current type of RenderEngine instance that was created.
+     // TODO(b/180767535): This is only implemented to allow for backend-specific behavior, which
+     // we should not allow in general, so remove this.
+-    bool isThreaded() const { return mThreaded == Threaded::YES; }
++    RenderEngineType getRenderEngineType() const { return mRenderEngineType; }
+ 
+     static void validateInputBufferUsage(const sp<GraphicBuffer>&);
+     static void validateOutputBufferUsage(const sp<GraphicBuffer>&);
+@@ -193,9 +191,9 @@ public:
+     virtual void setEnableTracing(bool /*tracingEnabled*/) {}
+ 
+ protected:
+-    RenderEngine() : RenderEngine(Threaded::NO) {}
++    RenderEngine() : RenderEngine(RenderEngineType::SKIA_GL) {}
+ 
+-    RenderEngine(Threaded threaded) : mThreaded(threaded) {}
++    RenderEngine(RenderEngineType type) : mRenderEngineType(type) {}
+ 
+     // Maps GPU resources for this buffer.
+     // Note that work may be deferred to an additional thread, i.e. this call
+@@ -230,7 +228,7 @@ protected:
+     friend class impl::ExternalTexture;
+     friend class threaded::RenderEngineThreaded;
+     friend class RenderEngineTest_cleanupPostRender_cleansUpOnce_Test;
+-    const Threaded mThreaded;
++    const RenderEngineType mRenderEngineType;
+ 
+     // Update protectedContext mode depending on whether or not any layer has a protected buffer.
+     void updateProtectedContext(const std::vector<LayerSettings>&,
+@@ -253,8 +251,7 @@ struct RenderEngineCreationArgs {
+     bool precacheToneMapperShaderOnly;
+     bool supportsBackgroundBlur;
+     RenderEngine::ContextPriority contextPriority;
+-    RenderEngine::Threaded threaded;
+-    RenderEngine::GraphicsApi graphicsApi;
++    RenderEngine::RenderEngineType renderEngineType;
+ 
+     struct Builder;
+ 
+@@ -264,16 +261,14 @@ private:
+                              bool _enableProtectedContext, bool _precacheToneMapperShaderOnly,
+                              bool _supportsBackgroundBlur,
+                              RenderEngine::ContextPriority _contextPriority,
+-                             RenderEngine::Threaded _threaded,
+-                             RenderEngine::GraphicsApi _graphicsApi)
++                             RenderEngine::RenderEngineType _renderEngineType)
+           : pixelFormat(_pixelFormat),
+             imageCacheSize(_imageCacheSize),
+             enableProtectedContext(_enableProtectedContext),
+             precacheToneMapperShaderOnly(_precacheToneMapperShaderOnly),
+             supportsBackgroundBlur(_supportsBackgroundBlur),
+             contextPriority(_contextPriority),
+-            threaded(_threaded),
+-            graphicsApi(_graphicsApi) {}
++            renderEngineType(_renderEngineType) {}
+     RenderEngineCreationArgs() = delete;
+ };
+ 
+@@ -304,18 +299,14 @@ struct RenderEngineCreationArgs::Builder {
+         this->contextPriority = contextPriority;
+         return *this;
+     }
+-    Builder& setThreaded(RenderEngine::Threaded threaded) {
+-        this->threaded = threaded;
+-        return *this;
+-    }
+-    Builder& setGraphicsApi(RenderEngine::GraphicsApi graphicsApi) {
+-        this->graphicsApi = graphicsApi;
++    Builder& setRenderEngineType(RenderEngine::RenderEngineType renderEngineType) {
++        this->renderEngineType = renderEngineType;
+         return *this;
+     }
+     RenderEngineCreationArgs build() const {
+         return RenderEngineCreationArgs(pixelFormat, imageCacheSize, enableProtectedContext,
+                                         precacheToneMapperShaderOnly, supportsBackgroundBlur,
+-                                        contextPriority, threaded, graphicsApi);
++                                        contextPriority, renderEngineType);
+     }
+ 
+ private:
+@@ -326,8 +317,8 @@ private:
+     bool precacheToneMapperShaderOnly = false;
+     bool supportsBackgroundBlur = false;
+     RenderEngine::ContextPriority contextPriority = RenderEngine::ContextPriority::MEDIUM;
+-    RenderEngine::Threaded threaded = RenderEngine::Threaded::YES;
+-    RenderEngine::GraphicsApi graphicsApi = RenderEngine::GraphicsApi::GL;
++    RenderEngine::RenderEngineType renderEngineType =
++            RenderEngine::RenderEngineType::SKIA_GL_THREADED;
+ };
+ 
+ } // namespace renderengine
+diff --git a/libs/renderengine/skia/SkiaGLRenderEngine.cpp b/libs/renderengine/skia/SkiaGLRenderEngine.cpp
+index fea4129ec0..d688b51793 100644
+--- a/libs/renderengine/skia/SkiaGLRenderEngine.cpp
++++ b/libs/renderengine/skia/SkiaGLRenderEngine.cpp
+@@ -268,7 +268,7 @@ EGLConfig SkiaGLRenderEngine::chooseEglConfig(EGLDisplay display, int format, bo
+ SkiaGLRenderEngine::SkiaGLRenderEngine(const RenderEngineCreationArgs& args, EGLDisplay display,
+                                        EGLContext ctxt, EGLSurface placeholder,
+                                        EGLContext protectedContext, EGLSurface protectedPlaceholder)
+-      : SkiaRenderEngine(args.threaded, static_cast<PixelFormat>(args.pixelFormat),
++      : SkiaRenderEngine(args.renderEngineType, static_cast<PixelFormat>(args.pixelFormat),
+                          args.supportsBackgroundBlur),
+         mEGLDisplay(display),
+         mEGLContext(ctxt),
+diff --git a/libs/renderengine/skia/SkiaRenderEngine.cpp b/libs/renderengine/skia/SkiaRenderEngine.cpp
+index 6e393f03fa..35eb4e5622 100644
+--- a/libs/renderengine/skia/SkiaRenderEngine.cpp
++++ b/libs/renderengine/skia/SkiaRenderEngine.cpp
+@@ -270,9 +270,9 @@ void SkiaRenderEngine::setEnableTracing(bool tracingEnabled) {
+     SkAndroidFrameworkTraceUtil::setEnableTracing(tracingEnabled);
+ }
+ 
+-SkiaRenderEngine::SkiaRenderEngine(Threaded threaded, PixelFormat pixelFormat,
++SkiaRenderEngine::SkiaRenderEngine(RenderEngineType type, PixelFormat pixelFormat,
+                                    bool supportsBackgroundBlur)
+-      : RenderEngine(threaded), mDefaultPixelFormat(pixelFormat) {
++      : RenderEngine(type), mDefaultPixelFormat(pixelFormat) {
+     if (supportsBackgroundBlur) {
+         ALOGD("Background Blurs Enabled");
+         mBlurFilter = new KawaseBlurFilter();
+@@ -390,9 +390,10 @@ void SkiaRenderEngine::ensureGrContextsCreated() {
+ void SkiaRenderEngine::mapExternalTextureBuffer(const sp<GraphicBuffer>& buffer,
+                                                   bool isRenderable) {
+     // Only run this if RE is running on its own thread. This
+-    // way the access to GL/VK operations is guaranteed to be happening on the
++    // way the access to GL operations is guaranteed to be happening on the
+     // same thread.
+-    if (!isThreaded()) {
++    if (mRenderEngineType != RenderEngineType::SKIA_GL_THREADED &&
++        mRenderEngineType != RenderEngineType::SKIA_VK_THREADED) {
+         return;
+     }
+     // We don't attempt to map a buffer if the buffer contains protected content. In GL this is
+diff --git a/libs/renderengine/skia/SkiaRenderEngine.h b/libs/renderengine/skia/SkiaRenderEngine.h
+index e88d44cca6..ac134afa64 100644
+--- a/libs/renderengine/skia/SkiaRenderEngine.h
++++ b/libs/renderengine/skia/SkiaRenderEngine.h
+@@ -59,7 +59,7 @@ class BlurFilter;
+ class SkiaRenderEngine : public RenderEngine {
+ public:
+     static std::unique_ptr<SkiaRenderEngine> create(const RenderEngineCreationArgs& args);
+-    SkiaRenderEngine(Threaded, PixelFormat pixelFormat, bool supportsBackgroundBlur);
++    SkiaRenderEngine(RenderEngineType type, PixelFormat pixelFormat, bool supportsBackgroundBlur);
+     ~SkiaRenderEngine() override;
+ 
+     std::future<void> primeCache(bool shouldPrimeUltraHDR) override final;
+diff --git a/libs/renderengine/skia/SkiaVkRenderEngine.cpp b/libs/renderengine/skia/SkiaVkRenderEngine.cpp
+index 40ff364e3e..30d2d04f57 100644
+--- a/libs/renderengine/skia/SkiaVkRenderEngine.cpp
++++ b/libs/renderengine/skia/SkiaVkRenderEngine.cpp
+@@ -687,7 +687,7 @@ std::unique_ptr<SkiaVkRenderEngine> SkiaVkRenderEngine::create(
+ }
+ 
+ SkiaVkRenderEngine::SkiaVkRenderEngine(const RenderEngineCreationArgs& args)
+-      : SkiaRenderEngine(args.threaded, static_cast<PixelFormat>(args.pixelFormat),
++      : SkiaRenderEngine(args.renderEngineType, static_cast<PixelFormat>(args.pixelFormat),
+                          args.supportsBackgroundBlur) {}
+ 
+ SkiaVkRenderEngine::~SkiaVkRenderEngine() {
+diff --git a/libs/renderengine/tests/RenderEngineTest.cpp b/libs/renderengine/tests/RenderEngineTest.cpp
+index 4c18704f52..2fd2a35927 100644
+--- a/libs/renderengine/tests/RenderEngineTest.cpp
++++ b/libs/renderengine/tests/RenderEngineTest.cpp
+@@ -106,8 +106,8 @@ public:
+     virtual ~RenderEngineFactory() = default;
+ 
+     virtual std::string name() = 0;
+-    virtual renderengine::RenderEngine::GraphicsApi graphicsApi() = 0;
+-    virtual bool apiSupported() = 0;
++    virtual renderengine::RenderEngine::RenderEngineType type() = 0;
++    virtual bool typeSupported() = 0;
+     std::unique_ptr<renderengine::RenderEngine> createRenderEngine() {
+         renderengine::RenderEngineCreationArgs reCreationArgs =
+                 renderengine::RenderEngineCreationArgs::Builder()
+@@ -117,8 +117,7 @@ public:
+                         .setPrecacheToneMapperShaderOnly(false)
+                         .setSupportsBackgroundBlur(true)
+                         .setContextPriority(renderengine::RenderEngine::ContextPriority::MEDIUM)
+-                        .setThreaded(renderengine::RenderEngine::Threaded::NO)
+-                        .setGraphicsApi(graphicsApi())
++                        .setRenderEngineType(type())
+                         .build();
+         return renderengine::RenderEngine::create(reCreationArgs);
+     }
+@@ -128,11 +127,11 @@ class SkiaVkRenderEngineFactory : public RenderEngineFactory {
+ public:
+     std::string name() override { return "SkiaVkRenderEngineFactory"; }
+ 
+-    renderengine::RenderEngine::GraphicsApi graphicsApi() override {
+-        return renderengine::RenderEngine::GraphicsApi::VK;
++    renderengine::RenderEngine::RenderEngineType type() {
++        return renderengine::RenderEngine::RenderEngineType::SKIA_VK;
+     }
+ 
+-    bool apiSupported() override {
++    bool typeSupported() override {
+         return skia::SkiaVkRenderEngine::canSupportSkiaVkRenderEngine();
+     }
+ };
+@@ -141,11 +140,11 @@ class SkiaGLESRenderEngineFactory : public RenderEngineFactory {
+ public:
+     std::string name() override { return "SkiaGLRenderEngineFactory"; }
+ 
+-    renderengine::RenderEngine::GraphicsApi graphicsApi() {
+-        return renderengine::RenderEngine::GraphicsApi::GL;
++    renderengine::RenderEngine::RenderEngineType type() {
++        return renderengine::RenderEngine::RenderEngineType::SKIA_GL;
+     }
+ 
+-    bool apiSupported() override { return true; }
++    bool typeSupported() override { return true; }
+ };
+ 
+ class RenderEngineTest : public ::testing::TestWithParam<std::shared_ptr<RenderEngineFactory>> {
+@@ -1480,7 +1479,7 @@ INSTANTIATE_TEST_SUITE_P(PerRenderEngineType, RenderEngineTest,
+                                          std::make_shared<SkiaVkRenderEngineFactory>()));
+ 
+ TEST_P(RenderEngineTest, drawLayers_noLayersToDraw) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1488,7 +1487,7 @@ TEST_P(RenderEngineTest, drawLayers_noLayersToDraw) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillRedBufferAndEmptyBuffer) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1515,7 +1514,7 @@ TEST_P(RenderEngineTest, drawLayers_fillRedBufferAndEmptyBuffer) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_withoutBuffers_withColorTransform) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1549,7 +1548,7 @@ TEST_P(RenderEngineTest, drawLayers_withoutBuffers_withColorTransform) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_nullOutputBuffer) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1570,7 +1569,7 @@ TEST_P(RenderEngineTest, drawLayers_nullOutputBuffer) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillRedBuffer_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1578,7 +1577,7 @@ TEST_P(RenderEngineTest, drawLayers_fillRedBuffer_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillGreenBuffer_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1586,7 +1585,7 @@ TEST_P(RenderEngineTest, drawLayers_fillGreenBuffer_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBlueBuffer_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1594,7 +1593,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBlueBuffer_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillRedTransparentBuffer_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1602,7 +1601,7 @@ TEST_P(RenderEngineTest, drawLayers_fillRedTransparentBuffer_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferPhysicalOffset_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1610,7 +1609,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferPhysicalOffset_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate0_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1618,7 +1617,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate0_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate90_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1626,7 +1625,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate90_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate180_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1634,7 +1633,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate180_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate270_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1642,7 +1641,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate270_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferLayerTransform_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1650,7 +1649,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferLayerTransform_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1660,7 +1659,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_colorSource) {
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_sourceDataspace) {
+     const auto& renderEngineFactory = GetParam();
+     // skip for non color management
+-    if (!renderEngineFactory->apiSupported()) {
++    if (!renderEngineFactory->typeSupported()) {
+         GTEST_SKIP();
+     }
+ 
+@@ -1671,7 +1670,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_sourceDataspace) {
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_outputDataspace) {
+     const auto& renderEngineFactory = GetParam();
+     // skip for non color management
+-    if (!renderEngineFactory->apiSupported()) {
++    if (!renderEngineFactory->typeSupported()) {
+         GTEST_SKIP();
+     }
+ 
+@@ -1680,7 +1679,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_outputDataspace) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferRoundedCorners_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1688,7 +1687,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferRoundedCorners_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformZeroLayerAlpha_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1696,7 +1695,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformZeroLayerAlpha_color
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferAndBlurBackground_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1704,7 +1703,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferAndBlurBackground_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillSmallLayerAndBlurBackground_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1712,7 +1711,7 @@ TEST_P(RenderEngineTest, drawLayers_fillSmallLayerAndBlurBackground_colorSource)
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_overlayCorners_colorSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1720,7 +1719,7 @@ TEST_P(RenderEngineTest, drawLayers_overlayCorners_colorSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillRedBuffer_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1728,7 +1727,7 @@ TEST_P(RenderEngineTest, drawLayers_fillRedBuffer_opaqueBufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillGreenBuffer_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1736,7 +1735,7 @@ TEST_P(RenderEngineTest, drawLayers_fillGreenBuffer_opaqueBufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBlueBuffer_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1744,7 +1743,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBlueBuffer_opaqueBufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillRedTransparentBuffer_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1752,7 +1751,7 @@ TEST_P(RenderEngineTest, drawLayers_fillRedTransparentBuffer_opaqueBufferSource)
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferPhysicalOffset_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1760,7 +1759,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferPhysicalOffset_opaqueBufferSource)
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate0_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1768,7 +1767,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate0_opaqueBufferSource
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate90_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1776,7 +1775,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate90_opaqueBufferSourc
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate180_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1784,7 +1783,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate180_opaqueBufferSour
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate270_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1792,7 +1791,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate270_opaqueBufferSour
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferLayerTransform_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1800,7 +1799,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferLayerTransform_opaqueBufferSource)
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1810,7 +1809,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_opaqueBufferSource)
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformAndSourceDataspace_opaqueBufferSource) {
+     const auto& renderEngineFactory = GetParam();
+     // skip for non color management
+-    if (!renderEngineFactory->apiSupported()) {
++    if (!renderEngineFactory->typeSupported()) {
+         GTEST_SKIP();
+     }
+ 
+@@ -1821,7 +1820,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformAndSourceDataspace_o
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformAndOutputDataspace_opaqueBufferSource) {
+     const auto& renderEngineFactory = GetParam();
+     // skip for non color management
+-    if (!renderEngineFactory->apiSupported()) {
++    if (!renderEngineFactory->typeSupported()) {
+         GTEST_SKIP();
+     }
+ 
+@@ -1830,7 +1829,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformAndOutputDataspace_o
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferRoundedCorners_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1838,7 +1837,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferRoundedCorners_opaqueBufferSource)
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformZeroLayerAlpha_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1846,7 +1845,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformZeroLayerAlpha_opaqu
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferAndBlurBackground_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1854,7 +1853,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferAndBlurBackground_opaqueBufferSour
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillSmallLayerAndBlurBackground_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1862,7 +1861,7 @@ TEST_P(RenderEngineTest, drawLayers_fillSmallLayerAndBlurBackground_opaqueBuffer
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_overlayCorners_opaqueBufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1870,7 +1869,7 @@ TEST_P(RenderEngineTest, drawLayers_overlayCorners_opaqueBufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillRedBuffer_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1878,7 +1877,7 @@ TEST_P(RenderEngineTest, drawLayers_fillRedBuffer_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillGreenBuffer_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1886,7 +1885,7 @@ TEST_P(RenderEngineTest, drawLayers_fillGreenBuffer_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBlueBuffer_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1894,7 +1893,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBlueBuffer_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillRedTransparentBuffer_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1902,7 +1901,7 @@ TEST_P(RenderEngineTest, drawLayers_fillRedTransparentBuffer_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferPhysicalOffset_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1910,7 +1909,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferPhysicalOffset_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate0_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1918,7 +1917,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate0_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate90_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1926,7 +1925,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate90_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate180_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1934,7 +1933,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate180_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate270_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1942,7 +1941,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferCheckersRotate270_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferLayerTransform_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1950,7 +1949,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferLayerTransform_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1960,7 +1959,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransform_bufferSource) {
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformAndSourceDataspace_bufferSource) {
+     const auto& renderEngineFactory = GetParam();
+     // skip for non color management
+-    if (!renderEngineFactory->apiSupported()) {
++    if (!renderEngineFactory->typeSupported()) {
+         GTEST_SKIP();
+     }
+ 
+@@ -1971,7 +1970,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformAndSourceDataspace_b
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformAndOutputDataspace_bufferSource) {
+     const auto& renderEngineFactory = GetParam();
+     // skip for non color management
+-    if (!renderEngineFactory->apiSupported()) {
++    if (!renderEngineFactory->typeSupported()) {
+         GTEST_SKIP();
+     }
+ 
+@@ -1980,7 +1979,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformAndOutputDataspace_b
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferRoundedCorners_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1988,7 +1987,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferRoundedCorners_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformZeroLayerAlpha_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -1996,7 +1995,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferColorTransformZeroLayerAlpha_buffe
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferAndBlurBackground_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2004,7 +2003,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferAndBlurBackground_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillSmallLayerAndBlurBackground_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2012,7 +2011,7 @@ TEST_P(RenderEngineTest, drawLayers_fillSmallLayerAndBlurBackground_bufferSource
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_overlayCorners_bufferSource) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2020,7 +2019,7 @@ TEST_P(RenderEngineTest, drawLayers_overlayCorners_bufferSource) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBufferTextureTransform) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2028,7 +2027,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBufferTextureTransform) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBuffer_premultipliesAlpha) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2036,7 +2035,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBuffer_premultipliesAlpha) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillBuffer_withoutPremultiplyingAlpha) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2044,7 +2043,7 @@ TEST_P(RenderEngineTest, drawLayers_fillBuffer_withoutPremultiplyingAlpha) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillShadow_castsWithoutCasterLayer) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2062,7 +2061,7 @@ TEST_P(RenderEngineTest, drawLayers_fillShadow_castsWithoutCasterLayer) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillShadow_casterLayerMinSize) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2085,7 +2084,7 @@ TEST_P(RenderEngineTest, drawLayers_fillShadow_casterLayerMinSize) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillShadow_casterColorLayer) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2109,7 +2108,7 @@ TEST_P(RenderEngineTest, drawLayers_fillShadow_casterColorLayer) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillShadow_casterOpaqueBufferLayer) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2134,7 +2133,7 @@ TEST_P(RenderEngineTest, drawLayers_fillShadow_casterOpaqueBufferLayer) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillShadow_casterWithRoundedCorner) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2160,7 +2159,7 @@ TEST_P(RenderEngineTest, drawLayers_fillShadow_casterWithRoundedCorner) {
+ }
+ 
+ TEST_P(RenderEngineTest, drawLayers_fillShadow_translucentCasterWithAlpha) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2189,7 +2188,7 @@ TEST_P(RenderEngineTest, drawLayers_fillShadow_translucentCasterWithAlpha) {
+ }
+ 
+ TEST_P(RenderEngineTest, cleanupPostRender_cleansUpOnce) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2225,7 +2224,7 @@ TEST_P(RenderEngineTest, cleanupPostRender_cleansUpOnce) {
+     if (mRE->canSkipPostRenderCleanup()) {
+         // Skia's Vk backend may keep the texture alive beyond drawLayersInternal, so
+         // it never gets added to the cleanup list. In those cases, we can skip.
+-        EXPECT_TRUE(GetParam()->graphicsApi() == renderengine::RenderEngine::GraphicsApi::VK);
++        EXPECT_TRUE(GetParam()->type() == renderengine::RenderEngine::RenderEngineType::SKIA_VK);
+     } else {
+         mRE->cleanupPostRender();
+         EXPECT_TRUE(mRE->canSkipPostRenderCleanup());
+@@ -2233,7 +2232,7 @@ TEST_P(RenderEngineTest, cleanupPostRender_cleansUpOnce) {
+ }
+ 
+ TEST_P(RenderEngineTest, testRoundedCornersCrop) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2286,7 +2285,7 @@ TEST_P(RenderEngineTest, testRoundedCornersCrop) {
+ }
+ 
+ TEST_P(RenderEngineTest, testRoundedCornersParentCrop) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2334,7 +2333,7 @@ TEST_P(RenderEngineTest, testRoundedCornersParentCrop) {
+ }
+ 
+ TEST_P(RenderEngineTest, testRoundedCornersParentCropSmallBounds) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2371,7 +2370,7 @@ TEST_P(RenderEngineTest, testRoundedCornersParentCropSmallBounds) {
+ }
+ 
+ TEST_P(RenderEngineTest, testRoundedCornersXY) {
+-    if (!GetParam()->apiSupported()) {
++    if (GetParam()->type() != renderengine::RenderEngine::RenderEngineType::SKIA_GL) {
+         GTEST_SKIP();
+     }
+ 
+@@ -2414,7 +2413,7 @@ TEST_P(RenderEngineTest, testRoundedCornersXY) {
+ }
+ 
+ TEST_P(RenderEngineTest, testClear) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2446,7 +2445,7 @@ TEST_P(RenderEngineTest, testClear) {
+ }
+ 
+ TEST_P(RenderEngineTest, testDisableBlendingBuffer) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2497,7 +2496,7 @@ TEST_P(RenderEngineTest, testDisableBlendingBuffer) {
+ }
+ 
+ TEST_P(RenderEngineTest, testBorder) {
+-    if (!GetParam()->apiSupported()) {
++    if (GetParam()->type() != renderengine::RenderEngine::RenderEngineType::SKIA_GL) {
+         GTEST_SKIP();
+     }
+ 
+@@ -2542,7 +2541,7 @@ TEST_P(RenderEngineTest, testBorder) {
+ }
+ 
+ TEST_P(RenderEngineTest, testDimming) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2617,7 +2616,7 @@ TEST_P(RenderEngineTest, testDimming) {
+ }
+ 
+ TEST_P(RenderEngineTest, testDimming_inGammaSpace) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2695,7 +2694,7 @@ TEST_P(RenderEngineTest, testDimming_inGammaSpace) {
+ }
+ 
+ TEST_P(RenderEngineTest, testDimming_inGammaSpace_withDisplayColorTransform) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2758,7 +2757,7 @@ TEST_P(RenderEngineTest, testDimming_inGammaSpace_withDisplayColorTransform) {
+ }
+ 
+ TEST_P(RenderEngineTest, testDimming_inGammaSpace_withDisplayColorTransform_deviceHandles) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2822,7 +2821,7 @@ TEST_P(RenderEngineTest, testDimming_inGammaSpace_withDisplayColorTransform_devi
+ }
+ 
+ TEST_P(RenderEngineTest, testDimming_withoutTargetLuminance) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2876,7 +2875,7 @@ TEST_P(RenderEngineTest, testDimming_withoutTargetLuminance) {
+ }
+ 
+ TEST_P(RenderEngineTest, test_isOpaque) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -2926,7 +2925,7 @@ TEST_P(RenderEngineTest, test_isOpaque) {
+ }
+ 
+ TEST_P(RenderEngineTest, test_tonemapPQMatches) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+ 
+@@ -2943,7 +2942,7 @@ TEST_P(RenderEngineTest, test_tonemapPQMatches) {
+ }
+ 
+ TEST_P(RenderEngineTest, test_tonemapHLGMatches) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+ 
+@@ -2960,7 +2959,7 @@ TEST_P(RenderEngineTest, test_tonemapHLGMatches) {
+ }
+ 
+ TEST_P(RenderEngineTest, r8_behaves_as_mask) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -3020,7 +3019,7 @@ TEST_P(RenderEngineTest, r8_behaves_as_mask) {
+ }
+ 
+ TEST_P(RenderEngineTest, r8_respects_color_transform) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -3085,7 +3084,7 @@ TEST_P(RenderEngineTest, r8_respects_color_transform) {
+ }
+ 
+ TEST_P(RenderEngineTest, r8_respects_color_transform_when_device_handles) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+@@ -3153,7 +3152,7 @@ TEST_P(RenderEngineTest, r8_respects_color_transform_when_device_handles) {
+ }
+ 
+ TEST_P(RenderEngineTest, primeShaderCache) {
+-    if (!GetParam()->apiSupported()) {
++    if (!GetParam()->typeSupported()) {
+         GTEST_SKIP();
+     }
+     initializeRenderEngine();
+diff --git a/libs/renderengine/tests/RenderEngineThreadedTest.cpp b/libs/renderengine/tests/RenderEngineThreadedTest.cpp
+index d56dbb2a7b..1b9adba063 100644
+--- a/libs/renderengine/tests/RenderEngineThreadedTest.cpp
++++ b/libs/renderengine/tests/RenderEngineThreadedTest.cpp
+@@ -35,7 +35,8 @@ struct RenderEngineThreadedTest : public ::testing::Test {
+ 
+     void SetUp() override {
+         mThreadedRE = renderengine::threaded::RenderEngineThreaded::create(
+-                [this]() { return std::unique_ptr<renderengine::RenderEngine>(mRenderEngine); });
++                [this]() { return std::unique_ptr<renderengine::RenderEngine>(mRenderEngine); },
++                renderengine::RenderEngine::RenderEngineType::SKIA_GL_THREADED);
+     }
+ 
+     std::unique_ptr<renderengine::threaded::RenderEngineThreaded> mThreadedRE;
+diff --git a/libs/renderengine/threaded/RenderEngineThreaded.cpp b/libs/renderengine/threaded/RenderEngineThreaded.cpp
+index f4cebc05ec..f58f543854 100644
+--- a/libs/renderengine/threaded/RenderEngineThreaded.cpp
++++ b/libs/renderengine/threaded/RenderEngineThreaded.cpp
+@@ -33,12 +33,13 @@ namespace android {
+ namespace renderengine {
+ namespace threaded {
+ 
+-std::unique_ptr<RenderEngineThreaded> RenderEngineThreaded::create(CreateInstanceFactory factory) {
+-    return std::make_unique<RenderEngineThreaded>(std::move(factory));
++std::unique_ptr<RenderEngineThreaded> RenderEngineThreaded::create(CreateInstanceFactory factory,
++                                                                   RenderEngineType type) {
++    return std::make_unique<RenderEngineThreaded>(std::move(factory), type);
+ }
+ 
+-RenderEngineThreaded::RenderEngineThreaded(CreateInstanceFactory factory)
+-      : RenderEngine(Threaded::YES) {
++RenderEngineThreaded::RenderEngineThreaded(CreateInstanceFactory factory, RenderEngineType type)
++      : RenderEngine(type) {
+     ATRACE_CALL();
+ 
+     std::lock_guard lockThread(mThreadMutex);
+diff --git a/libs/renderengine/threaded/RenderEngineThreaded.h b/libs/renderengine/threaded/RenderEngineThreaded.h
+index d440c961e7..3f1e67f285 100644
+--- a/libs/renderengine/threaded/RenderEngineThreaded.h
++++ b/libs/renderengine/threaded/RenderEngineThreaded.h
+@@ -37,9 +37,10 @@ using CreateInstanceFactory = std::function<std::unique_ptr<renderengine::Render
+  */
+ class RenderEngineThreaded : public RenderEngine {
+ public:
+-    static std::unique_ptr<RenderEngineThreaded> create(CreateInstanceFactory factory);
++    static std::unique_ptr<RenderEngineThreaded> create(CreateInstanceFactory factory,
++                                                        RenderEngineType type);
+ 
+-    RenderEngineThreaded(CreateInstanceFactory factory);
++    RenderEngineThreaded(CreateInstanceFactory factory, RenderEngineType type);
+     ~RenderEngineThreaded() override;
+     std::future<void> primeCache(bool shouldPrimeUltraHDR) override;
+ 
+diff --git a/services/surfaceflinger/SurfaceFlinger.cpp b/services/surfaceflinger/SurfaceFlinger.cpp
+index 517d78cb7c..d4ccbeebac 100644
+--- a/services/surfaceflinger/SurfaceFlinger.cpp
++++ b/services/surfaceflinger/SurfaceFlinger.cpp
+@@ -802,26 +802,22 @@ void SurfaceFlinger::bootFinished() {
+     }));
+ }
+ 
+-void chooseRenderEngineType(renderengine::RenderEngineCreationArgs::Builder& builder) {
++static std::optional<renderengine::RenderEngine::RenderEngineType>
++chooseRenderEngineTypeViaSysProp() {
+     char prop[PROPERTY_VALUE_MAX];
+     property_get(PROPERTY_DEBUG_RENDERENGINE_BACKEND, prop, "");
+ 
+     if (strcmp(prop, "skiagl") == 0) {
+-        builder.setThreaded(renderengine::RenderEngine::Threaded::NO)
+-                .setGraphicsApi(renderengine::RenderEngine::GraphicsApi::GL);
++        return renderengine::RenderEngine::RenderEngineType::SKIA_GL;
+     } else if (strcmp(prop, "skiaglthreaded") == 0) {
+-        builder.setThreaded(renderengine::RenderEngine::Threaded::YES)
+-                .setGraphicsApi(renderengine::RenderEngine::GraphicsApi::GL);
++        return renderengine::RenderEngine::RenderEngineType::SKIA_GL_THREADED;
+     } else if (strcmp(prop, "skiavk") == 0) {
+-        builder.setThreaded(renderengine::RenderEngine::Threaded::NO)
+-                .setGraphicsApi(renderengine::RenderEngine::GraphicsApi::VK);
++        return renderengine::RenderEngine::RenderEngineType::SKIA_VK;
+     } else if (strcmp(prop, "skiavkthreaded") == 0) {
+-        builder.setThreaded(renderengine::RenderEngine::Threaded::YES)
+-                .setGraphicsApi(renderengine::RenderEngine::GraphicsApi::VK);
++        return renderengine::RenderEngine::RenderEngineType::SKIA_VK_THREADED;
+     } else {
+-        builder.setGraphicsApi(FlagManager::getInstance().vulkan_renderengine()
+-                                       ? renderengine::RenderEngine::GraphicsApi::VK
+-                                       : renderengine::RenderEngine::GraphicsApi::GL);
++        ALOGE("Unrecognized RenderEngineType %s; ignoring!", prop);
++        return {};
+     }
+ }
+ 
+@@ -847,7 +843,9 @@ void SurfaceFlinger::init() FTL_FAKE_GUARD(kMainThreadContext) {
+                                    useContextPriority
+                                            ? renderengine::RenderEngine::ContextPriority::REALTIME
+                                            : renderengine::RenderEngine::ContextPriority::MEDIUM);
+-    chooseRenderEngineType(builder);
++    if (auto type = chooseRenderEngineTypeViaSysProp()) {
++        builder.setRenderEngineType(type.value());
++    }
+     mRenderEngine = renderengine::RenderEngine::create(builder.build());
+     mCompositionEngine->setRenderEngine(mRenderEngine.get());
+     mMaxRenderTargetSize =
+@@ -8367,8 +8365,13 @@ ftl::SharedFuture<FenceResult> SurfaceFlinger::renderScreenImpl(
+     //
+     // TODO(b/196334700) Once we use RenderEngineThreaded everywhere we can always defer the call
+     // to CompositionEngine::present.
+-    auto presentFuture = mRenderEngine->isThreaded() ? ftl::defer(std::move(present)).share()
+-                                                     : ftl::yield(present()).share();
++    const bool renderEngineIsThreaded = [&]() {
++        using Type = renderengine::RenderEngine::RenderEngineType;
++        const auto type = mRenderEngine->getRenderEngineType();
++        return type == Type::SKIA_GL_THREADED;
++    }();
++    auto presentFuture = renderEngineIsThreaded ? ftl::defer(std::move(present)).share()
++                                                : ftl::yield(present()).share();
+ 
+     for (auto& [layer, layerFE] : layers) {
+         layer->onLayerDisplayed(presentFuture, ui::INVALID_LAYER_STACK,
+diff --git a/services/surfaceflinger/common/FlagManager.cpp b/services/surfaceflinger/common/FlagManager.cpp
+index b7f06a992e..69acd0be60 100644
+--- a/services/surfaceflinger/common/FlagManager.cpp
++++ b/services/surfaceflinger/common/FlagManager.cpp
+@@ -127,7 +127,6 @@ void FlagManager::dump(std::string& result) const {
+     DUMP_READ_ONLY_FLAG(game_default_frame_rate);
+     DUMP_READ_ONLY_FLAG(enable_layer_command_batching);
+     DUMP_READ_ONLY_FLAG(screenshot_fence_preservation);
+-    DUMP_READ_ONLY_FLAG(vulkan_renderengine);
+     DUMP_READ_ONLY_FLAG(renderable_buffer_usage);
+     DUMP_READ_ONLY_FLAG(restore_blur_step);
+     DUMP_READ_ONLY_FLAG(dont_skip_on_early_ro);
+@@ -207,7 +206,6 @@ FLAG_MANAGER_READ_ONLY_FLAG(fp16_client_target, "debug.sf.fp16_client_target")
+ FLAG_MANAGER_READ_ONLY_FLAG(game_default_frame_rate, "")
+ FLAG_MANAGER_READ_ONLY_FLAG(enable_layer_command_batching, "")
+ FLAG_MANAGER_READ_ONLY_FLAG(screenshot_fence_preservation, "debug.sf.screenshot_fence_preservation")
+-FLAG_MANAGER_READ_ONLY_FLAG(vulkan_renderengine, "debug.renderengine.vulkan")
+ FLAG_MANAGER_READ_ONLY_FLAG(renderable_buffer_usage, "")
+ FLAG_MANAGER_READ_ONLY_FLAG(restore_blur_step, "debug.renderengine.restore_blur_step")
+ FLAG_MANAGER_READ_ONLY_FLAG(dont_skip_on_early_ro, "")
+diff --git a/services/surfaceflinger/common/include/common/FlagManager.h b/services/surfaceflinger/common/include/common/FlagManager.h
+index 241c814780..0263df8820 100644
+--- a/services/surfaceflinger/common/include/common/FlagManager.h
++++ b/services/surfaceflinger/common/include/common/FlagManager.h
+@@ -67,7 +67,6 @@ public:
+     bool game_default_frame_rate() const;
+     bool enable_layer_command_batching() const;
+     bool screenshot_fence_preservation() const;
+-    bool vulkan_renderengine() const;
+     bool renderable_buffer_usage() const;
+     bool restore_blur_step() const;
+     bool dont_skip_on_early_ro() const;
+-- 
+2.48.1
+

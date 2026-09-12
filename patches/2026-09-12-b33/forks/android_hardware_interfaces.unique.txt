@@ -1,0 +1,4 @@
+    7ce5cd1b03 2022-09-06 html6405: Revert "audio: use binder threadpool"
+    c0f21db430 2022-09-06 html6405: Revert "Audio: Load Bluetooth AIDL HAL"
+    b261d657d2 2018-06-07 Purushottam Kushwaha: wifi: Add provision to create/remove dynamic interface(s).
+    968a580253 2023-11-08 Yaroslav Zviezda: Revert "Remove HIDL implementation for the WiFi"

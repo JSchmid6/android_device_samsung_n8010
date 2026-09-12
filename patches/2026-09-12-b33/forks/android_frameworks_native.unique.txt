@@ -1,0 +1,16 @@
+    5255e5d255 2023-12-03 Yaroslav Zviezda: renderengine: gles: unconditionally skip PostRenderCleanup
+    8d7170ed2a 2024-10-20 html6405: KeyLayoutMap.cpp: don't LOG_ALWAYS_FATAL_IF if there's no kernel config.
+    bcd66b6be2 2024-03-31 Yaroslav Zviezda: Revert "Remove contention from Render Engine early return"
+    a88f414373 2024-04-06 Yaroslav Zviezda: [UL] renderengine, gles: convert to c_str
+    dfa99621e5 2024-04-06 Yaroslav Zviezda: [UL] renderengine,skia: fixup after 1607d39462b695da0ce9ac417f951e9dfa280b9b
+    e74c3b111b 2024-08-03 html6405: Revert "Remove useFramebufferCache parameter in drawLayers()"
+    6db912d6f3 2024-08-03 html6405: Revert "Delete GLESRenderEngine"
+    2413c003c4 2024-08-03 html6405: Revert "Delete genTextures and deleteTextures from RenderEngine"
+    56e340d905 2024-08-03 html6405: Revert "RenderEngine, SF: gate HDR priming behind property"
+    7547d9445b 2024-08-03 html6405: Revert "Split RenderEngineType into two enums"
+    066d06063a 2024-08-03 html6405: Revert "vulkan_renderengine: Check for support first"
+    f91ace6144 2024-05-26 Andy CrossGate Yan: SurfaceFlinger: Disable SF HWC backpressure
+    41a7b59d80 2024-05-07 Pierre-Hugues Husson: Disable gpuservice on old BPF-less kernel
+    148f618880 2022-08-23 ivanmeler: Disable gpu service
+    41c39f7312 2020-11-06 Arne Coucheron: SurfaceFlinger: Don't cleanup resources from previous frame
+    ad889df197 2022-10-21 Yaroslav Zviezda: libbinder: make threadpool shrinking non-fatal

@@ -1,0 +1,44 @@
+diff --cc init/service.cpp
+index 6c0b73c95,c60a6d37b..000000000
+--- a/init/service.cpp
++++ b/init/service.cpp
+@@@ -704,25 -708,18 +704,38 @@@ Result<void> Service::Start() 
+      if (CgroupsAvailable()) {
+          bool use_memcg = swappiness_ != -1 || soft_limit_in_bytes_ != -1 || limit_in_bytes_ != -1 ||
+                           limit_percent_ != -1 || !limit_property_.empty();
+ -        errno = -createProcessGroup(proc_attr_.uid, pid_, use_memcg);
+ +        errno = -createProcessGroup(uid(), pid_, use_memcg);
+          if (errno != 0) {
+++<<<<<<< HEAD
+ +            // On kernels < 4.5 without cgroup v2 support, createProcessGroup
+ +            // may fail with ENOENT (cgroup fs not mounted) or EPERM/EROFS
+ +            // (sysfs directory not writable). Treat these as non-fatal so
+ +            // services can still start on legacy kernels (e.g. Samsung
+ +            // Exynos4412 with kernel 3.0.x).
+ +            if (errno == ENOENT || errno == EPERM || errno == EROFS) {
+ +                LOG(WARNING) << "createProcessGroup(" << uid() << ", " << pid_ << ", " << use_memcg
+ +                             << ") failed for service '" << name_ << "': " << strerror(errno)
+ +                             << " (cgroup v2 not available, continuing)";
+ +            } else {
+ +                Result<void> result = cgroups_activated.Write(kActivatingCgroupsFailed);
+ +                if (!result.ok()) {
+ +                    return Error() << "Sending notification failed: " << result.error();
+ +                }
+ +                return Error() << "createProcessGroup(" << uid() << ", " << pid_ << ", " << use_memcg
+ +                               << ") failed for service '" << name_ << "': " << strerror(errno);
+ +            }
+++=======
++             PLOG(ERROR) << "createProcessGroup(" << proc_attr_.uid << ", " << pid_ <<  ") failed for service '" << name_ << "'";
++ #if 0
++             Result<void> result = cgroups_activated.Write(kActivatingCgroupsFailed);
++             if (!result.ok()) {
++                 return Error() << "Sending notification failed: " << result.error();
++             }
++             return Error() << "createProcessGroup(" << proc_attr_.uid << ", " << pid_ << ", "
++                            << use_memcg << ") failed for service '" << name_
++                            << "': " << strerror(errno);
++ #endif
+++>>>>>>> 3747b8ce6 (Fix support for devices without cgroupv2 support)
+          }
+  
+          // When the blkio controller is mounted in the v1 hierarchy, NormalIoPriority is

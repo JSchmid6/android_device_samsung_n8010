@@ -1,0 +1,5 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): 0ca22f22769ecc8ddf4ef34d8e0b5fff3d0429e5
+Branch n8010-b33 Spitze: 28e7abb87d0f110ce1d4c6104c887075e3e685d4
+
+28e7abb HidlSupport: Fix zero-termination for legacy blobs
+c85aca7 Revert "delete gBn/sConstructorMap"

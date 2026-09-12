@@ -1,0 +1,27 @@
+From 2b18ae9ce58b493eb0ca4626613edd1c720a75ec Mon Sep 17 00:00:00 2001
+From: html6405 <peter.schelchshorn@mhs-solutions.at>
+Date: Sun, 20 Oct 2024 14:06:43 +0200
+Subject: [PATCH 16/17] KeyLayoutMap.cpp: don't LOG_ALWAYS_FATAL_IF if there's
+ no kernel config.
+
+(cherry picked from commit 8d7170ed2a139972b2282d2a235eef074d9d4bf4)
+---
+ libs/input/KeyLayoutMap.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libs/input/KeyLayoutMap.cpp b/libs/input/KeyLayoutMap.cpp
+index 508818852e..f0d8d77055 100644
+--- a/libs/input/KeyLayoutMap.cpp
++++ b/libs/input/KeyLayoutMap.cpp
+@@ -103,7 +103,7 @@ bool kernelConfigsArePresent(const std::set<std::string>& configs) {
+ 
+     std::map<std::string, std::string> kernelConfigs;
+     const status_t result = android::kernelconfigs::LoadKernelConfigs(&kernelConfigs);
+-    LOG_ALWAYS_FATAL_IF(result != OK, "Kernel configs could not be fetched");
++    //LOG_ALWAYS_FATAL_IF(result != OK, "Kernel configs could not be fetched");
+ 
+     for (const std::string& requiredConfig : configs) {
+         const auto configIt = kernelConfigs.find(requiredConfig);
+-- 
+2.48.1
+

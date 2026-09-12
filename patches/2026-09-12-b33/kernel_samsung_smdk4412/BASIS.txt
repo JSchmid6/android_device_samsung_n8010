@@ -1,0 +1,4 @@
+Basis: html6405/android_kernel_samsung_smdk4412 Branch lineage-21.0-BPF, Commit f29c7c3c576 (2025-01-19)
+Branch n8010-b33 Spitze: 38337530b0e29635e4350e740d4621ec241db5fb
+
+38337530b0e n8010: Defconfig aus lineageos_n8000_defconfig (BPF-Branch) ableiten, dm-verity argc>=10 fuer apexd

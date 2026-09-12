@@ -1,0 +1,19 @@
+    d8a6f904 2024-08-15 html6405: createjson.sh: fix permissions
+    ab5a3aa3 2022-10-14 html6405: Revert "apns: Clean up Austrian carriers"
+    046bff37 2022-10-14 html6405: Revert "apns: Clean up Austrian carriers"
+    f71480c5 2022-09-08 html6405: createjson.sh: move to LineageOS 21
+    e019b339 2022-03-15 html6405: bacon.mk: use createjson script for OTA.
+    db8beefc 2022-03-15 html6405: version.mk: set build type to HTML6405.
+    20f99111 2022-04-19 Nolen Johnson: Revert "Remove libbfqio"
+    d3d8c9d0 2022-09-03 TARKZiM: Revert "soong: Drop TARGET_USES_QTI_CAMERA_DEVICE"
+    d0f0a6e7 2015-11-10 Scott Mertz: adb insecure by default
+    81eebae8 2022-01-03 Dominggoes Isakh: kernel: Add BOARD_CUSTOM_KERNEL_MK support
+    57b50ed9 2021-10-27 Kyle Harrison: soong: Update camera_in_mediaserver_defaults
+    edae04eb 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_CAMERA_BOOTTIME_TIMESTAMP"
+    7e4da5ae 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_USES_QCOM_BSP_LEGACY"
+    5220964f 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_HAS_LEGACY_CAMERA_HAL1"
+    bb6320d1 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_SPECIFIC_CAMERA_PARAMETER_LIBRARY"
+    83c3ed2a 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_HAS_MEMFD_BACKPORT"
+    b2043f7e 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_NEEDS_NETD_DIRECT_CONNECT_RULE"
+    513c7d32 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_DISABLE_POSTRENDER_CLEANUP"
+    5a3408c4 2022-10-25 Khalvat-M: Revert "config: Remove TARGET_PROCESS_SDK_VERSION_OVERRIDE"

@@ -1,0 +1,10 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): ec299bf6da55702b7b9675d60a0faf2815f0dc6d
+Branch n8010-b33 Spitze: 8c2043b7637ca796446587d027f2d55354eaee01
+
+8c2043b76 healthd_mode_charger: Allow home, volume up and down keys to wake up and boot the device while charging
+3b4546abf init: reboot to recovery on fatal errors
+1abe10819 Revert "remove inprocess tethering"
+4b1cbce0f Revert "libprocessgroup: switch freezer to cgroup v2"
+d7df465ec reboot must be fast on legacy too
+9339725a6 Camera: Add feature extensions
+06d74e0a2 n8010: lokale Aenderungen aus dem Build-Baum (Stand Build 32)

@@ -1,0 +1,41 @@
+From 3b4546abfe1859110a3006adfa73ad0cb3d26f0d Mon Sep 17 00:00:00 2001
+From: Shilin Victor <chrono.monochrome@gmail.com>
+Date: Sun, 8 Mar 2020 02:46:44 +0100
+Subject: [PATCH 6/7] init: reboot to recovery on fatal errors
+
+Change-Id: If1199e145e7b2d570c3db4fd207e0c4d5367e263
+(cherry picked from commit 715ec0952363fca8c65c09ece3ab6cd976972ce4)
+---
+ init/reboot.cpp       | 2 +-
+ init/reboot_utils.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/init/reboot.cpp b/init/reboot.cpp
+index dc49c1399..9fcebe152 100644
+--- a/init/reboot.cpp
++++ b/init/reboot.cpp
+@@ -1030,7 +1030,7 @@ void HandlePowerctlMessage(const std::string& command) {
+             if (reboot_target == "fastboot" &&
+                 !android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) &&
+                 !android::base::GetBoolProperty("ro.fastbootd.available", false)) {
+-                reboot_target = "bootloader";
++                reboot_target = "recovery";
+             }
+             // When rebooting to the bootloader notify the bootloader writing
+             // also the BCB.
+diff --git a/init/reboot_utils.cpp b/init/reboot_utils.cpp
+index 547b1869f..dd0fbbfe8 100644
+--- a/init/reboot_utils.cpp
++++ b/init/reboot_utils.cpp
+@@ -37,7 +37,7 @@
+ namespace android {
+ namespace init {
+ 
+-static std::string init_fatal_reboot_target = "bootloader";
++static std::string init_fatal_reboot_target = "recovery";
+ static bool init_fatal_panic = false;
+ 
+ // this needs to read the /proc/* files directly because it is called before
+-- 
+2.48.1
+

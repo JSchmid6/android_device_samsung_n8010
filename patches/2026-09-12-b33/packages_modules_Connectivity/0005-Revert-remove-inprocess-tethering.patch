@@ -1,0 +1,19 @@
+From bce8787341a11a1f36d61f4eb5a0c8e7d8f8af1a Mon Sep 17 00:00:00 2001
+From: Yaroslav Zviezda <acroreiser@gmail.com>
+Date: Mon, 1 Apr 2024 22:52:22 +0300
+Subject: [PATCH 05/15] Revert "remove inprocess tethering"
+
+This reverts commit 024cbc341845395ee028c3cc8aa922ffacace31a.
+
+(cherry picked from commit dce6db99b244ef702603518a9d4d2ccca43c6fa0)
+---
+ Tethering/apex/in-process | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 Tethering/apex/in-process
+
+diff --git a/Tethering/apex/in-process b/Tethering/apex/in-process
+new file mode 100644
+index 0000000000..e69de29bb2
+-- 
+2.48.1
+

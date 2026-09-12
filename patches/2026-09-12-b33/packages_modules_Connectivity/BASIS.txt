@@ -1,0 +1,18 @@
+Basis (Upstream LineageOS 21, Build-Baum HEAD vor Build 33): 965d387f90f22d20c3cba4dc90fd900f2e1b7ed0
+Branch n8010-b33 Spitze: 2ea5af78fce51ea271b6b7d2d0d39d3ab6124970
+
+2ea5af78fc n8010: netbpfload nicht-blockierend starten (Build 33, BPF-Kernel)
+17a144b0d5 BpfHandler.cpp: we must not wait until the BPF programs are loaded (for BPF less devices)
+02eecb590c [UL] netbpfload: Support no-bpf usecase
+b3768af5be Revert "netdupdatable: add back abort() on init() fail"
+9e7fe9e020 [UL] clatcoordinator: Support no-bpf usecase
+c984e19a12 [UL] dnsresolver: Support no-bpf usecase
+9c62967876 Bring back traffic indicators for legacy devices
+1a78506e0e Support non-working BPF maps on old BPF-less kernel
+093179b0b4 Allow failing to load bpf programs, for BPF-less devices
+59ce33ca19 [UL] mdns: disable SocketNetlinkMonitor
+bce8787341 Revert "remove inprocess tethering"
+2111663549 Revert "Use new soong support to install privapp xml"
+c74a787383 Revert "remove inprocess tethering"
+c5da7aee2d Revert "remove out-of-process flag"
+72f3ae638b n8010: lokale Aenderungen aus dem Build-Baum (Stand Build 32)

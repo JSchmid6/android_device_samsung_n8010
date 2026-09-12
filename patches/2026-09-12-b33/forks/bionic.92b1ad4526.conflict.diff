@@ -1,0 +1,63 @@
+diff --cc libc/Android.bp
+index fd14aea57,c3c481fc0..000000000
+--- a/libc/Android.bp
++++ b/libc/Android.bp
+@@@ -91,32 -118,12 +91,37 @@@ cc_defaults 
+      // warning since this is intended right now.
+      ldflags: ["-Wl,-z,muldefs"],
+  
+ -    product_variables: {
+ -        malloc_zero_contents: {
+ -            cflags: ["-DSCUDO_ZERO_CONTENTS"],
+ +    multilib: {
+ +        lib64: {
+ +            product_variables: {
+ +                malloc_zero_contents: {
+ +                    cflags: ["-DSCUDO_ZERO_CONTENTS"],
+ +                },
+ +                malloc_pattern_fill_contents: {
+ +                    cflags: ["-DSCUDO_PATTERN_FILL_CONTENTS"],
+ +                },
+ +                malloc_not_svelte: {
+ +                    cflags: ["-DUSE_SCUDO"],
+ +                },
+ +            },
+          },
+++<<<<<<< HEAD
+ +        lib32: {
+ +            product_variables: {
+ +                malloc_zero_contents: {
+ +                    cflags: ["-DSCUDO_ZERO_CONTENTS"],
+ +                },
+ +                malloc_pattern_fill_contents: {
+ +                    cflags: ["-DSCUDO_PATTERN_FILL_CONTENTS"],
+ +                },
+ +                malloc_not_svelte_libc32: {
+ +                    cflags: ["-DUSE_SCUDO"],
+ +                },
+ +            },
+++=======
++         malloc_pattern_fill_contents: {
++             cflags: ["-DSCUDO_PATTERN_FILL_CONTENTS"],
+++>>>>>>> 92b1ad452 (Switch to jemalloc memory allocator)
+          },
+      },
+  
+@@@ -166,14 -157,6 +171,17 @@@ cc_defaults 
+          "libc_jemalloc_wrapper",
+      ],
+      header_libs: ["gwp_asan_headers"],
+++<<<<<<< HEAD
+ +    multilib: {
+ +        lib64: {
+ +            product_variables: libc_scudo_product_variables,
+ +        },
+ +        lib32: {
+ +            product_variables: libc32_scudo_product_variables,
+ +        }
+ +    },
+++=======
+++>>>>>>> 92b1ad452 (Switch to jemalloc memory allocator)
+  }
+  
+  // Functions not implemented by jemalloc directly, or that need to

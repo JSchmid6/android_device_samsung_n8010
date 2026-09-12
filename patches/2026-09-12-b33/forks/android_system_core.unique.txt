@@ -1,0 +1,7 @@
+    c22ee608c 2024-01-05 html6405: healthd_mode_charger: Allow home, volume up and down keys to wake up and boot the device while charging
+    715ec0952 2020-03-08 Shilin Victor: init: reboot to recovery on fatal errors
+    620093a90 2023-11-29 Yaroslav Zviezda: Revert "remove inprocess tethering"
+    b0e446492 2021-12-28 Yaroslav Zviezda: Revert "libprocessgroup: switch freezer to cgroup v2"
+    783011c01 2023-02-20 Yaroslav Zviezda: reboot must be fast on legacy too
+    f06a3ae10 2015-06-24 Sauhard Pande: Camera: Add feature extensions
+    3747b8ce6 2022-10-26 Pierre-Hugues Husson: Fix support for devices without cgroupv2 support

@@ -1,0 +1,41 @@
+    f0685e6420 2021-12-24 html6405: Partly revert: wfd: Miracast related build fixes
+    03f911d4e7 2020-01-04 Arne Coucheron: Enable legacy adaptive playback for QCOM_BSP_LEGACY
+    f1837f4f1d 2020-04-13 Pierre-Hugues Husson: There are three SCO devices. Fallback from one to the others if needed
+    237955e91d 2019-08-05 Pierre-Hugues Husson: Fix BT in-call on CAF devices
+    eff8a2ab6c 2016-10-06 Simon Shields: camera/media: Support legacy HALv1 camera in mediaserver
+    ed94e48955 2023-11-08 Yaroslav Zviezda: Restore clearkey hidl code
+    c459431de8 2023-11-28 TARKZiM: libaudiohal: Add missing parts of 2.0 hal
+    93789493bd 2022-02-12 TARKZiM: libaudiohal: Bring back 2.0 HAL
+    74e883f1cf 2023-11-19 Yaroslav Zviezda: wfd: Miracast related build fixes
+    de5a2b0be6 2023-12-03 Yaroslav Zviezda: libcameraservice: HAL1 related build fixes
+    f4843ddf54 2021-10-05 Jayant Chowdhary: cameraserver: fix deadlock scenario in torchModeStatusChanged callback.
+    7bdb3ce2a1 2017-08-30 Manikanta Kanamarlapudi: libstagefright: Free buffers on observer died
+    305d2fa29a 2015-07-08 Shuzhen Wang: Camera: Add extensions to CameraClient
+    66a9cd1761 2017-09-17 Shilin Victor: libcameraservice: Don't pass NULL args on setCallbacks call
+    f3b787b202 2018-05-04 Paras Nagda: stagefright: add changes related to high-framerates in CameraSource
+    c306e36fb1 2014-04-29 Susmitha Gummalla: Camera: Add support for preview frame fd
+    3a1123e561 2020-10-15 Pig: camera: Allow devices to load custom CameraParameter code
+    7cd0e57b8a 2019-03-25 Priyanka Gujjula: libstagefright: Fix memory leak due to lock timeout
+    017bb24f49 2018-04-17 Milos Ratkovic: Camera: check metadata type before releasing frame
+    5d3b11e3c0 2017-09-23 Bruno Martins: camera: include: Don't override possible overlayed header
+    e6c1a90688 2018-01-08 Milos Ratkovic: libstagefright: use 64-bit usage for native_window_set_usage
+    6fd155adc5 2017-08-30 Manikanta Kanamarlapudi: libstagefright: Free buffers on observer died
+    32c11f7411 2017-12-31 Adrian DC: stagefright: ACodec: Resolve empty vendor parameters usage
+    1289bbbc4e 2016-10-09 Arne Coucheron: stagefright: omx: Don't signal dataspace change on legacy QCOM
+    fdf9cc631c 2013-05-01 Steve Kondik: camera: Don't segfault if we get a NULL parameter
+    0883773bce 2015-12-15 Steve Kondik: nuplayer: Avoid crash when codec fails to load
+    9210be98be 2018-10-09 maxwen: camera: Allow to use boottime as timestamp reference
+    4814747688 2021-10-28 Kyle Harrison: Camera: Restore camera HALv1 support [1/2]
+    76e67ca46b 2021-11-02 Dominggoes Isakh: Revert "Camera: Remove old recording path support"
+    d9c391a819 2023-11-19 Yaroslav Zviezda: camera: reset to Android 12.1 state
+    83a96b0ca5 2023-12-28 html6405: Revert "Fix deadlock when notifyPhysicalCameraDevice is called while waitUntilDrained hasn't completed"
+    b5606bf8df 2023-12-28 html6405: Revert "Camera: Handling out-of-order request id"
+    81a1363bca 2023-12-28 html6405: Revert "Implement Camera Id Remapping in CameraService"
+    0da3ad9e6a 2023-12-28 html6405: Revert "Camera: Skip stream size check for whitelisted apps"
+    741e7028ba 2023-12-28 html6405: Revert "Harden remapCameraApi() API"
+    e39ef72dff 2023-12-28 html6405: Revert "Implement CameraIdRemapping for API1"
+    807af59417 2023-12-28 html6405: Revert "Use ERROR_CAMERA_DISCONNECTED on id remap"
+    f7173c6c44 2023-12-28 html6405: Revert "Camera: Ensure 'isSlowJpegModeForced' is always initialized"
+    7aa5afecfd 2022-02-23 html6405: CameraSource.cpp: support PIXEL_FORMAT_YUV420SP_NV21.
+    3b00af5ad9 2016-01-03 Ethan Chen: libstagefright: Support YVU420SemiPlanar camera format
+    9896ae8589 2021-12-24 html6405: libstagefright: Make it possible to skip OMX buffer reallocation

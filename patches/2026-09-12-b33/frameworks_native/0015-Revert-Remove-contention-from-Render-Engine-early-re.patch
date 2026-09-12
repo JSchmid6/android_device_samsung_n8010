@@ -1,0 +1,97 @@
+From a4855ebc6afc7ada113cb97dd0c2710ba3d38b91 Mon Sep 17 00:00:00 2001
+From: Yaroslav Zviezda <acroreiser@gmail.com>
+Date: Sun, 31 Mar 2024 20:52:32 +0200
+Subject: [PATCH 15/17] Revert "Remove contention from Render Engine early
+ return"
+
+This reverts commit 5b7855f224cc048fe8c765ad760bca6fd77ae89f.
+
+(cherry picked from commit bcd66b6be2a5d68116c1db4729787b20ffc42022)
+---
+ .../tests/RenderEngineThreadedTest.cpp        | 20 ++-----------------
+ .../threaded/RenderEngineThreaded.cpp         |  5 ++---
+ .../threaded/RenderEngineThreaded.h           |  1 -
+ 3 files changed, 4 insertions(+), 22 deletions(-)
+
+diff --git a/libs/renderengine/tests/RenderEngineThreadedTest.cpp b/libs/renderengine/tests/RenderEngineThreadedTest.cpp
+index ef8dcd784a..fe3a16d4bf 100644
+--- a/libs/renderengine/tests/RenderEngineThreadedTest.cpp
++++ b/libs/renderengine/tests/RenderEngineThreadedTest.cpp
+@@ -110,6 +110,7 @@ TEST_F(RenderEngineThreadedTest, supportsProtectedContent_returnsTrue) {
+ }
+ 
+ TEST_F(RenderEngineThreadedTest, PostRenderCleanup_skipped) {
++    EXPECT_CALL(*mRenderEngine, canSkipPostRenderCleanup()).WillOnce(Return(true));
+     EXPECT_CALL(*mRenderEngine, cleanupPostRender()).Times(0);
+     mThreadedRE->cleanupPostRender();
+ 
+@@ -118,25 +119,8 @@ TEST_F(RenderEngineThreadedTest, PostRenderCleanup_skipped) {
+ }
+ 
+ TEST_F(RenderEngineThreadedTest, PostRenderCleanup_notSkipped) {
+-    renderengine::DisplaySettings settings;
+-    std::vector<renderengine::LayerSettings> layers;
+-    std::shared_ptr<renderengine::ExternalTexture> buffer = std::make_shared<
+-            renderengine::impl::
+-                    ExternalTexture>(sp<GraphicBuffer>::make(), *mRenderEngine,
+-                                     renderengine::impl::ExternalTexture::Usage::READABLE |
+-                                             renderengine::impl::ExternalTexture::Usage::WRITEABLE);
+-    base::unique_fd bufferFence;
+-
+-    EXPECT_CALL(*mRenderEngine, useProtectedContext(false));
+-    EXPECT_CALL(*mRenderEngine, drawLayersInternal)
+-        .WillOnce([&](const std::shared_ptr<std::promise<FenceResult>>&& resultPromise,
+-                          const renderengine::DisplaySettings&,
+-                          const std::vector<renderengine::LayerSettings>&,
+-                          const std::shared_ptr<renderengine::ExternalTexture>&,
+-                          base::unique_fd&&) { resultPromise->set_value(Fence::NO_FENCE); });
++    EXPECT_CALL(*mRenderEngine, canSkipPostRenderCleanup()).WillOnce(Return(false));
+     EXPECT_CALL(*mRenderEngine, cleanupPostRender()).WillOnce(Return());
+-    ftl::Future<FenceResult> future =
+-            mThreadedRE->drawLayers(settings, layers, buffer, std::move(bufferFence));
+     mThreadedRE->cleanupPostRender();
+ 
+     // call ANY synchronous function to ensure that cleanupPostRender has completed.
+diff --git a/libs/renderengine/threaded/RenderEngineThreaded.cpp b/libs/renderengine/threaded/RenderEngineThreaded.cpp
+index 111780ca29..528115d7f6 100644
+--- a/libs/renderengine/threaded/RenderEngineThreaded.cpp
++++ b/libs/renderengine/threaded/RenderEngineThreaded.cpp
+@@ -275,13 +275,13 @@ void RenderEngineThreaded::cleanupPostRender() {
+             ATRACE_NAME("REThreaded::cleanupPostRender");
+             instance.cleanupPostRender();
+         });
+-        mNeedsPostRenderCleanup = false;
+     }
+     mCondition.notify_one();
+ }
+ 
+ bool RenderEngineThreaded::canSkipPostRenderCleanup() const {
+-    return !mNeedsPostRenderCleanup;
++    waitUntilInitialized();
++    return mRenderEngine->canSkipPostRenderCleanup();
+ }
+ 
+ void RenderEngineThreaded::drawLayersInternal(
+@@ -303,7 +303,6 @@ ftl::Future<FenceResult> RenderEngineThreaded::drawLayers(
+     int fd = bufferFence.release();
+     {
+         std::lock_guard lock(mThreadMutex);
+-        mNeedsPostRenderCleanup = true;
+         mFunctionCalls.push([resultPromise, display, layers, buffer, useFramebufferCache,
+                              fd](renderengine::RenderEngine& instance) {
+             ATRACE_NAME("REThreaded::drawLayers");
+diff --git a/libs/renderengine/threaded/RenderEngineThreaded.h b/libs/renderengine/threaded/RenderEngineThreaded.h
+index 8a6c01947b..4ba26bf926 100644
+--- a/libs/renderengine/threaded/RenderEngineThreaded.h
++++ b/libs/renderengine/threaded/RenderEngineThreaded.h
+@@ -93,7 +93,6 @@ private:
+     mutable std::mutex mThreadMutex;
+     std::thread mThread GUARDED_BY(mThreadMutex);
+     std::atomic<bool> mRunning = true;
+-    std::atomic<bool> mNeedsPostRenderCleanup = false;
+ 
+     using Work = std::function<void(renderengine::RenderEngine&)>;
+     mutable std::queue<Work> mFunctionCalls GUARDED_BY(mThreadMutex);
+-- 
+2.48.1
+
