@@ -1,0 +1,30 @@
+diff --git a/libc/SYSCALLS.TXT b/libc/SYSCALLS.TXT
+index 0db5d79aa..bf279f4da 100644
+--- a/libc/SYSCALLS.TXT
++++ b/libc/SYSCALLS.TXT
+@@ -162,6 +162,7 @@ int linkat(int, const char*, int, const char*, int)  all
+ int mkdirat(int, const char*, mode_t)  all
+ int mknodat(int, const char*, mode_t, dev_t)  all
+ ssize_t readlinkat(int, const char*, char*, size_t)  all
++int renameat(int, const char*, int, const char*)  all
+ int renameat2(int, const char*, int, const char*, unsigned)  all
+ int symlinkat(const char*, int, const char*)  all
+ int unlinkat(int, const char*, int)   all
+diff --git a/libc/bionic/rename.cpp b/libc/bionic/rename.cpp
+index 89786f7a0..18594ef85 100644
+--- a/libc/bionic/rename.cpp
++++ b/libc/bionic/rename.cpp
+@@ -29,10 +29,8 @@
+ #include <fcntl.h>
+ #include <stdio.h>
+ 
++// GT-N8010 (Kernel 3.4): renameat2 (Linux >= 3.15) fehlt -> ENOSYS.
++// Wie html6405/android_bionic 777991efe: rename() ueber renameat-Syscall.
+ int rename(const char* old_path, const char* new_path) {
+-  return renameat2(AT_FDCWD, old_path, AT_FDCWD, new_path, 0);
+-}
+-
+-int renameat(int old_dir_fd, const char* old_path, int new_dir_fd, const char* new_path) {
+-  return renameat2(old_dir_fd, old_path, new_dir_fd, new_path, 0);
++  return renameat(AT_FDCWD, old_path, AT_FDCWD, new_path);
+ }

@@ -29,6 +29,8 @@ vom 2. September 2026.
 | `external_chromium-webview_*` | drei Prebuilt-Zweige | je 1 | |
 | `device_google_cuttlefish_vmm/` | | 2 | |
 | `vendor_samsung_smdk4412-common/` | kein Git-Repo — Dateikopien | | |
+| `packages_modules_adb/` | `packages/modules/adb` | 1 Patch (+Original) | `git diff` gegen LineageOS lineage-21.0, Build 32 |
+| `bionic/` | `bionic` | 1 Patch (+Original) | gegen `c9fb1e864`, Build 32 |
 
 Je Verzeichnis:
 
@@ -258,3 +260,135 @@ Wenn das greift: zygote, adbd und mediaextractor sollten laufen — und mit adbd
 im Crash-Loop ist die surfaceflinger-Fehlersuche endlich interaktiv moeglich.
 `/data/apex/decompressed/` kann danach geleert werden (apexd ignoriert
 dekomprimierte APEXe ohne komprimiertes Gegenstueck).
+
+## Nachtrag 12. September (abends): Boot 31 — drei Ursachen, ein Fork-Netz
+
+Build 31 wurde geflasht und bootete wie erwartet in die Neustartschleife. Nach
+~10 Minuten zurueck nach TWRP, Logs gezogen (`~/n8010-logs/b31/collect_b31.sh`).
+Der persistente logcatd hat funktioniert: `/data/misc/logd/logcat` mit 989 MB,
+6,3 Mio Zeilen, alle Puffer inkl. kernel (`grep -a` noetig). `/proc/last_kmsg`
+enthielt nur S-Boot-Text — der Reset ueber Power+Lauter ist ein Kaltstart.
+
+### APEX-Fix wirkt
+
+`/data/misc/apexdata/` hat jetzt alle 32 APEXe (adbd, art, media, …). Die
+Dekompressions-Reste in `/data/apex/decompressed/` (20 Dateien) sind harmlos
+und koennen irgendwann geloescht werden.
+
+### surfaceflinger: Register, aber keine Bibliothek
+
+`user_debug=31` liefert bei jedem SIGSEGV die Register nach dmesg. 1055
+Abstuerze, immer gleich:
+
+    unhandled page fault (11) at 0x66203a6b, code 0x005
+    r0=0x66203a6b r1=0x45 r3=0x8 r7=0x78, pc ...922 (Thumb), lr ...489
+
+`0x66203a6b` ist little-endian der ASCII-Text `"k: f"` — ein Zeiger (r0)
+wurde mit String-Daten ueberschrieben, r1 = `'E'`. Klassischer Heap-/
+Puffer-Ueberlauf. pc und lr liegen ~0x1BB67 auseinander, also in derselben
+Bibliothek; ASLR verschiebt die Basis, die Seiten-Offsets bleiben. Ohne
+`/proc/<pid>/maps` bleibt die Bibliothek unbekannt: `sf_maps_snapshot.sh` hat
+nie eine maps-Datei geschrieben (init meldet 65x fehlende Domain-Transition
+fuer `/vendor/bin/sf_maps_snapshot.sh`, `sf_maps.tmp` bleibt 0 Byte).
+crash_dump32 stirbt selbst mit Fault-Adresse 0x10 (NULL+0x10). Wird
+zurueckgestellt — mit adb ist das ein Einzeiler.
+
+### Ursache 1: adbd — Android 14 kann nur noch AIO, Kernel 3.4 kann kein AIO auf FunctionFS
+
+Das Geraet erscheint sehr wohl am Host (04e8:6860, Interface-Klasse ff,
+iSerial RF2D10DVL0J), aber `adb devices` pendelt zwischen `offline` und weg.
+Im Log alle paar Sekunden:
+
+    UsbFfs: connection terminated: failed to submit read: Invalid argument
+
+adbd (`packages/modules/adb/daemon/usb.cpp`) benutzt seit 2020 (Commit
+6b55e755) ausschliesslich `io_submit` auf den ep-Dateien von FunctionFS.
+`drivers/usb/gadget/f_fs.c:966` im 3.4-Kernel hat in `ffs_epfile_operations`
+kein `aio_read/aio_write` → `fs/aio.c aio_setup_iocb` gibt -EINVAL. adbd
+schliesst die Verbindung, bevor die CNXN-Antwort rausgeht. Die Properties im
+Device-Tree (`ro.adb.nonblocking_ffs=false`, `sys.usb.ffs.aio_compat=1`,
+`persist.adb.nonblocking_ffs=0`) sind fuer den alten Sync-Backend gedacht,
+den es nicht mehr gibt.
+
+Fix (Build 32): html6405s Commit `ba39fe821` "adb: Bring back support for
+legacy FunctionFS" (Arne Coucheron, LOS 20) auf Android 14 portiert:
+`daemon/usb_legacy.cpp` (Sync-Backend mit read/write), `transport_legacy.cpp`
+(altes USB-Transport, komplett in `#if LEGACY_FFS`), Fallback in `usb.cpp`
+bei EINVAL, `-DLEGACY_FFS=1` in `adbd_defaults`. Zwei Handanpassungen:
+`transport.cpp/.h` (`#if ADB_HOST || LEGACY_FFS` um die USB-Transport-Teile)
+und `is_adb_interface` von `int` auf `bool` (Prototyp in `client/usb.h`).
+Patch liegt in `patches/2026-09-02/packages_modules_adb/`.
+
+### Ursache 2: rename() ist systemweit kaputt — zygote kann deshalb nicht starten
+
+    derive_classpath: Failed to write /data/system/environ/classpath: Function not implemented
+    zygote: BOOTCLASSPATH and DEX2OATBOOTCLASSPATH must not be empty
+
+Android 14s bionic setzt `rename()` und `renameat()` ueber den Syscall
+`renameat2` um (Linux >= 3.15). In `arch/arm/kernel/calls.S` unseres 3.4-Kernels
+sind die Slots 380–382 `sys_ni_syscall` (nur kcmp, finit_module, seccomp,
+getrandom, memfd_create wurden zurueckportiert) → ENOSYS. derive_classpath
+schreibt erst `.tmp`, dann `rename()` — das scheitert, `load_exports` liefert
+nichts, zygote bricht ab. Gleiche Ursache: logcatd rotiert nie (eine
+989-MB-Datei), odrefresh meldet "BOOTCLASSPATH is not defined".
+
+Fix (Build 32): html6405/android_bionic `777991efe` Revert "Rewrite
+renameat()." von Hand uebernommen — `renameat` zurueck in `SYSCALLS.TXT`,
+`rename()` ruft `renameat()`. Einziger direkter `renameat2()`-Aufrufer im
+Baum ist `netbpfload/loader.cpp`, der auf diesem Kernel ohnehin nichts tun
+kann. Patch in `patches/2026-09-02/bionic/`.
+
+### Ursache 3: netd stirbt alle 5 s — kein eBPF im Kernel
+
+    libnetd_updatable_init: Failed: (38) [Function not implemented] :
+      Failed to get program from /sys/fs/bpf/netd_shared/prog_netd_skfilter_allowlist_xtbpf
+
+`libnetd_updatable.so` (com.android.tethering-APEX) verlangt BPF-Programme,
+Kernel 3.4 hat kein eBPF. Genauso `GpuMem: Failed to retrieve pinned program`.
+Noch nicht gefixt — siehe Fork-Netz.
+
+### Das eigentliche Problem: html6405s Port haengt an ~20 stillen Forks
+
+Unser Manifest (`.repo/local_manifests/roomservice.xml`) holt von html6405
+nur n8010, n80xx-common, smdk4412-common, den Kernel, SamsungServiceMode und
+hardware/samsung — alles andere ist Stock-LineageOS 21. html6405 hat aber
+`lineage-21.0`-Branches fuer bionic, system_core, system_vold, system_libhidl,
+frameworks_native (`lineage-21.0-r08`), frameworks_av, frameworks_base,
+hardware_interfaces, hardware_lineage_interfaces, build, build_soong,
+vendor_lineage, packages_modules_Connectivity_UL, frameworks_ex,
+frameworks_opt_net_wifi, frameworks_opt_telephony, packages_services_Telephony,
+packages_apps_SetupWizard, system_nfc — ohne Manifest-Repo, ohne Bauanleitung.
+Die Forks sind klein (bionic 10, system_core 8, frameworks_native 16 eigene
+Commits), aber genau die Stellen, an denen Android 14 mit Kernel 3.4 und
+2012er-Blobs bricht:
+
+- bionic: renameat-Revert, jemalloc statt Scudo, pre-P-Mutex-Verhalten,
+  `TARGET_PROCESS_SDK_VERSION_OVERRIDE` im Linker (der Device-Tree setzt das
+  in `BoardCommonConfig.mk` fuer rild/GPS/libsec-ril — Stock-Build ignoriert
+  die Variable), `LD_SHIM_LIBS`.
+- system_core: Revert "libprocessgroup: switch freezer to cgroup v2", "Fix
+  support for devices without cgroupv2", Revert "remove inprocess tethering".
+- frameworks_native: **Revert "Delete GLESRenderEngine"** samt vier
+  Folge-Reverts (Android 14 rendert nur noch ueber Skia — Mali-400 kann GLES
+  2.0), "Disable gpuservice on old BPF-less kernel", "SurfaceFlinger: Don't
+  cleanup resources from previous frame", "Disable SF HWC backpressure",
+  "libbinder: make threadpool shrinking non-fatal". Das ist der heisseste
+  Kandidat fuer den surfaceflinger-SIGSEGV.
+- frameworks_av: 44 Commits, im Kern Camera-HAL1-Wiederherstellung und
+  Audio-HAL-2.0.
+- Kernel: unser Manifest zeigt auf `lineage-21.0` (letzter Commit 29.06.2024).
+  Der Branch **`lineage-21.0-BPF`** ist die Fortsetzung (bis 19.01.2025, 991
+  Commits ueber der gemeinsamen Basis, enthaelt die 416 von lineage-21.0 fast
+  komplett) mit eBPF-Backport, **renameat2-Backport** (Miklos Szeredi,
+  "ARM: add renameat2 syscall"), cgroup-Kompatibilitaet, und den aktuellen
+  Defconfigs (`lineageos_n8000_defconfig`, 385 Zeilen Unterschied). Die
+  n80xx-Device-Trees (Commits bis 04/2025) sind gegen diesen Branch entwickelt
+  (Kernel-Commit "sec_keyboard.c: … wakelock bug workaround made in
+  n80xx-common"). Wir haben bis Build 32 den falschen Kernel-Branch gebaut.
+
+Plan fuer Build 33: Kernel auf `lineage-21.0-BPF` (n8010-Defconfig neu aus
+`lineageos_n8000_defconfig` ableiten, dm-verity-argc-Patch und `user_debug=31`
+nachziehen), dazu die Fork-Commits von bionic, system_core, frameworks_native,
+libhidl, vold als Cherry-Picks auf unsere neueren Upstream-Staende; frameworks_av/
+base nach Sichtung. Stock-Upstream bleibt Basis, damit die Sicherheits-Merges
+von 2024/25 erhalten bleiben.
