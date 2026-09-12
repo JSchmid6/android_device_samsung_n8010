@@ -49,6 +49,28 @@ index 503773b..6c813b1 100755
          ln -sf /lineage/device/samsung/android_device_samsung_n8010 device/samsung/n8010 && \
          source build/envsetup.sh && \
          breakfast $DEVICE
+diff --git a/lineage_n8010.mk b/lineage_n8010.mk
+index 8423994..552879f 100644
+--- a/lineage_n8010.mk
++++ b/lineage_n8010.mk
+@@ -16,6 +16,17 @@ TARGET_SCREEN_WIDTH := 600
+ # Inherit some common stuff.
+ $(call inherit-product, vendor/lineage/config/common_full_tablet_wifionly.mk)
+ 
++# Keine komprimierten APEXe (.capex). apexd mountet vorinstallierte APEXe aus
++# /system ohne dm-verity, dekomprimierte aus /data/apex/decompressed aber mit
++# (apexd.cpp, MountPackageImpl) -- und genau das schlaegt auf Kernel 3.4 fehl:
++# /data/misc/apexdata/ enthaelt nur die unkomprimierten APEXe, keinen der
++# dekomprimierten. Folgen: kein com.android.art (zygote exit 1), kein
++# com.android.adbd (kein USB-Debugging), kein com.android.media
++# (mediaextractor findet seine seccomp-Policy nicht).
++# Muss hier stehen, nicht in n8010.mk: bei Single-Value-Variablen gewinnt der
++# eigene Wert ueber alle geerbten (node_fns.mk, _expand-inherited-values).
++PRODUCT_COMPRESSED_APEX := false
++
+ # Device identifier. This must come after all inclusions
+ PRODUCT_DEVICE := n8010
+ PRODUCT_NAME := lineage_n8010
 diff --git a/n8010.mk b/n8010.mk
 index 35560fc..e296b79 100644
 --- a/n8010.mk

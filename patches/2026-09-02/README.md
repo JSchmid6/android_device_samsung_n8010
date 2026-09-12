@@ -222,3 +222,39 @@ Keine Aenderung an der Grafikkette, nur Instrumentierung
 
 Nach dem Flash: booten, zurueck nach TWRP, dann `/proc/last_kmsg`,
 `/data/misc/logd/logcat*` und `/data/local/tmp/sf_maps.*` ziehen.
+
+### Dazu eine funktionale Aenderung: komprimierte APEXe wurden nie aktiviert
+
+Beim Nachforschen, warum adbd nie startet, fiel auf: adbd gibt es im ROM nur
+in `/system/apex/com.android.adbd.capex` — einem **komprimierten** APEX.
+Ebenso `com.android.art.capex` (ohne ART kein zygote → "exited with status 1")
+und `com.android.media.capex` (dort liegt die seccomp-Policy, die
+mediaextractor nicht findet). Bionic dagegen kommt laut Backtrace aus
+`/apex/com.android.runtime/` — einem *unkomprimierten* APEX.
+
+Auf dem Geraet (TWRP, /data gemountet):
+
+- `/data/apex/decompressed/` enthaelt alle dekomprimierten APEXe (Dekompression
+  funktioniert).
+- `/data/misc/apexdata/` enthaelt **genau die unkomprimierten** APEXe (runtime,
+  i18n, tzdata, statsd, vndk, …) und **keinen** dekomprimierten. init legt diese
+  Verzeichnisse nur fuer aktivierte APEXe an.
+
+`system/apex/apexd/apexd.cpp` (`MountPackageImpl`, Zeile 546): vorinstallierte
+APEXe aus /system werden **ohne dm-verity** gemountet (nur Loop-Device),
+dekomprimierte aus /data **mit dm-verity**. dm-verity auf Kernel 3.4 ist genau
+die Baustelle, an der der `argc >= 10`-Patch vom 2. September ansetzte — und
+offenbar nicht der einzige Stolperstein.
+
+Aenderung: `PRODUCT_COMPRESSED_APEX := false` in `lineage_n8010.mk` (muss dort
+stehen, nicht in `n8010.mk`: bei Single-Value-Variablen gewinnt der eigene Wert
+ueber alle geerbten, und `aosp_base_telephony.mk` sortiert vor `device/…`).
+Kostet ~115 MB im System-Image (1,26 GB von 1,47 GB Limit; die Partition
+selbst ist 3 GB). `OVERRIDE_TARGET_FLATTEN_APEX := true` in
+`BoardCommonConfig.mk` ist in Android 14 wirkungslos (flattened APEX gibt es
+nicht mehr), bleibt vorerst stehen.
+
+Wenn das greift: zygote, adbd und mediaextractor sollten laufen — und mit adbd
+im Crash-Loop ist die surfaceflinger-Fehlersuche endlich interaktiv moeglich.
+`/data/apex/decompressed/` kann danach geleert werden (apexd ignoriert
+dekomprimierte APEXe ohne komprimiertes Gegenstueck).

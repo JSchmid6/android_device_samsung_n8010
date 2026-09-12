@@ -12,6 +12,11 @@
 #   init.target.rc   on property:init.svc.surfaceflinger=running
 #                      -> exec_background /vendor/bin/sf_maps_snapshot.sh
 #   n8010.mk         kopiert rootdir/sf_maps_snapshot.sh nach /vendor/bin
+#   lineage_n8010.mk PRODUCT_COMPRESSED_APEX := false -- einzige funktionale
+#                    Aenderung: dekomprimierte APEXe (/data/apex/decompressed)
+#                    wurden nie aktiviert (apexd mountet sie mit dm-verity,
+#                    /system-APEXe ohne). Ohne ART kein zygote, ohne adbd-APEX
+#                    kein USB-Debugging, ohne media-APEX kein mediaextractor.
 #
 # Befund aus Build 30 (/proc/last_kmsg, 8,86 Tage im Crash-Loop):
 # - audit=0 hat nichts gebracht -- es kam nie am Kernel an (s.o.). Die

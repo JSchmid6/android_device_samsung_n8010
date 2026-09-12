@@ -1,5 +1,6 @@
  M BoardConfig.mk
  M docker-build.sh
+ M lineage_n8010.mk
  M n8010.mk
  M rootdir/init.target.rc
  M system.prop
