@@ -1,5 +1,5 @@
 diff --git a/BoardConfig.mk b/BoardConfig.mk
-index 9179e15..d96f9f0 100644
+index 9179e15..d876351 100644
 --- a/BoardConfig.mk
 +++ b/BoardConfig.mk
 @@ -17,8 +17,11 @@
@@ -15,17 +15,16 @@ index 9179e15..d96f9f0 100644
  
  N8010 := true
  
-@@ -35,3 +38,10 @@ SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += device/samsung/n80xx-common/selinux/private
+@@ -35,3 +38,9 @@ SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += device/samsung/n80xx-common/selinux/private
  # Temporarily set SELinux to permissive for debugging binder issues
  # TODO: Create proper SELinux policies and remove this
  BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
-+# Diagnose (Build 31): surfaceflinger stirbt mit SIGSEGV, aber crash_dump32
-+# stuerzt beim Dump selbst ab ("Untracked pid ... received signal 11"), daher
-+# kein Tombstone. Mit CONFIG_DEBUG_USER=y schreibt der Kernel bei user_debug=31
-+# fuer jeden User-Fault pc/lr/sp/r0-r12 und die Fault-Adresse nach dmesg.
-+# (audit=0 aus Build 28-30 war wirkungslos: die avc-Flut kam nicht vom Kernel,
-+# sondern von logd via /dev/kmsg -- jetzt per ro.logd.auditd.dmesg=false aus.)
-+BOARD_KERNEL_CMDLINE += user_debug=31
++# ACHTUNG: S-Boot (N8010XXBLK9) reicht den Cmdline aus dem boot.img-Header NICHT
++# an den Kernel durch -- /proc/cmdline enthaelt nur die ATAG-Zeile des
++# Bootloaders plus CONFIG_CMDLINE (CONFIG_CMDLINE_EXTEND=y). Wirksame Parameter
++# gehoeren deshalb in CONFIG_CMDLINE der lineageos_n8010_defconfig; dort steht
++# auch das eigentlich wirksame androidboot.selinux=permissive. audit=0
++# (Build 28-30) kam so nie an; user_debug=31 (Build 31) steht in der Defconfig.
 diff --git a/docker-build.sh b/docker-build.sh
 index 503773b..6c813b1 100755
 --- a/docker-build.sh

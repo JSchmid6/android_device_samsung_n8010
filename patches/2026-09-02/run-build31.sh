@@ -1,8 +1,12 @@
 #!/bin/bash
 # Build 31 — reiner Debug-Build, keine Aenderung an der Grafikkette
 #
-# Aenderungen gegenueber Build 30 (alle in device/samsung/n8010):
-#   BoardConfig.mk   audit=0 -> user_debug=31
+# Aenderungen gegenueber Build 30:
+#   lineageos_n8010_defconfig  CONFIG_CMDLINE += user_debug=31
+#   BoardConfig.mk   audit=0 entfernt. BOARD_KERNEL_CMDLINE ist auf diesem
+#                    Geraet wirkungslos: S-Boot reicht den boot.img-Header-
+#                    Cmdline nicht durch (TWRP-Header hat "buildvariant=eng",
+#                    /proc/cmdline in TWRP nicht). Nur ATAG + CONFIG_CMDLINE.
 #   vendor_prop.mk   ro.logd.auditd.dmesg=false
 #                    persist.logd.logpersistd=logcatd, .size=32
 #   init.target.rc   on property:init.svc.surfaceflinger=running
@@ -10,9 +14,10 @@
 #   n8010.mk         kopiert rootdir/sf_maps_snapshot.sh nach /vendor/bin
 #
 # Befund aus Build 30 (/proc/last_kmsg, 8,86 Tage im Crash-Loop):
-# - audit=0 hat nichts gebracht: die avc-Zeilen tragen Praefix <38>
-#   (LOG_AUTH|LOG_INFO), das ist logd/LogAudit.cpp, das sie selbst nach
-#   /dev/kmsg schreibt. Abschalten geht nur ueber ro.logd.auditd.dmesg=false.
+# - audit=0 hat nichts gebracht -- es kam nie am Kernel an (s.o.). Die
+#   avc-Zeilen tragen Praefix <38> (LOG_AUTH|LOG_INFO): logd/LogAudit.cpp
+#   schreibt sie selbst nach /dev/kmsg; ro.logd.auditd.dmesg=false stellt
+#   das ab, ohne die Denials aus logcat zu verlieren.
 # - surfaceflinger erreicht den Mali-Treiber ("Mali: mem_usage before <pid>"
 #   = erster ioctl nach open /dev/mali) und stirbt ~200 ms spaeter mit SIGSEGV.
 # - Kein Tombstone, weil crash_dump32 beim Dump selbst mit SIGSEGV stirbt

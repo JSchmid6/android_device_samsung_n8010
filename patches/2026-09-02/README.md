@@ -175,11 +175,22 @@ Erkenntnisse:
 3. mediaextractor stirbt an
    `Could not read base policy file '/apex/com.android.media/etc/seccomp_policy/mediaextractor.policy'`
    — Folgeproblem, nicht Ursache.
-4. `audit=0` auf der Kernel-Kommandozeile (Build 28–30) war **wirkungslos**.
-   Die avc-Zeilen tragen das Praefix `<38>` = LOG_AUTH|LOG_INFO: das ist
-   `logd/LogAudit.cpp`, das sie selbst nach /dev/kmsg schreibt, nicht der
-   Kernel. flags_health_check (`UPDATABLE_CRASHING`, alle 500 ms) erzeugt
-   ~100 Stueck pro Sekunde. Richtiger Schalter: `ro.logd.auditd.dmesg=false`.
+4. `audit=0` auf der Kernel-Kommandozeile (Build 28–30) war **wirkungslos**,
+   und zwar aus zwei Gruenden:
+   - **S-Boot (N8010XXBLK9) reicht den Cmdline aus dem boot.img-Header nicht
+     durch.** Beweis: der TWRP-Header enthaelt `buildvariant=eng`, in
+     `/proc/cmdline` unter TWRP fehlt es. Der Kernel sieht nur die ATAG-Zeile
+     des Bootloaders plus `CONFIG_CMDLINE` (`CONFIG_CMDLINE_EXTEND=y`) — dort
+     steht auch das wirklich wirksame `androidboot.selinux=permissive`.
+     `BOARD_KERNEL_CMDLINE` ist auf diesem Geraet tot.
+   - Die avc-Zeilen tragen das Praefix `<38>` = LOG_AUTH|LOG_INFO: das ist
+     `logd/LogAudit.cpp`, das sie selbst nach /dev/kmsg schreibt.
+     flags_health_check (`UPDATABLE_CRASHING`, alle 500 ms) erzeugt ~100
+     Stueck pro Sekunde. Richtiger Schalter: `ro.logd.auditd.dmesg=false`.
+   Die ATAG-Zeile enthaelt uebrigens `sec_log=0x200000@0x46000000` — die
+   Bootloader-Reservierung fuer den Kernel-Log ist 2 MB, genau die Groesse, bei
+   der Build 29 keinen Log mehr lieferte (Puffer + sec_log-Header passen dann
+   nicht mehr hinein).
 5. `CONFIG_LOG_BUF_SHIFT`: 22 verwirft kconfig still (Maximum 21 → Rueckfall
    auf 17 = 128 KB, Build 28); 21 lieferte gar keinen Log mehr (Build 29,
    nur S-Boot-Ausgabe); 20 ist der einzige Wert, der nachweislich geht.
@@ -195,9 +206,11 @@ Erkenntnisse:
 Keine Aenderung an der Grafikkette, nur Instrumentierung
 (`device/samsung/n8010`, siehe `run-build31.sh`):
 
-- `BoardConfig.mk`: `audit=0` → `user_debug=31`. Mit `CONFIG_DEBUG_USER=y`
-  schreibt der Kernel bei jedem User-SIGSEGV/SIGBUS/SIGILL pc, lr, sp, r0–r12
-  und die Fault-Adresse nach dmesg — unabhaengig von crash_dump.
+- `lineageos_n8010_defconfig` (Kernel-Fork, `5377329c09e`): `user_debug=31`
+  in `CONFIG_CMDLINE`. Mit `CONFIG_DEBUG_USER=y` schreibt der Kernel bei jedem
+  User-SIGSEGV/SIGBUS/SIGILL pc, lr, sp, r0–r12 und die Fault-Adresse nach
+  dmesg — unabhaengig von crash_dump. `BoardConfig.mk`: `audit=0` entfernt,
+  Hinweis auf den toten `BOARD_KERNEL_CMDLINE` hinterlassen.
 - `vendor_prop.mk`: `ro.logd.auditd.dmesg=false`,
   `persist.logd.logpersistd=logcatd`, `persist.logd.logpersistd.size=32`
   (logcatd sichert alle Puffer inkl. kernel nach `/data/misc/logd/logcat*`).
