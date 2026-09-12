@@ -1,5 +1,5 @@
 diff --git a/BoardConfig.mk b/BoardConfig.mk
-index 9179e15..2bdd860 100644
+index 9179e15..d96f9f0 100644
 --- a/BoardConfig.mk
 +++ b/BoardConfig.mk
 @@ -17,8 +17,11 @@
@@ -15,6 +15,17 @@ index 9179e15..2bdd860 100644
  
  N8010 := true
  
+@@ -35,3 +38,10 @@ SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += device/samsung/n80xx-common/selinux/private
+ # Temporarily set SELinux to permissive for debugging binder issues
+ # TODO: Create proper SELinux policies and remove this
+ BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
++# Diagnose (Build 31): surfaceflinger stirbt mit SIGSEGV, aber crash_dump32
++# stuerzt beim Dump selbst ab ("Untracked pid ... received signal 11"), daher
++# kein Tombstone. Mit CONFIG_DEBUG_USER=y schreibt der Kernel bei user_debug=31
++# fuer jeden User-Fault pc/lr/sp/r0-r12 und die Fault-Adresse nach dmesg.
++# (audit=0 aus Build 28-30 war wirkungslos: die avc-Flut kam nicht vom Kernel,
++# sondern von logd via /dev/kmsg -- jetzt per ro.logd.auditd.dmesg=false aus.)
++BOARD_KERNEL_CMDLINE += user_debug=31
 diff --git a/docker-build.sh b/docker-build.sh
 index 503773b..6c813b1 100755
 --- a/docker-build.sh
@@ -40,10 +51,19 @@ index 503773b..6c813b1 100755
          source build/envsetup.sh && \
          breakfast $DEVICE
 diff --git a/n8010.mk b/n8010.mk
-index 35560fc..2ede4c3 100644
+index 35560fc..e296b79 100644
 --- a/n8010.mk
 +++ b/n8010.mk
-@@ -31,5 +31,11 @@ DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
+@@ -24,12 +24,19 @@ PRODUCT_ENFORCE_VINTF_MANIFEST := false
+ 
+ # Rootdir
+ PRODUCT_COPY_FILES += \
+-    $(LOCAL_PATH)/rootdir/init.target.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.target.rc
++    $(LOCAL_PATH)/rootdir/init.target.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.target.rc \
++    $(LOCAL_PATH)/rootdir/sf_maps_snapshot.sh:$(TARGET_COPY_OUT_VENDOR)/bin/sf_maps_snapshot.sh
+ 
+ # HIDL
+ DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
  
  $(call inherit-product-if-exists, vendor/samsung/n8010/n8010-vendor.mk)
  
@@ -57,7 +77,7 @@ index 35560fc..2ede4c3 100644
  -include $(LOCAL_PATH)/vendor_prop.mk
 \ No newline at end of file
 diff --git a/rootdir/init.target.rc b/rootdir/init.target.rc
-index 1364a5c..040379f 100644
+index 1364a5c..60e67ef 100644
 --- a/rootdir/init.target.rc
 +++ b/rootdir/init.target.rc
 @@ -2,7 +2,7 @@ import /vendor/etc/init/hw/init.target.usb.rc
@@ -69,6 +89,18 @@ index 1364a5c..040379f 100644
  
      chown system system /sys/devices/system/cpu/cpufreq/pegasusq
      chown system system /sys/devices/system/cpu/cpufreq/pegasusq/boost_freq
+@@ -118,6 +118,11 @@ on boot
+ # cbd
+     setprop ro.radio.noril yes
+ 
++# Debug (Build 31): maps des laufenden surfaceflinger sichern, siehe
++# sf_maps_snapshot.sh. Feuert bei jedem (Neu-)Start des Dienstes.
++on property:init.svc.surfaceflinger=running
++    exec_background - root root -- /vendor/bin/sf_maps_snapshot.sh
++
+ # serial keyboard daemon
+ service vendor.sec_keyboard /vendor/bin/sec_keyboard /dev/ttySAC2
+ 	class core
 diff --git a/system.prop b/system.prop
 index cb129dd..f3b79b2 100644
 --- a/system.prop
@@ -92,7 +124,7 @@ index cb129dd..f3b79b2 100644
  ro.config.max_starting_bg=4
  
 diff --git a/vendor_prop.mk b/vendor_prop.mk
-index fc89745..81f5202 100644
+index fc89745..0740b42 100644
 --- a/vendor_prop.mk
 +++ b/vendor_prop.mk
 @@ -70,10 +70,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
@@ -106,3 +138,21 @@ index fc89745..81f5202 100644
  # Set max background services
  # PRODUCT_PROPERTY_OVERRIDES += \
  	ro.config.max_starting_bg=4
+@@ -84,4 +80,15 @@ PRODUCT_PROPERTY_OVERRIDES += \
+ 
+ # Wifi
+ #PRODUCT_PROPERTY_OVERRIDES += \
+-	wifi.supplicant_scan_interval=240
+\ No newline at end of file
++	wifi.supplicant_scan_interval=240
++# Debug-Instrumentierung fuer den surfaceflinger-Absturz (Build 31)
++# - logd schreibt avc-Meldungen sonst selbst nach /dev/kmsg (LogAudit.cpp,
++#   Praefix <38>). flags_health_check erzeugt ~100 davon pro Sekunde und
++#   ueberschreibt den 1-MB-Kernelpuffer in ~15 s. Der Kernel-Parameter audit=0
++#   greift dagegen nicht.
++# - logcatd persistiert alle Puffer (main/system/crash/kernel) nach
++#   /data/misc/logd/logcat*, 32 x 2 MB.
++PRODUCT_PROPERTY_OVERRIDES += \
++	ro.logd.auditd.dmesg=false \
++	persist.logd.logpersistd=logcatd \
++	persist.logd.logpersistd.size=32

@@ -5,4 +5,5 @@
  M system.prop
  M vendor_prop.mk
 ?? android_device_samsung_n8010
+?? rootdir/sf_maps_snapshot.sh
 ?? vendorsetup.sh

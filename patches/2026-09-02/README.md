@@ -81,6 +81,7 @@ Folge dieser Kette, nicht ihre Ursache.**
 - **Build 26** (`lineage-21.0-20260809-UNOFFICIAL-n8010.zip`, 628 MB) enthält alle
   diese Fixes und ist erfolgreich gebaut — aber **nie geflasht**.
 - Auf dem Tablet liegt `21.0-20260404`, gebaut am 3. April, also **vor** den Fixes.
+  *(Stand 12. September: inzwischen Build 30 geflasht, siehe Nachtrag unten.)*
 - Die sechs unterschiedlich datierten Zip-Namen im Ausgabeverzeichnis sind
   Hardlinks auf dieselbe Datei: Stand 9. August.
 
@@ -142,3 +143,69 @@ eglApi.cpp) wurde folglich in keinem Build kompiliert — obwohl
 Kernel 3.4 (seit 3.3), ist hier aber abgeschaltet. `CONFIG_SYNC`, `CONFIG_SW_SYNC`
 und `CONFIG_ION` sind an. Ob der Grafikstapel ohne dma-buf traegt, ist die naechste
 offene Frage — unabhaengig von dieser Aenderung.
+
+## Nachtrag 12. September: Builds 27–31, der Absturz sitzt hinter dem Mali-ioctl
+
+Build 27 (EGL-Shim aktiv) wurde geflasht. Ergebnis: surfaceflinger stirbt nicht
+mehr mit Signal 6 ("couldn't find an OpenGL ES implementation"), sondern mit
+**Signal 11**. Der Treiber wird geladen und stuerzt darin ab. Seitdem geht es
+nur noch darum, den Backtrace zu bekommen — das hat drei Builds gekostet.
+
+### Was die Kernel-Logs hergaben
+
+`/proc/last_kmsg` (Samsung sec_log, 1 MB) enthaelt immer nur die **letzten
+~16 Sekunden** vor dem Reset, weil das Tablet stundenlang in der Dienst-
+Neustartschleife haengt. Darin, pro 5-Sekunden-Zyklus:
+
+    init: starting service 'surfaceflinger'...
+    Mali: mem_usage before <pid> : 1048576        <- erster ioctl nach open(/dev/mali)
+    init: starting service 'tombstoned'...
+    init: Untracked pid <pid+25> received signal 11 <- das ist crash_dump32
+    init: Service 'surfaceflinger' (pid <pid>) received signal 11
+    init: Service 'tombstoned' (pid ...) exited with status 1
+
+Erkenntnisse:
+
+1. surfaceflinger kommt bis in den Mali-Kerneltreiber (`mali_ukk_core.c`,
+   `get_api_version_wrapper`) und stirbt rund 200 ms danach.
+2. **crash_dump32 stuerzt beim Dump selbst ab.** Fuer surfaceflinger und
+   gpuservice gibt es deshalb keinen Tombstone; `/data/tombstones` ist leer.
+   Fuer den einfaedigen mediaextractor funktioniert es (SIGABRT, DEBUG-Block
+   im Log). Vermutung: Kernel 3.4 und ptrace ueber mehrere Threads.
+3. mediaextractor stirbt an
+   `Could not read base policy file '/apex/com.android.media/etc/seccomp_policy/mediaextractor.policy'`
+   — Folgeproblem, nicht Ursache.
+4. `audit=0` auf der Kernel-Kommandozeile (Build 28–30) war **wirkungslos**.
+   Die avc-Zeilen tragen das Praefix `<38>` = LOG_AUTH|LOG_INFO: das ist
+   `logd/LogAudit.cpp`, das sie selbst nach /dev/kmsg schreibt, nicht der
+   Kernel. flags_health_check (`UPDATABLE_CRASHING`, alle 500 ms) erzeugt
+   ~100 Stueck pro Sekunde. Richtiger Schalter: `ro.logd.auditd.dmesg=false`.
+5. `CONFIG_LOG_BUF_SHIFT`: 22 verwirft kconfig still (Maximum 21 → Rueckfall
+   auf 17 = 128 KB, Build 28); 21 lieferte gar keinen Log mehr (Build 29,
+   nur S-Boot-Ausgabe); 20 ist der einzige Wert, der nachweislich geht.
+6. Nach 9 Tagen im Loop zeigt der sec_log-Bereich Bit-Kipper (`<18>` statt
+   `<38>`). Log innerhalb weniger Minuten nach dem Boot ziehen.
+7. adbd startet nie, obwohl `persist.sys.usb.config=adb`, `ro.adb.secure=0`
+   und der FunctionFS-Mount in `init.smdk4x12.rc` vorhanden sind. Das Geraet
+   erscheint am Host nicht (`lsusb`). Ursache unbekannt — der Boot-Anfang steht
+   in keinem Log.
+
+### Build 31: reiner Debug-Build
+
+Keine Aenderung an der Grafikkette, nur Instrumentierung
+(`device/samsung/n8010`, siehe `run-build31.sh`):
+
+- `BoardConfig.mk`: `audit=0` → `user_debug=31`. Mit `CONFIG_DEBUG_USER=y`
+  schreibt der Kernel bei jedem User-SIGSEGV/SIGBUS/SIGILL pc, lr, sp, r0–r12
+  und die Fault-Adresse nach dmesg — unabhaengig von crash_dump.
+- `vendor_prop.mk`: `ro.logd.auditd.dmesg=false`,
+  `persist.logd.logpersistd=logcatd`, `persist.logd.logpersistd.size=32`
+  (logcatd sichert alle Puffer inkl. kernel nach `/data/misc/logd/logcat*`).
+- `rootdir/init.target.rc` + `rootdir/sf_maps_snapshot.sh` (→ /vendor/bin):
+  `on property:init.svc.surfaceflinger=running` startet ein Skript, das
+  `/proc/<pid>/maps` alle 100 ms nach `/data/local/tmp/sf_maps.txt` kopiert,
+  bis der Prozess weg ist. Ohne maps laesst sich der pc keiner Bibliothek
+  zuordnen.
+
+Nach dem Flash: booten, zurueck nach TWRP, dann `/proc/last_kmsg`,
+`/data/misc/logd/logcat*` und `/data/local/tmp/sf_maps.*` ziehen.
