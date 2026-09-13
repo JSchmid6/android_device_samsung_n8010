@@ -1,0 +1,46 @@
+libEGL: fail cleanly when the vendor eglInitialize fails
+
+On GT-N8010 the Mali blob (UK API 23) refused to initialize against the
+kernel driver (API 29). egl_display_t::initialize() logged the failure
+but carried on and read the never-written queryString.extensions (0x200)
+in findExtension() -> strstr -> SIGSEGV, ~90 restarts per boot. Zero-init
+the strings and return EGL_NOT_INITIALIZED instead, so the caller
+(GLESRenderEngine::create) sees a proper error.
+
+diff --git a/opengl/libs/EGL/egl_display.cpp b/opengl/libs/EGL/egl_display.cpp
+index cd94877a08..636a4dfdca 100644
+--- a/opengl/libs/EGL/egl_display.cpp
++++ b/opengl/libs/EGL/egl_display.cpp
+@@ -312,8 +312,18 @@ EGLBoolean egl_display_t::initialize(EGLint* major, EGLint* minor) {
+                 disp.queryString.clientApi = cnx->egl.eglQueryString(idpy, EGL_CLIENT_APIS);
+ 
+             } else {
+-                ALOGW("eglInitialize(%p) failed (%s)", idpy,
++                // The vendor driver refused to initialize (e.g. Mali "Device
++                // driver API mismatch"). Bail out instead of continuing with
++                // an uninitialized queryString, which would crash in
++                // findExtension() below.
++                ALOGE("eglInitialize(%p) failed (%s), no usable EGL display", idpy,
+                       egl_tls_t::egl_strerror(cnx->egl.eglGetError()));
++                { // undo the reference taken above
++                    std::unique_lock<std::mutex> _rl(refLock);
++                    refs--;
++                    refCond.notify_all();
++                }
++                return setError(EGL_NOT_INITIALIZED, EGL_FALSE);
+             }
+         }
+ 
+diff --git a/opengl/libs/EGL/egl_display.h b/opengl/libs/EGL/egl_display.h
+index f6fc266bcd..de54862e38 100644
+--- a/opengl/libs/EGL/egl_display.h
++++ b/opengl/libs/EGL/egl_display.h
+@@ -107,7 +107,7 @@ public:
+     };
+ 
+     struct DisplayImpl {
+-        DisplayImpl() : dpy(EGL_NO_DISPLAY), state(NOT_INITIALIZED) {}
++        DisplayImpl() : dpy(EGL_NO_DISPLAY), state(NOT_INITIALIZED), queryString{} {}
+         EGLDisplay dpy;
+         EGLint state;
+         strings_t queryString;

@@ -1,0 +1,44 @@
+adb: start USB transports on the device, detached start is host-only
+
+AOSP 36c8520873d5 ("Add attach/detach support to libusb backend") makes
+fdevent_register_transport() put every kTransportUsb transport into
+kCsDetached. The check is only guarded by ADB_HOST for the
+usb_devices_start_detached() part, so on the device (ADB_HOST=0) the
+legacy FunctionFS transport (transport_legacy.cpp sets kTransportUsb) is
+never started: no read/write threads, host shows the device as "offline".
+Upstream adbd is unaffected only because its aio transport keeps
+type == kTransportAny.
+
+Seen on GT-N8010 (kernel 3.4, legacy FFS) with Build 33: adbd logs
+"registering usb transport" and nothing else, `adb devices` says offline.
+
+--- a/transport.cpp
++++ b/transport.cpp
+@@ -751,19 +751,20 @@
+     if (t->GetConnectionState() != kCsNoPerm) {
+         t->connection()->SetTransport(t);
+ 
+-        if (t->type == kTransportUsb
+ #if ADB_HOST
+-            && usb_devices_start_detached()  // -d setting propagated from the
+-                                             // host device, hence n/a on-device.
+-#endif
+-        ) {
++        // Detached start is a host-side feature (-d / ADB_LIBUSB_START_DETACHED).
++        // On the device every registered transport must be started, otherwise
++        // the legacy FunctionFS transport (type == kTransportUsb) never gets
++        // its read/write threads and the host sees the device as "offline".
++        if (t->type == kTransportUsb && usb_devices_start_detached()) {
+             t->SetConnectionState(kCsDetached);
+         } else {
+             t->connection()->Start();
+-#if ADB_HOST
+             send_connect(t);
+-#endif
+         }
++#else
++        t->connection()->Start();
++#endif
+     }
+ 
+     {

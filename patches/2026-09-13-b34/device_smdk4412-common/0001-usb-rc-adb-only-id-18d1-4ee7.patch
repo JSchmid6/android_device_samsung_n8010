@@ -1,0 +1,22 @@
+smdk4412-common: sys.usb.config=adb als 18d1:4ee7 statt 04e8:6860
+
+04e8:6860 ist in libmtp als MTP-Geraet gelistet; Linux-Hosts (gvfs-mtp)
+probten das Tablet und resetteten den Bus alle 20-45 s (Boot 1 von Build 33).
+
+diff --git a/rootdir/init.smdk4x12.usb.rc b/rootdir/init.smdk4x12.usb.rc
+index a3e2b4f..17c5d2b 100755
+--- a/rootdir/init.smdk4x12.usb.rc
++++ b/rootdir/init.smdk4x12.usb.rc
+@@ -28,8 +28,10 @@ on property:sys.usb.config=mtp,adb
+ 
+ on property:sys.usb.config=adb
+     write /sys/class/android_usb/android0/enable 0
+-    write /sys/class/android_usb/android0/idVendor 04e8
+-    write /sys/class/android_usb/android0/idProduct 6860
++    # Google "adb only" ID: 04e8:6860 is registered as an MTP device in
++    # libmtp, so Linux hosts (gvfs/libmtp) kept probing and resetting the bus.
++    write /sys/class/android_usb/android0/idVendor 18d1
++    write /sys/class/android_usb/android0/idProduct 4ee7
+     write /sys/class/android_usb/android0/functions ${sys.usb.config}
+     write /sys/class/android_usb/android0/enable 1
+     start adbd

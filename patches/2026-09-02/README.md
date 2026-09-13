@@ -495,3 +495,116 @@ nicht mehr alle 5 s sterben (BPF im Kernel), (c) surfaceflinger — offen;
 wenn er weiter mit Fault-Adresse ASCII „k: f“ stirbt, liegt es nicht am
 Skia-Backend, sondern tiefer (Gralloc/Mali-Blobs), dann hilft erst die
 maps-Ausgabe.
+
+## Nachtrag 13. September (nachmittags): Boot 33 — der Mali-Blob passt nicht zum Kernel
+
+Build 33 wurde per TWRP mit Factory-Reset installiert. Er bootet bis
+zum Bootscreen und bleibt dort (Bootanimation ohne Bild, dann nach ~20 min
+zurueck nach TWRP durch den Nutzer). Weil adb weiter nicht antwortete,
+kam die Diagnose ueber den persistierten logcat: `persist.logd.logpersistd=
+logcatd` (vendor/build.prop) schreibt seit Build 33 nach
+`/data/misc/logd/`, und das laesst sich aus TWRP heraus ziehen
+(`2026-09-13-b34/werkzeug/twrp_pull.sh`). `/proc/last_kmsg` war nach dem
+Kaltstart leer (3,5 KB) — der Ring ueberlebt nur Warmstarts. Auszug:
+`2026-09-13-b34/logs/b33-boot1-auszug.txt`.
+
+Was funktioniert (zum ersten Mal komplett zu sehen): Kernel
+`lineage-21.0-BPF`, init bis `zygote-start`, apexd, vold, bpfloader,
+netd bleibt am Leben, USB-Gadget wird konfiguriert, adbd startet mit
+Legacy-FunctionFS („functionfs successfully initialized“, „registering usb
+transport“). Alle ~87–89 Neustarts von zygote, netd, audioserver usw.
+sind Folge der `onrestart`-Ketten hinter surfaceflinger, nicht eigene
+Fehler.
+
+### 1. surfaceflinger: „Device driver API mismatch“
+
+Direkt vor jedem der 89 SIGSEGV steht:
+
+```
+E         : ERROR in Mali driver:
+E         :  * Device driver API mismatch
+E         :  * Device driver API version: 29
+E         :  * User space API version: 23
+E         : mali: REVISION=Linux-r3p2-01rel3 BUILD_DATE=Fri Mar 21 13:52:50 KST 2014
+W libEGL  : eglInitialize(0x1) failed (EGL_BAD_ALLOC)
+F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x200
+    #00 libc.so (__strchr_chk+6)
+    #01 libc.so (strstr+8)
+    #02 libEGL.so (android::egl_display_t::initialize(int*, int*)+742)
+    #03 surfaceflinger (GLESRenderEngine::create+32)
+```
+
+Unser `libMali.so` stammt aus der KitKat-Stock-Firmware N8010XXUDNE4
+(Maerz 2014) und spricht Mali-UK-API **23**. Der Mali-Kerneltreiber in
+html6405s Kernel (r3p2, Commit `bea61001a38` „Mali r3p2-01rel3 API
+version 29 from T311XXUBNH6 update“, seit 2014 in beiden Branches)
+verlangt API **29**. `eglInitialize` schlaegt fehl, libEGL loggt das nur
+als Warnung, macht weiter und liest in `findExtension()` das nie
+beschriebene `disp.queryString.extensions` — das ist die Fault-Adresse
+0x200 (in Build 31 stand dort ein anderer Muell, „k: f“). Der
+Linker-SDK-Override, die RenderEngine-Wahl und Gralloc waren nie das
+Problem; der Absturz war von Anfang an der Blob.
+
+html6405s Vendor-Repo (`android_vendor_samsung_smdk4412-common`, main)
+hat die passenden Blobs: `libMali.so` mit `BUILD_DATE=Tue Jul 22 2014`
+(T311XXUBNH6, Galaxy Tab 3 8.0), gleiche Groesse 981.272 B, aber
+`mov r1, #29` statt `mov r1, #23` vor dem `bfi r1, r1, #16, #16`, mit
+dem die Bibliothek ihre Versionsnummer an den Treiber meldet. Dazu die
+zwei EGL-Shims `egl/libGLESv1_CM_mali.so` und `egl/libGLESv2_mali.so`.
+Ansonsten unterscheiden sich unsere und html6405s `proprietary/` nur bei
+WLAN-/Kamera-Firmware (unsere aus der eigenen N8010-Firmware, bleiben).
+Pruefsummen: `2026-09-13-b34/vendor_blobs/MD5SUMS.txt`; die alten Dateien
+liegen in `/media/RAID/lineageos-build/backup/mali-api23-from-N8010XXUDNE4/`.
+
+### 2. adb „offline“: der Transport wird registriert, aber nie gestartet
+
+adbd laeuft, das Gadget ist enumeriert, der Host sieht das Geraet aber
+als `offline`. Nach „registering usb transport“ kommt nichts mehr — keine
+Read/Write-Threads. Ursache ist AOSP-Commit `36c8520873d5` („Add
+attach/detach support to libusb backend“): `fdevent_register_transport()`
+setzt jeden `kTransportUsb`-Transport auf `kCsDetached`, nur der Teil
+`usb_devices_start_detached()` steht unter `#if ADB_HOST`. Upstreams
+Daemon-Transport (aio) laesst `type` auf `kTransportAny` und merkt davon
+nichts; html6405s Legacy-Transport setzt `kTransportUsb` und bleibt
+haengen. Patch: die ganze Detached-Abzweigung unter `ADB_HOST`, das
+Geraet startet jeden Transport
+(`2026-09-13-b34/packages_modules_adb/`).
+
+### 3. tombstoned stirbt beim Start (deshalb nie ein Tombstone)
+
+```
+F tombstoned: failed to create temporary tombstone in /data/tombstones: Is a directory
+```
+
+`O_TMPFILE` gibt es erst ab Linux 3.11; auf 3.4 wird das Flag als
+`O_DIRECTORY` gelesen und `openat(dir, ".", O_WRONLY|...)` liefert
+EISDIR. AOSP `aa1d18a59` („Remove support for Linux before 3.11“) hat
+den Fallback auf `.temporaryN` entfernt — html6405s aelterer Stand hat
+ihn noch. Revert auf `n8010-b33` in system/core
+(`2026-09-13-b34/system_core/`). Damit gibt es ab Build 34 echte
+Tombstones in `/data/tombstones` (aus TWRP holbar).
+
+### 4. USB-Flackern kommt vom Host
+
+Die Bus-Resets alle 20–45 s stehen nicht im Geraete-Log; das Gadget wird
+sauber konfiguriert. `sys.usb.config=adb` meldet sich als `04e8:6860`, und
+das ist in libmtp als MTP-Geraet gelistet — gvfs-mtp am Linux-Host probt,
+scheitert (kein MTP-Interface) und resettet. Der adb-only-Fall meldet
+sich ab Build 34 als Googles `18d1:4ee7`
+(`2026-09-13-b34/device_smdk4412-common/`). Zur Not auf dem Host
+`gvfs-mtp-volume-monitor` beenden.
+
+### Build 34
+
+Aenderungen gegenueber Build 33: die drei Mali-Blobs (html6405, API 29),
+adb-Transport-Patch, system/core-Revert, libEGL-Absicherung (Null-Init
+von `queryString`, `initialize()` gibt `EGL_NOT_INITIALIZED` zurueck
+statt weiterzulaufen — ein kuenftiges Blob-Problem endet dann mit einer
+klaren Meldung statt SIGSEGV), USB-ID. Gestartet 13.09. 16:24 CEST mit
+`run-build34.sh` (bootimage, dann bacon). Erwartung: surfaceflinger
+initialisiert EGL auf Mali-400, Bootanimation wird sichtbar, adb
+antwortet (Host-Key liegt seit dem TWRP-Pull in `/data/misc/adb/adb_keys`,
+`ro.adb.secure=1` aus system/build.prop gewinnt gegen vendor). Bleibt
+offen: `flags_health_check`-SELinux-Spam (56k Zeilen, permissive, nur
+Laerm), `init.boringssl.zygote32.rc` „Too many symbolic links“, das
+`sf_maps_snapshot.sh`-Exec aus Build 31 (Label-Fehler, kann raus).

@@ -1,0 +1,67 @@
+### Mali/EGL (erster Versuch)
+05-27 15:41:27.603525  1046  3707  3707 I OmxStore: node [OMX.google.vp9.decoder] not found in IOmx
+05-27 15:41:27.603613  1046  3707  3707 I OmxStore: node [OMX.google.h264.encoder] not found in IOmx
+05-27 15:41:27.603740  1046  3707  3707 I OmxStore: node [OMX.google.h263.encoder] not found in IOmx
+05-27 15:41:27.603844  1046  3707  3707 I OmxStore: node [OMX.google.mpeg4.encoder] not found in IOmx
+05-27 15:41:27.604300  1046  3707  3707 I OmxStore: node [OMX.google.vp8.encoder] not found in IOmx
+05-27 15:41:27.607401  1046  3707  3707 I HidlServiceManagement: Registered android.hardware.media.omx@1.0::IOmxStore/default
+05-27 15:41:27.607891  1046  3707  3707 I HidlServiceManagement: Removing namespace from process name android.hardware.media.omx@1.0-service to omx@1.0-service.
+05-27 15:41:27.732876  root  3595  3595 W zygote  : FaultHandler: MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED failed: 38 Function not implemented
+05-27 15:41:27.756785  1000  3627  3627 E         : ERROR in Mali driver:
+05-27 15:41:27.756785  1000  3627  3627 E         :  * Device driver API mismatch
+05-27 15:41:27.756785  1000  3627  3627 E         :  * Device driver API version: 29
+05-27 15:41:27.756785  1000  3627  3627 E         :  * User space API version: 23
+05-27 15:41:27.756893  1000  3627  3627 E         : mali: REVISION=Linux-r3p2-01rel3 BUILD_DATE=Fri Mar 21 13:52:50 KST 2014 
+05-27 15:41:27.757211  1000  3627  3627 W libEGL  : eglInitialize(0x1) failed (EGL_BAD_ALLOC)
+--------- switch to kernel
+05-27 15:41:27.752582  root     0     0 W Mali    : mem_usage before 3627 : 1048576
+
+### Backtrace (erster Absturz)
+05-27 15:41:27.758807  1000  3627  3627 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x200 in tid 3627 (surfaceflinger), pid 3627 (surfaceflinger)
+05-27 15:41:28.039123  1000  3760  3760 F DEBUG   : Build fingerprint: 'samsung/p4notewifixx/p4notewifiww:4.4.2/KOT49H/N8010XXUDNE4:user/release-keys'
+05-27 15:41:28.039336  1000  3760  3760 F DEBUG   : pid: 3627, tid: 3627, name: surfaceflinger  >>> /system/bin/surfaceflinger <<<
+05-27 15:41:28.039394  1000  3760  3760 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x00000200
+05-27 15:41:28.039475  1000  3760  3760 F DEBUG   :     r0  00000200  r1  00000045  r2  ffffffff  r3  00000008
+
+### tombstoned
+05-27 15:41:27.812561  1058  3265  3265 F tombstoned: failed to create temporary tombstone in /data/tombstones: Is a directory
+05-27 15:41:31.698343  1058  3763  3763 F tombstoned: failed to create temporary tombstone in /data/tombstones: Is a directory
+05-27 15:41:36.709766  1058  3873  3873 F tombstoned: failed to create temporary tombstone in /data/tombstones: Is a directory
+
+### adbd
+05-27 15:41:25.712538  root  3632  3659 I adbd    : registering usb transport
+
+### USB-Gadget
+05-27 15:39:18.642582  root     0     0 I TCP     : Hash tables configured (established 131072 bind 65536)
+05-27 15:39:19.172582  root     0     0 D usb     : usb_gadget_disconnect
+05-27 15:39:19.177582  root     0     0 I android_usb gadget: Mass Storage Function, version: 2009/09/11
+05-27 15:39:19.177582  root     0     0 I android_usb gadget: Number of LUNs=1
+05-27 15:39:19.177582  root     0     0 I android_usb gadget: android_usb ready
+### Backtrace (Frames)
+05-27 15:41:28.039771  1000  3760  3760 F DEBUG   :       #00 pc 0008e672  /apex/com.android.runtime/lib/bionic/libc.so (__strchr_chk+6) (BuildId: e71c8e334e6351f4d67a171240432e1a)
+05-27 15:41:28.039807  1000  3760  3760 F DEBUG   :       #01 pc 000aa1d5  /apex/com.android.runtime/lib/bionic/libc.so (strstr+8) (BuildId: e71c8e334e6351f4d67a171240432e1a)
+05-27 15:41:28.039842  1000  3760  3760 F DEBUG   :       #02 pc 00010333  /system/lib/libEGL.so (android::egl_display_t::initialize(int*, int*)+742) (BuildId: 1f0e78bcf26fd0e9c5120a112bb950de)
+05-27 15:41:28.039881  1000  3760  3760 F DEBUG   :       #03 pc 0026b0dd  /system/bin/surfaceflinger (android::renderengine::gl::GLESRenderEngine::create(android::renderengine::RenderEngineCreationAr
+05-27 15:41:28.039991  1000  3760  3760 F DEBUG   :       #04 pc 0026ac4f  /system/bin/surfaceflinger (android::renderengine::RenderEngine::create(android::renderengine::RenderEngineCreationArgs const
+05-27 15:41:28.040032  1000  3760  3760 F DEBUG   :       #05 pc 0020d985  /system/bin/surfaceflinger (android::SurfaceFlinger::init()+152) (BuildId: ea19a11702ae3a641115de8c32a33200)
+05-27 15:41:28.040062  1000  3760  3760 F DEBUG   :       #06 pc 002378cf  /system/bin/surfaceflinger (main+222) (BuildId: ea19a11702ae3a641115de8c32a33200)
+05-27 15:41:28.040098  1000  3760  3760 F DEBUG   :       #07 pc 0005c781  /apex/com.android.runtime/lib/bionic/libc.so (__libc_init+72) (BuildId: e71c8e334e6351f4d67a171240432e1a)
+
+### adbd (alle relevanten Zeilen des ersten Starts)
+05-27 15:41:25.698021  root  3632  3632 I adbd    : persist.adb.watchdog set to ''
+05-27 15:41:25.708037  root  3632  3632 I adbd    : persist.sys.test_harness set to ''
+05-27 15:41:25.708317  root  3632  3632 I adbd    : adb watchdog timeout set to 600 seconds
+05-27 15:41:25.709473  root  3632  3632 I adbd    : adbd started
+05-27 15:41:25.709980  root  3632  3659 I adbd    : initializing functionfs
+05-27 15:41:25.710171  root  3632  3659 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+05-27 15:41:25.712326  root  3632  3659 I adbd    : functionfs successfully initialized
+05-27 15:41:25.712538  root  3632  3659 I adbd    : registering usb transport
+05-27 15:41:25.728089  root  3632  3657 I adbd    : Waiting for persist.adb.tls_server.enable=1
+
+### Service-Neustarts insgesamt (init: Service ... exited)
+     89 init    : Service 'tombstoned'
+     89 init    : Service 'surfaceflinger'
+     88 init    : Service 'zygote'
+     88 init    : Service 'vendor.audio-hal'
+     87 init    : Service 'wificond'
+     87 init    : Service 'vendor.gnss_service'

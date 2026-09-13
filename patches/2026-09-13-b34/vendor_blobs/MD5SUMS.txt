@@ -1,0 +1,16 @@
+# Mali-Blobs in vendor/samsung/smdk4412-common/proprietary (nicht im Git, Binaries)
+#
+# vorher (Build <=33): aus N8010XXUDNE4 (KitKat 4.4.2), BUILD_DATE Fri Mar 21 2014, UK-API 23 ("mov r1, #23")
+795a1023726d2e93f0a482264295d36a  lib/libMali.so
+e01814b0b93d51b9387cada7e1ed768b  lib/egl/libGLESv1_CM_mali.so
+7ca3b5d6f5fb711397ed944621a4123a  lib/egl/libGLESv2_mali.so
+#
+# ab Build 34: html6405/android_vendor_samsung_smdk4412-common @ main, BUILD_DATE Tue Jul 22 2014 (T311XXUBNH6), UK-API 29 ("mov r1, #29")
+# https://raw.githubusercontent.com/html6405/android_vendor_samsung_smdk4412-common/main/proprietary/lib/libMali.so (+ lib/egl/...)
+e71ab569f360d421c669c9ed12c547c4  lib/libMali.so
+e32f6d80ef3626a9a19a5ce002e1933f  lib/egl/libGLESv1_CM_mali.so
+46186ccab64b0d78f6e2eeb719042e10  lib/egl/libGLESv2_mali.so
+#
+# Pruefung der API-Nummer:
+#   llvm-objdump -d libMali.so | grep -B3 'bfi\s*r1, r1, #16, #16' | grep mov
+# Originale gesichert: /media/RAID/lineageos-build/backup/mali-api23-from-N8010XXUDNE4/
