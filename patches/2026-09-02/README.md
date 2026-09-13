@@ -454,3 +454,44 @@ Stash), `git checkout --detach n8010-b33`. Device-Overlay
 `smdk4412-common/overlay/.../config.xml`: `config_colorFade_enabled` →
 `config_displayColorFadeDisabled=true`. Dann `run-build33.sh` (erst
 `mka bootimage` als Kernel-Compile-Test, dann `mka bacon`).
+
+## Nachtrag 13. September: Build 32 und Build 33 sind gebaut, noch nicht geflasht
+
+Beide Builds sind mit `BUILD_EXIT=0` durch. Zips liegen als echte Kopien
+(kein Hardlink — `mka bacon` ueberschreibt das Zip in `out/` in-place, ein
+Hardlink waere mit ueberschrieben worden) unter
+`/media/RAID/lineageos-build/builds/`:
+
+| Build | Datei | Groesse | sha256 (Anfang) | Bauzeit |
+|---|---|---|---|---|
+| 32 | `build32-lineage-21.0-20260912-n8010.zip` + `build32-boot.img` | 620.693.325 B | `4506f70b0b6f6534` | 1 h 13 min |
+| 33 | `build33-lineage-21.0-20260912-n8010.zip` + `build33-boot.img` | 620.775.856 B | `96fc9c7a989ca76b` | 58 min bootimage + 7 h 39 min bacon (Kernel- und Framework-Neubau) |
+
+Im Build-33-Image geprueft (Staging `out/target/product/n8010/`):
+
+- Kernel `.config`: `BPF_SYSCALL=y`, `BPF_JIT=y`, `CGROUP_BPF=y`,
+  `LOG_BUF_SHIFT=20`, Spoof-Prefix `4.9.337`, `CMDLINE` mit `user_debug=31`,
+  `DM_VERITY=y` (argc>=10-Patch), `MODULES=y` — nur `scsi_wait_scan.ko`,
+  kernel.mk baut und installiert es anstandslos.
+- `system/bin/surfaceflinger` enthaelt `GLESRenderEngine` (Fork-Commits
+  drin) — erst damit ist `debug.renderengine.backend=gles` mehr als ein
+  ignoriertes Property.
+- `system/etc/init/netbpfload.rc`: `start bpfloader`, `reboot_on_failure`
+  auskommentiert.
+- `system/apex/com.android.adbd.apex` (unkomprimiert): Strings
+  „usb_init - using legacy FunctionFS“, `sys.usb.ffs.aio_compat`.
+- `system/lib/bootstrap/libc.so`: `renameat` exportiert (rename()-Fix).
+- bionic-Fork-Commits kompilieren (libc wurde schon fuers bootimage-Ziel
+  gebaut, u. a. `pthread_mutex.cpp`).
+
+Flash-Reihenfolge, sobald jemand am Geraet ist: zuerst Build 33 (der
+eigentliche Fix-Versuch: GLES-RenderEngine + BPF-Kernel + adbd). Bootet er
+nicht bis zu adb, Build 32 als Rueckfall (nur adbd + rename(), sonst wie
+Build 31) — damit man wenigstens `adb shell`, `/proc/<sf-pid>/maps` und
+`logcat -b crash` bekommt. Beides via TWRP, MTP vorher aus.
+
+Erwartung fuer Build 33: (a) adb ueber USB muss jetzt gehen, (b) netd darf
+nicht mehr alle 5 s sterben (BPF im Kernel), (c) surfaceflinger — offen;
+wenn er weiter mit Fault-Adresse ASCII „k: f“ stirbt, liegt es nicht am
+Skia-Backend, sondern tiefer (Gralloc/Mali-Blobs), dann hilft erst die
+maps-Ausgabe.
