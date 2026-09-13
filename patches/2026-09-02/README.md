@@ -608,3 +608,20 @@ antwortet (Host-Key liegt seit dem TWRP-Pull in `/data/misc/adb/adb_keys`,
 offen: `flags_health_check`-SELinux-Spam (56k Zeilen, permissive, nur
 Laerm), `init.boringssl.zygote32.rc` „Too many symbolic links“, das
 `sf_maps_snapshot.sh`-Exec aus Build 31 (Label-Fehler, kann raus).
+
+### Nachtrag 13. September (abends): Build 34 ist gebaut
+
+`BUILD_EXIT=0`, 16:24–18:29 CEST (50 min bootimage, 1 h 15 min bacon).
+Echte Kopien unter `/media/RAID/lineageos-build/builds/`:
+
+| Build | Datei | Groesse | sha256 (Anfang) |
+|---|---|---|---|
+| 34 | `build34-lineage-21.0-20260913-n8010.zip` + `build34-boot.img` | 620.788.533 B | `5bde94b053f8f415` |
+
+Im Staging geprueft: `vendor/lib/libMali.so` = gestrippter html6405-Blob
+(`mov r1, #29`, `BUILD_DATE=Tue Jul 22 2014`), beide EGL-Shims mit den
+neuen md5s, `vendor/etc/init/hw/init.smdk4x12.usb.rc` mit `idProduct 4ee7`,
+`system/bin/tombstoned` enthaelt wieder `.temporary%zu`,
+`system/lib/libEGL.so` die neue Meldung „no usable EGL display“,
+`com.android.adbd.apex` neu gebaut (18:04). Flash per TWRP ohne Wipe
+(/data ist frisch, Host-adb-Key liegt in `/data/misc/adb/adb_keys`).
